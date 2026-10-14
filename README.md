@@ -1,25 +1,32 @@
 # GameVault — GitHub Pages + Supabase Free
 
-This is a static gaming gallery with Supabase email/password authentication, public posts, and media uploads.
+Static gaming gallery with username/password login, uploads, and an admin moderation panel. Uses Supabase Auth and RLS; no server is hosted by GitHub Pages.
 
-## A. Configure the keys
-Open `js/config.js` in a text editor. Replace the two placeholders with the **Project URL** and **Publishable key** from your Supabase dashboard. Never use a Secret or `service_role` key in browser code.
+## 1. Configure the client
+Edit `js/config.js` and set `SUPABASE_URL` to the plain project URL (for example `https://project-ref.supabase.co`) and `SUPABASE_PUBLISHABLE_KEY` to the publishable key. Do not use Markdown link syntax or a secret/service_role key.
 
-## B. Finish the database setup
-Since you already created `public.posts` and its RLS policies, run `setup.sql` once in Supabase SQL Editor. This adds `storage_path`, used to remove the media file when its owner deletes a post.
+## 2. Run setup SQL
+In Supabase → SQL Editor, run `setup.sql`. This creates the `profiles` table and profile trigger, and adds admin post/media delete policies. Keep your existing `posts` table and `gamevault-media` public bucket with owner-folder Storage policies.
 
-## C. Check Storage
-Create a bucket named exactly `gamevault-media` and make it **Public** so visitors can view shared files. The Storage insert/update/delete policies should restrict changes to authenticated users' own user-ID folders. Website uploads use `<auth-user-id>/<filename>` paths. If you haven't run the Storage policies yet, use the SQL policies you were given earlier.
+## 3. Enable username-only sign-up
+This version maps usernames to synthetic addresses like `playername@username.gamevault.invalid`. In Supabase → Authentication → Sign In / Providers → Email, turn **Confirm email OFF** for this username-only flow. No actual email is collected, so password recovery by email is unavailable. Existing email-based accounts are not automatically migrated; create a new username account or keep using the prior email version until you plan a migration. Never ask users to use a real person's email as a username.
 
-## D. Configure authentication URLs
-In Supabase, open Authentication → URL Configuration. Set Site URL to the final GitHub Pages URL and add that URL to Redirect URLs. A repository site usually looks like `https://YOUR-USERNAME.github.io/YOUR-REPOSITORY/`. If email confirmation is enabled, users need to confirm their email before signing in.
+Important limitation: synthetic-email usernames are a practical demo approach for a static site, not a substitute for a custom authentication backend. If you need reliable account recovery, email verification, or robust username reservation against concurrent signups, use a server-side function/auth flow instead.
 
-## E. Publish
-1. Create a GitHub repository, for example `gamevault`.
-2. Upload `index.html`, the `css` folder and the `js` folder (and optionally this README and setup.sql) to the repository root.
-3. Open repository Settings → Pages.
-4. Choose Deploy from a branch, branch `main`, folder `/ (root)`, then Save.
-5. Wait for the published URL and add it to Supabase Authentication URL Configuration.
+## 4. Make yourself admin
+1. Open GameVault and create/sign in to your own username account once.
+2. In Supabase → SQL Editor, run the following after replacing `YOUR_USERNAME` with your exact username:
 
-## Free-plan notes
-Stay on Supabase Free; do not upgrade or add billing details. Free storage and bandwidth are limited. Uploads are capped at 20 MB per file in the UI. The media bucket is public, so anyone with a media URL can view shared uploads. Never upload private files. Never disable RLS or commit secret/service-role keys.
+```sql
+update public.profiles
+set is_admin = true
+where lower(username) = lower('YOUR_USERNAME');
+```
+
+3. Sign out and sign in again, then refresh the site. The Admin portal button/section should appear. Do not set `is_admin` for other users unless you trust them. Only project owners should edit this flag in SQL.
+
+## 5. Publish
+Upload the contents of this folder to the root of your `gamevault` GitHub repository (not the outer folder). Enable GitHub Pages from `main` and `/(root)`. In Supabase → Authentication → URL Configuration, set Site URL and Redirect URL to your GitHub Pages URL.
+
+## Free-plan safety
+Stay on Supabase Free; do not upgrade or enter billing details. Free quotas apply. Public bucket files can be viewed by anyone with their URL; do not upload private content. The admin UI alone is not security: the SQL RLS policies enforce post/media removal. Never disable RLS or expose a secret/service_role key.
