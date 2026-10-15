@@ -126,6 +126,7 @@ async function refreshAdmin() {
 
 
 
+
 function renderAccount() {
   const a = $('account');
   a.replaceChildren();
@@ -139,13 +140,36 @@ function renderAccount() {
     return;
   }
 
+  const username = usernameOf(user);
+
+  // Hidden input for changing the profile picture
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/jpeg,image/png,image/webp';
+  fileInput.hidden = true;
+
+  fileInput.onchange = async () => {
+    const file = fileInput.files?.[0];
+    if (file) await uploadAvatar(file);
+    fileInput.value = '';
+  };
+
+  // Profile dropdown wrapper
+  const menu = document.createElement('div');
+  menu.className = 'profile-menu';
+
+  // Profile picture trigger
+  const trigger = document.createElement('button');
+  trigger.type = 'button';
+  trigger.className = 'profile-trigger';
+  trigger.setAttribute('aria-label', 'Open account menu');
+  trigger.setAttribute('aria-expanded', 'false');
+
   const avatar = document.createElement('img');
-  avatar.alt = 'Profile picture';
+  avatar.className = 'profile-avatar';
+  avatar.alt = '';
   avatar.width = 40;
   avatar.height = 40;
-  avatar.style.cssText =
-    'width:40px;height:40px;border-radius:50%;' +
-    'object-fit:cover;vertical-align:middle;margin-right:8px;';
 
   if (avatarUrl) {
     avatar.src = avatarUrl;
@@ -160,54 +184,211 @@ function renderAccount() {
       );
   }
 
-  a.append(avatar);
-  a.append(document.createTextNode(usernameOf(user) + ' '));
+  const name = document.createElement('span');
+  name.className = 'profile-username';
+  name.textContent = username;
 
-  const fileInput = document.createElement('input');
-  fileInput.type = 'file';
-  fileInput.accept = 'image/jpeg,image/png,image/webp';
-  fileInput.hidden = true;
+  const arrow = document.createElement('span');
+  arrow.className = 'profile-chevron';
+  arrow.textContent = '⌄';
+  arrow.setAttribute('aria-hidden', 'true');
 
-  const changeButton = document.createElement('button');
-  changeButton.type = 'button';
-  changeButton.textContent = 'Change picture';
-  changeButton.onclick = () => fileInput.click();
+  trigger.append(avatar, name, arrow);
 
-  fileInput.onchange = async () => {
-    const file = fileInput.files?.[0];
-    if (file) await uploadAvatar(file);
-    fileInput.value = '';
-  };
+  // Dropdown panel
+  const dropdown = document.createElement('div');
+  dropdown.className = 'profile-dropdown';
+  dropdown.hidden = true;
 
-  a.append(changeButton, fileInput);
+  const heading = document.createElement('div');
+  heading.className = 'profile-dropdown-heading';
 
-  const signOut = document.createElement('button');
-  signOut.type = 'button';
-  signOut.textContent = 'Sign out';
+  const headingName = document.createElement('strong');
+  headingName.textContent = username;
 
-  signOut.onclick = async () => {
-    await sb.auth.signOut();
+  const headingLabel = document.createElement('span');
+  headingLabel.textContent = isAdmin ? 'Administrator' : 'GameVault member';
+
+  heading.append(headingName, headingLabel);
+  dropdown.append(heading);
+
+  function addItem(label, action, icon) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'profile-menu-item';
+
+    const symbol = document.createElement('span');
+    symbol.className = 'profile-menu-icon';
+    symbol.textContent = icon;
+    symbol.setAttribute('aria-hidden', 'true');
+
+    const text = document.createElement('span');
+    text.textContent = label;
+
+    button.append(symbol, text);
+    button.onclick = action;
+    dropdown.append(button);
+
+    return button;
+  }
+
+  function closeMenu() {
+    dropdown.hidden = true;
+    trigger.setAttribute('aria-expanded', 'false');
+  }
+
+  function openProfile() {
+    let dialog = $('my-profile-dialog');
+
+    if (!dialog) {
+      dialog = document.createElement('dialog');
+      dialog.id = 'my-profile-dialog';
+      dialog.className = 'profile-dialog';
+
+      const close = document.createElement('button');
+      close.type = 'button';
+      close.className = 'profile-dialog-close';
+      close.textContent = '✕';
+      close.setAttribute('aria-label', 'Close profile');
+      close.onclick = () => dialog.close();
+
+      const picture = document.createElement('img');
+      picture.id = 'my-profile-avatar';
+      picture.className = 'profile-dialog-avatar';
+      picture.alt = 'Your profile picture';
+
+      const title = document.createElement('h2');
+      title.id = 'my-profile-name';
+
+      const subtitle = document.createElement('p');
+      subtitle.id = 'my-profile-role';
+
+      const count = document.createElement('p');
+      count.id = 'my-profile-post-count';
+
+      const change = document.createElement('button');
+      change.type = 'button';
+      change.className = 'profile-change-button';
+      change.textContent = 'Change profile picture';
+      change.onclick = () => {
+        dialog.close();
+        fileInput.click();
+      };
+
+      dialog.append(close, picture, title, subtitle, count, change);
+      dialog.addEventListener('click', event => {
+        if (event.target === dialog) dialog.close();
+      });
+
+      document.body.append(dialog);
+    }
+
+    $('my-profile-avatar').src = avatarUrl || avatar.src;
+    $('my-profile-name').textContent = username;
+    $('my-profile-role').textContent =
+      isAdmin ? 'Administrator' : 'GameVault member';
+
+    $('my-profile-post-count').textContent =
+      'Posts in the latest loaded feed: ' +
+      postsCache.filter(post => post.user_id === user.id).length;
+
+    dialog.showModal();
+  }
+
+  addItem('My Profile', () => {
+    closeMenu();
+    openProfile();
+  }, '◉');
+
+  addItem('My Posts', async () => {
+    closeMenu();
+
+    const heading = document.querySelector('.community-heading h2');
+    if (heading) heading.textContent = 'My Posts';
+
+    const showAll = $('show-all-posts');
+    if (showAll) showAll.hidden = false;
+
+    const myPosts = postsCache.filter(post => post.user_id === user.id);
+    const gallery = $('gallery-grid');
+
+    if (!myPosts.length) {
+      gallery.textContent = 'You have no posts in the latest loaded feed yet.';
+    } else {
+      gallery.replaceChildren(
+        ...myPosts.map(post => makePostCard(post, false))
+      );
+    }
+
+    $('gallery-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, '▤');
+
+  addItem('Change Profile Picture', () => {
+    closeMenu();
+    fileInput.click();
+  }, '✎');
+
+  if (isAdmin) {
+    addItem('Admin Portal', () => {
+      closeMenu();
+      $('admin-panel').hidden = false;
+      $('admin-panel').scrollIntoView({ behavior: 'smooth' });
+    }, '⚙');
+  }
+
+  const separator = document.createElement('div');
+  separator.className = 'profile-menu-separator';
+  dropdown.append(separator);
+
+  addItem('Sign Out', async () => {
+    closeMenu();
+
+    const { error } = await sb.auth.signOut();
+
+    if (error) {
+      alert('Could not sign out: ' + error.message);
+      return;
+    }
+
     user = null;
     isAdmin = false;
     avatarUrl = null;
+
     $('admin-panel').hidden = true;
     renderAccount();
     updateUpload();
+    await loadPosts();
+  }, '↪');
+
+  trigger.onclick = () => {
+    const opening = dropdown.hidden;
+    dropdown.hidden = !opening;
+    trigger.setAttribute('aria-expanded', String(opening));
   };
 
-  a.append(signOut);
+  // Close when clicking outside the menu
+  if (!window.__gameVaultProfileMenuHandler) {
+    document.addEventListener('click', event => {
+      document.querySelectorAll('.profile-menu').forEach(profileMenu => {
+        if (!profileMenu.contains(event.target)) {
+          const panel = profileMenu.querySelector('.profile-dropdown');
+          const button = profileMenu.querySelector('.profile-trigger');
 
-  if (isAdmin) {
-    const adm = document.createElement('button');
-    adm.type = 'button';
-    adm.textContent = 'Admin portal';
-    adm.onclick = () => {
-      $('admin-panel').hidden = false;
-      $('admin-panel').scrollIntoView({ behavior: 'smooth' });
-    };
-    a.append(adm);
+          if (panel && button) {
+            panel.hidden = true;
+            button.setAttribute('aria-expanded', 'false');
+          }
+        }
+      });
+    });
+
+    window.__gameVaultProfileMenuHandler = true;
   }
+
+  menu.append(trigger, dropdown, fileInput);
+  a.append(menu);
 }
+
 
 function updateUpload(){$('upload-button').disabled=!user;$('upload-status').textContent=user?'Signed in. Files are limited to 20 MB.':'Sign in before uploading.'}
 function openAuth(){$('auth-status').textContent='';$('auth-dialog').showModal()}$('auth-open').onclick=openAuth;
