@@ -74,7 +74,7 @@ async function uploadAvatar(file) {
     return;
   }
 
-  const path = `${user.id}/avatar.${types[file.type]}`;
+const path = `${user.id}/avatar-${crypto.randomUUID()}.${types[file.type]}`;
 
   const { error: uploadError } = await sb.storage
     .from('gamevault-avatars')
