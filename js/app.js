@@ -1,130 +1,3 @@
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from './config.js';
-const $=id=>document.getElementById(id); let sb=null,user=null,signup=false,isAdmin=false,postsCache=[],avatarUrl=null;
-// Username accounts are mapped to a synthetic, non-deliverable address. Disable email confirmation in Supabase Auth.
-const accountEmail = name => `${name.toLowerCase()}@username.gamevault.invalid`;
-const configured=SUPABASE_URL.startsWith('https://')&&!SUPABASE_URL.includes('PASTE_YOUR')&&SUPABASE_PUBLISHABLE_KEY&&!SUPABASE_PUBLISHABLE_KEY.includes('PASTE_YOUR');
-if(configured){sb=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);start()}else{$('gallery-grid').textContent='Add your Supabase URL and publishable key in js/config.js to connect the vault.';$('upload-status').textContent='Waiting for Supabase configuration.'}
-async function start() {
-  const { data } = await sb.auth.getSession();
-  user = data.session?.user || null;
-
-  await refreshAdmin();
-  await loadAvatar();
-  renderAccount();
-
-  await loadPosts();
-
-  sb.auth.onAuthStateChange((_e, s) => {
-    user = s?.user || null;
-
-    setTimeout(async () => {
-      await refreshAdmin();
-      await loadAvatar();
-      renderAccount();
-      updateUpload();
-      await loadPosts();
-    }, 0);
-  });
-
-  updateUpload();
-}
-function usernameOf(u){return u?.user_metadata?.username||u?.email?.split('@')[0]||'Player'}
-
-async function loadAvatar() {
-  avatarUrl = null;
-  if (!sb || !user) return;
-
-  const { data, error } = await sb
-    .from('profiles')
-    .select('avatar_path')
-    .eq('id', user.id)
-    .maybeSingle();
-
-  if (error) {
-    console.error('Could not load avatar:', error.message);
-    return;
-  }
-
-  if (data?.avatar_path) {
-    const { data: imageData } = sb.storage
-      .from('gamevault-avatars')
-      .getPublicUrl(data.avatar_path);
-
-    avatarUrl = imageData.publicUrl;
-  }
-}
-
-async function uploadAvatar(file) {
-  if (!sb || !user || !file) return;
-
-  const types = {
-    'image/jpeg': 'jpg',
-    'image/png': 'png',
-    'image/webp': 'webp'
-  };
-
-  if (!types[file.type]) {
-    alert('Choose a JPG, PNG, or WebP image.');
-    return;
-  }
-
-  if (file.size > 2 * 1024 * 1024) {
-    alert('Profile pictures must be 2 MB or smaller.');
-    return;
-  }
-
-const path = `${user.id}/avatar-${crypto.randomUUID()}.${types[file.type]}`;
-
-  const { error: uploadError } = await sb.storage
-    .from('gamevault-avatars')
-    .upload(path, file, {
-      upsert: true,
-      contentType: file.type,
-      cacheControl: '3600'
-    });
-
-  if (uploadError) {
-    alert('Picture upload failed: ' + uploadError.message);
-    return;
-  }
-
-  const { error: profileError } = await sb
-    .from('profiles')
-    .update({ avatar_path: path })
-    .eq('id', user.id);
-
-  if (profileError) {
-    alert('Image uploaded, but saving the profile failed: ' +
-      profileError.message);
-    return;
-  }
-
-  await loadAvatar();
-  renderAccount();
-}
-
-async function refreshAdmin() {
-  isAdmin = false;
-  $('admin-panel').hidden = true;
-
-  if (!sb || !user) return;
-
-  const r = await sb
-    .from('profiles')
-    .select('is_admin')
-    .eq('id', user.id)
-    .maybeSingle();
-
-  isAdmin = !!r.data?.is_admin;
-  $('admin-panel').hidden = !isAdmin;
-
-  if (isAdmin) {
-    $('admin-username').textContent = usernameOf(user);
-  }
-}
-
-
 
 function renderAccount() {
   const a = $('account');
@@ -139,39 +12,167 @@ function renderAccount() {
     return;
   }
 
+  const wrap = document.createElement('div');
+  wrap.className = 'profile-menu';
+
   const avatar = document.createElement('img');
   avatar.alt = 'Profile picture';
-  avatar.width = 40;
-  avatar.height = 40;
-  avatar.style.cssText =
-    'width:40px;height:40px;border-radius:50%;' +
-    'object-fit:cover;vertical-align:middle;margin-right:8px;';
+  avatar.width = 42;
+  avatar.height = 42;
+  avatar.src = avatarUrl || (
+    'data:image/svg+xml;charset=utf-8,' +
+    encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42">' +
+      '<rect width="42" height="42" rx="21" fill="#263447"/>' +
+      '<text x="21" y="28" text-anchor="middle" fill="white" font-size="22">?</text>' +
+      '</svg>'
+    )
+  );
 
-  if (avatarUrl) {
-    avatar.src = avatarUrl;
-  } else {
-    avatar.src =
-      'data:image/svg+xml;charset=utf-8,' +
-      encodeURIComponent(
-        '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40">' +
-        '<rect width="40" height="40" rx="20" fill="#263447"/>' +
-        '<text x="20" y="27" text-anchor="middle" fill="white" font-size="22">?</text>' +
-        '</svg>'
-      );
+  const toggle = document.createElement('button');
+  toggle.type = 'button';
+  toggle.className = 'profile-trigger';
+  toggle.setAttribute('aria-label', 'Open account menu');
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.append(avatar);
+
+  const label = document.createElement('span');
+  label.className = 'profile-trigger-name';
+  label.textContent = usernameOf(user);
+
+  const arrow = document.createElement('span');
+  arrow.className = 'profile-chevron';
+  arrow.textContent = '⌄';
+
+  toggle.append(label, arrow);
+
+  const menu = document.createElement('div');
+  menu.className = 'profile-dropdown';
+  menu.hidden = true;
+
+  const heading = document.createElement('div');
+  heading.className = 'profile-dropdown-heading';
+
+  const headingName = document.createElement('strong');
+  headingName.textContent = usernameOf(user);
+
+  const headingCaption = document.createElement('span');
+  headingCaption.textContent = isAdmin
+    ? 'GameVault administrator'
+    : 'GameVault member';
+
+  heading.append(headingName, headingCaption);
+  menu.append(heading);
+
+  function addMenuItem(text, icon, action, danger = false) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'profile-menu-item' +
+      (danger ? ' profile-menu-danger' : '');
+    button.innerHTML = '<span class="profile-menu-icon">' +
+      icon + '</span>';
+
+    const caption = document.createElement('span');
+    caption.textContent = text;
+    button.append(caption);
+
+    button.addEventListener('click', () => {
+      menu.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+      action();
+    });
+
+    menu.append(button);
+    return button;
   }
 
-  a.append(avatar);
-  a.append(document.createTextNode(usernameOf(user) + ' '));
+  addMenuItem('My profile', '♙', () => {
+    let dialog = document.getElementById('my-profile-dialog');
+
+    if (!dialog) {
+      dialog = document.createElement('dialog');
+      dialog.id = 'my-profile-dialog';
+      dialog.className = 'profile-dialog';
+      document.body.append(dialog);
+    }
+
+    dialog.replaceChildren();
+
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'profile-dialog-close';
+    close.textContent = '×';
+    close.onclick = () => dialog.close();
+
+    const picture = document.createElement('img');
+    picture.className = 'profile-dialog-avatar';
+    picture.alt = 'Your profile picture';
+    picture.src = avatarUrl || avatar.src;
+
+    const name = document.createElement('h2');
+    name.textContent = usernameOf(user);
+
+    const caption = document.createElement('p');
+    caption.textContent = 'Your GameVault profile';
+
+    const posts = document.createElement('p');
+    posts.className = 'profile-dialog-detail';
+    posts.textContent = 'Your posts: ' +
+      postsCache.filter(post => post.user_id === user.id).length;
+
+    const change = document.createElement('button');
+    change.type = 'button';
+    change.className = 'profile-dialog-action';
+    change.textContent = 'Change profile picture';
+    change.onclick = () => {
+      dialog.close();
+      fileInput.click();
+    };
+
+    dialog.append(close, picture, name, caption, posts, change);
+
+    if (!dialog.open) dialog.showModal();
+  });
+
+  addMenuItem('My posts', '▧', () => {
+    const mine = postsCache.filter(post => post.user_id === user.id);
+    const grid = $('gallery-grid');
+
+    grid.replaceChildren();
+
+    if (!mine.length) {
+      grid.textContent = 'You have not uploaded any posts yet.';
+    } else {
+      grid.replaceChildren(...mine.map(post => makePostCard(post)));
+    }
+
+    const heading = document.querySelector('.community-heading h2');
+    if (heading) heading.textContent = 'My posts';
+
+    const allButton = document.getElementById('show-all-posts');
+    if (allButton) allButton.hidden = false;
+
+    document.querySelector('.community-heading')
+      ?.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  addMenuItem('View all posts', '⌂', async () => {
+    const heading = document.querySelector('.community-heading h2');
+    if (heading) heading.textContent = 'Community feed';
+
+    const allButton = document.getElementById('show-all-posts');
+    if (allButton) allButton.hidden = true;
+
+    await loadPosts();
+
+    document.querySelector('.community-heading')
+      ?.scrollIntoView({ behavior: 'smooth' });
+  });
 
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
   fileInput.accept = 'image/jpeg,image/png,image/webp';
   fileInput.hidden = true;
-
-  const changeButton = document.createElement('button');
-  changeButton.type = 'button';
-  changeButton.textContent = 'Change picture';
-  changeButton.onclick = () => fileInput.click();
 
   fileInput.onchange = async () => {
     const file = fileInput.files?.[0];
@@ -179,230 +180,48 @@ function renderAccount() {
     fileInput.value = '';
   };
 
-  a.append(changeButton, fileInput);
+  addMenuItem('Change profile picture', '◎', () => fileInput.click());
 
-  const signOut = document.createElement('button');
-  signOut.type = 'button';
-  signOut.textContent = 'Sign out';
+  if (isAdmin) {
+    addMenuItem('Admin portal', '♜', () => {
+      $('admin-panel').hidden = false;
+      $('admin-panel').scrollIntoView({ behavior: 'smooth' });
+    });
+  }
 
-  signOut.onclick = async () => {
-    await sb.auth.signOut();
+  const separator = document.createElement('div');
+  separator.className = 'profile-menu-divider';
+  menu.append(separator);
+
+  addMenuItem('Sign out', '↪', async () => {
+    const { error } = await sb.auth.signOut();
+
+    if (error) {
+      alert('Sign out failed: ' + error.message);
+      return;
+    }
+
     user = null;
     isAdmin = false;
     avatarUrl = null;
     $('admin-panel').hidden = true;
     renderAccount();
     updateUpload();
-  };
-
-  a.append(signOut);
-
-  if (isAdmin) {
-    const adm = document.createElement('button');
-    adm.type = 'button';
-    adm.textContent = 'Admin portal';
-    adm.onclick = () => {
-      $('admin-panel').hidden = false;
-      $('admin-panel').scrollIntoView({ behavior: 'smooth' });
-    };
-    a.append(adm);
-  }
-}
-
-function updateUpload(){$('upload-button').disabled=!user;$('upload-status').textContent=user?'Signed in. Files are limited to 20 MB.':'Sign in before uploading.'}
-function openAuth(){$('auth-status').textContent='';$('auth-dialog').showModal()}$('auth-open').onclick=openAuth;
-$('auth-toggle').onclick=()=>{signup=!signup;$('auth-heading').textContent=signup?'Create your account':'Enter the vault';$('auth-submit').textContent=signup?'Create account':'Sign in';$('auth-toggle').textContent=signup?'Already have an account? Sign in':'Need an account? Sign up';$('password').autocomplete=signup?'new-password':'current-password';$('auth-status').textContent=signup?'Choose a unique username and a password of at least 8 characters.':''};
-
-$('auth-form').onsubmit = async e => {
-  e.preventDefault();
-  if (!sb) return;
-
-  const name = $('username').value.trim();
-
-  if (!/^[A-Za-z0-9_]{3,24}$/.test(name)) {
-    $('auth-status').textContent =
-      'Username must be 3–24 letters, numbers, or underscores.';
-    return;
-  }
-
-  $('auth-submit').disabled = true;
-  $('auth-status').textContent = signup
-    ? 'Creating account…'
-    : 'Signing in…';
-
-  try {
-    let r;
-
-    if (signup) {
-      r = await sb.auth.signUp({
-        email: accountEmail(name),
-        password: $('password').value,
-        options: { data: { username: name } }
-      });
-
-      if (r.error) throw r.error;
-
-      if (!r.data.session) {
-        $('auth-status').textContent =
-          'Account created, but confirmation is enabled. Turn OFF Confirm email in Supabase Authentication settings for username-only accounts.';
-        return;
-      }
-
-      $('auth-status').textContent = 'Account created!';
-    } else {
-      r = await sb.auth.signInWithPassword({
-        email: accountEmail(name),
-        password: $('password').value
-      });
-
-      if (r.error) throw r.error;
-
-      $('auth-status').textContent = 'Signed in!';
-    }
-
-    // Refresh the UI after successful authentication.
-    const { data } = await sb.auth.getSession();
-    user = data.session?.user || null;
-    await refreshAdmin();
-    await loadAvatar();
-    renderAccount();
-    updateUpload();
     await loadPosts();
+  }, true);
 
-    $('auth-dialog').close();
+  toggle.addEventListener('click', () => {
+    menu.hidden = !menu.hidden;
+    toggle.setAttribute('aria-expanded', String(!menu.hidden));
+  });
 
-  } catch (err) {
-    $('auth-status').textContent =
-      err.message || 'Authentication failed.';
-  } finally {
-    $('auth-submit').disabled = false;
-  }
-};
-$('upload-form').onsubmit=async e=>{e.preventDefault();if(!user)return openAuth();const f=$('media').files[0];if(!f)return;if(f.size>20*1024*1024){$('upload-status').textContent='File exceeds 20 MB. Choose a smaller file.';return}if(!f.type.startsWith('image/')&&!['video/mp4','video/webm','video/quicktime'].includes(f.type)){$('upload-status').textContent='Choose an image, MP4, WebM, or QuickTime video.';return}$('upload-button').disabled=true;$('upload-status').textContent='Uploading…';let path='';try{const safe=f.name.toLowerCase().replace(/[^a-z0-9._-]+/g,'-').slice(-90);path=`${user.id}/${crypto.randomUUID()}-${safe}`;const up=await sb.storage.from('gamevault-media').upload(path,f,{contentType:f.type,upsert:false});if(up.error)throw up.error;const url=sb.storage.from('gamevault-media').getPublicUrl(path).data.publicUrl;const ins=await sb.from('posts').insert({user_id:user.id,title:$('title').value.trim(),description:$('description').value.trim(),category:$('category').value,media_url:url,media_type:f.type.startsWith('video/')?'video':'image',storage_path:path});if(ins.error){await sb.storage.from('gamevault-media').remove([path]);throw ins.error}$('upload-form').reset();$('upload-status').textContent='Uploaded successfully!';await loadPosts()}catch(err){$('upload-status').textContent=err.message||'Upload failed. Check Storage and RLS policies.'}finally{updateUpload()}};
+  document.addEventListener('click', event => {
+    if (!wrap.contains(event.target)) {
+      menu.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  });
 
-function openPost(post) {
-  let dialog = document.getElementById('post-viewer');
-
-  if (!dialog) {
-    dialog = document.createElement('dialog');
-    dialog.id = 'post-viewer';
-    dialog.style.cssText =
-      'width:min(900px,92vw);max-height:90vh;overflow:auto;' +
-      'background:#151923;color:#fff;border:1px solid #394150;' +
-      'border-radius:14px;padding:20px;';
-
-    dialog.innerHTML = `
-      <button type="button" id="post-viewer-close"
-        style="float:right;padding:8px 14px;cursor:pointer">
-        Close ✕
-      </button>
-      <h2 id="post-viewer-title"></h2>
-      <div id="post-viewer-media"></div>
-      <p id="post-viewer-description"></p>
-      <p id="post-viewer-category"></p>
-    `;
-
-    dialog.addEventListener('click', e => {
-      if (e.target === dialog) dialog.close();
-    });
-
-    dialog.querySelector('#post-viewer-close')
-      .addEventListener('click', () => dialog.close());
-
-    document.body.append(dialog);
-  }
-
-  dialog.querySelector('#post-viewer-title').textContent =
-    post.title || 'Untitled post';
-  dialog.querySelector('#post-viewer-description').textContent =
-    post.description || '';
-  dialog.querySelector('#post-viewer-category').textContent =
-    post.category || 'Gaming';
-
-  const media = dialog.querySelector('#post-viewer-media');
-  media.replaceChildren();
-
-  let el;
-  if (post.media_type === 'video') {
-    el = document.createElement('video');
-    el.controls = true;
-    el.autoplay = false;
-    el.preload = 'metadata';
-  } else {
-    el = document.createElement('img');
-    el.alt = post.title || 'Gaming media';
-  }
-
-  el.src = post.media_url;
-  el.style.cssText =
-    'display:block;max-width:100%;max-height:65vh;' +
-    'width:auto;height:auto;margin:16px auto;object-fit:contain;';
-
-  media.append(el);
-
-  if (!dialog.open) dialog.showModal();
+  wrap.append(toggle, menu, fileInput);
+  a.append(wrap);
 }
-
-
-function makePostCard(post, admin = false) {
-  const c = document.createElement('article');
-  c.className = 'card';
-
-  const m = document.createElement('div');
-  m.className = 'media';
-
-  let el;
-
-  if (post.media_type === 'video') {
-    el = document.createElement('video');
-    el.controls = true;
-    el.preload = 'metadata';
-  } else {
-    el = document.createElement('img');
-    el.loading = 'lazy';
-    el.alt = post.title || 'Gaming media';
-  }
-
-  el.src = post.media_url;
-  m.append(el);
-
-  const b = document.createElement('div');
-  b.className = 'cardbody';
-
-  const tag = document.createElement('span');
-  tag.className = 'tag';
-  tag.textContent = post.category || 'Gaming';
-
-  const h = document.createElement('h3');
-  h.textContent = post.title || 'Untitled post';
-  b.append(tag, h);
-
-  if (post.description) {
-    const p = document.createElement('p');
-    p.textContent = post.description;
-    b.append(p);
-  }
-
-  const view = document.createElement('button');
-  view.type = 'button';
-  view.className = 'view-post';
-  view.textContent = 'Open post';
-  view.onclick = () => openPost(post);
-  b.append(view);
-
-  if (user && (user.id === post.user_id || admin)) {
-    const d = document.createElement('button');
-    d.type = 'button';
-    d.className = 'delete';
-    d.textContent = admin ? 'Remove post' : 'Delete my post';
-    d.onclick = () => deletePost(post, admin);
-    b.append(d);
-  }
-
-  c.append(m, b);
-  return c;
-}
-async function loadPosts(){if(!sb)return;const g=$('gallery-grid');g.textContent='Loading…';const r=await sb.from('posts').select('id,user_id,title,description,category,media_url,media_type,created_at,storage_path').order('created_at',{ascending:false}).limit(60);if(r.error){g.textContent=r.error.message;return}postsCache=r.data||[];if(!postsCache.length){g.textContent='The vault is empty. Be the first to share a gaming moment!'}else g.replaceChildren(...postsCache.map(p=>makePostCard(p,false)));if(isAdmin)renderAdminPosts()}
-async function deletePost(p,admin=false){if(!confirm(`${admin?'Admin removal':'Delete'} “${p.title}”?`))return;const r=await sb.from('posts').delete().eq('id',p.id);if(r.error){alert(r.error.message);return}if(p.storage_path){const f=await sb.storage.from('gamevault-media').remove([p.storage_path]);if(f.error)alert('Post row deleted, but media removal failed: '+f.error.message)}await loadPosts();if(admin)$('admin-message').textContent='Post removed.'}
-function renderAdminPosts(){const g=$('admin-posts');$('admin-post-count').textContent=String(postsCache.length);g.replaceChildren(...postsCache.map(p=>makePostCard(p,true)));if(!postsCache.length)g.textContent='No posts to moderate.'}
-$('admin-refresh').onclick=async()=>{if(!isAdmin)return;$('admin-message').textContent='Refreshing…';await loadPosts();$('admin-message').textContent='Posts refreshed.'};$('admin-close').onclick=()=>$('admin-panel').hidden=true;
