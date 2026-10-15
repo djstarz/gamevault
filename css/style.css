@@ -3,3 +3,214 @@
 @media(max-width:980px){.site-header{gap:18px;padding:0 22px}.brand{min-width:auto}.top-nav{gap:0}.top-nav a{padding:0 11px}.header-actions{min-width:auto}.welcome-banner{padding:40px}.welcome-art{right:0;transform:scale(.8);opacity:.75}.content-layout{grid-template-columns:minmax(0,1fr) 240px;gap:15px}.page-shell{padding-left:20px;padding-right:20px}}
 @media(max-width:720px){.site-header{height:66px;padding:0 14px;gap:10px}.brand{gap:8px}.brand-mark{width:34px;height:34px;border-radius:10px;font-size:19px}.brand-word{font-size:14px}.brand-word small{font-size:7px}.top-nav{margin-left:auto}.top-nav a{padding:0 8px;font-size:11px}.header-actions{margin-left:0;gap:5px}.icon-action{display:none}.sign-in-button,.header-actions #account button{padding:8px 9px;font-size:11px}.header-actions #account{gap:5px}.header-actions #account img{width:34px!important;height:34px!important}.page-shell{padding:20px 14px 48px}.welcome-banner{min-height:300px;padding:30px 25px}.welcome-copy{max-width:100%}.welcome-banner h1{font-size:clamp(37px,8vw,52px)}.welcome-banner p{max-width:400px;font-size:12px}.welcome-art{right:-125px;top:30px;opacity:.27;transform:scale(.85)}.community-heading{padding:30px 0 17px}.section-heading h2,.panel-heading h2{font-size:24px}.content-layout{grid-template-columns:1fr}.sidebar{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.sidebar-note{grid-column:1/-1}.grid{gap:11px;padding:11px}.cardbody{padding:11px}.card h3{font-size:13px}.panel{padding:17px}.site-footer{padding:20px 15px 28px;gap:12px;flex-wrap:wrap}.site-footer>span{margin-right:0}}
 @media(max-width:480px){.brand-word small{display:none}.brand-word{font-size:13px}.site-header{gap:7px}.top-nav a{padding:0 6px;font-size:10px}.header-actions #account{max-width:128px}.header-actions #account button{font-size:10px;padding:7px}.welcome-banner{min-height:280px;padding:25px 20px}.welcome-banner h1{font-size:39px}.welcome-actions{gap:8px}.welcome-actions .button{padding:10px 11px;font-size:11px}.welcome-art{right:-180px;opacity:.22}.community-heading{align-items:flex-end}.community-heading .text-link{font-size:11px;white-space:nowrap}.feed-toolbar{padding:0 13px}.feed-tabs{gap:10px}.feed-tab-label{display:none}.live-label{font-size:8px}.grid{grid-template-columns:1fr;padding:10px}.media{aspect-ratio:16/10}.cardbody{padding:13px}.card h3{font-size:14px}.sidebar{grid-template-columns:1fr}.sidebar-note{grid-column:auto}.upload-form{grid-template-columns:1fr}.upload-form label{grid-column:1/-1}.upload-submit{align-items:flex-start;flex-direction:column}.site-footer{font-size:10px}.site-footer>span{order:3;width:100%}}
+
+/* HoYoLAB-inspired account avatar and dropdown */
+.header-actions #account {
+  flex-wrap: nowrap;
+}
+
+.profile-menu {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.header-actions #account .profile-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 9px 5px 5px;
+  border: 1px solid transparent;
+  border-radius: 28px;
+  background: transparent;
+  color: var(--text);
+  transition: background .2s, border-color .2s;
+}
+
+.header-actions #account .profile-trigger:hover,
+.header-actions #account .profile-trigger[aria-expanded="true"] {
+  background: #222b39;
+  border-color: #39465a;
+}
+
+.header-actions #account .profile-trigger img {
+  display: block;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50%;
+  border: 2px solid #638bb6;
+  object-fit: cover;
+}
+
+.profile-trigger-name {
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.profile-chevron {
+  color: var(--muted);
+  font-size: 17px;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 100;
+  width: 255px;
+  padding: 8px;
+  background: #191f2a;
+  border: 1px solid #354154;
+  border-radius: 15px;
+  box-shadow: 0 18px 50px #0008;
+}
+
+.profile-dropdown[hidden] {
+  display: none !important;
+}
+
+.profile-dropdown-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  overflow-wrap: anywhere;
+}
+
+.profile-dropdown-heading strong {
+  color: #f2f5fb;
+  font-size: 14px;
+}
+
+.profile-dropdown-heading span {
+  color: #9aa5b6;
+  font-size: 11px;
+}
+
+.profile-menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px !important;
+  border: 0 !important;
+  border-radius: 9px !important;
+  background: transparent !important;
+  color: #dce4ef !important;
+  text-align: left;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+.profile-menu-item:hover {
+  background: #283345 !important;
+}
+
+.profile-menu-icon {
+  width: 20px;
+  color: #8fc6ff;
+  text-align: center;
+  font-size: 17px;
+}
+
+.profile-menu-divider {
+  height: 1px;
+  margin: 7px 4px;
+  background: #303746;
+}
+
+.profile-menu-item.profile-menu-danger {
+  color: #ff9ca5 !important;
+}
+
+.profile-menu-danger .profile-menu-icon {
+  color: #ff9ca5;
+}
+
+.profile-dialog {
+  position: fixed;
+  width: min(380px, calc(100% - 28px));
+  max-width: none;
+  padding: 30px 24px;
+  border: 1px solid #354154;
+  border-radius: 20px;
+  background: #191f2a;
+  color: #f2f5fb;
+  text-align: center;
+  box-shadow: 0 25px 90px #0009;
+}
+
+.profile-dialog::backdrop {
+  background: #05080dcc;
+  backdrop-filter: blur(5px);
+}
+
+.profile-dialog-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #354154;
+  border-radius: 10px;
+  background: #222a37;
+  color: #dce4ef;
+  font-size: 23px;
+}
+
+.profile-dialog-avatar {
+  display: block;
+  width: 90px;
+  height: 90px;
+  margin: 8px auto 15px;
+  border: 3px solid #638bb6;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-dialog h2 {
+  margin: 0 0 6px;
+  font-size: 23px;
+}
+
+.profile-dialog p {
+  color: #9aa5b6;
+  font-size: 12px;
+}
+
+.profile-dialog .profile-dialog-detail {
+  padding: 12px;
+  border: 1px solid #303746;
+  border-radius: 10px;
+  background: #141923;
+}
+
+.profile-dialog-action {
+  width: 100%;
+  padding: 11px 14px;
+  border: 0;
+  border-radius: 10px;
+  background: #75b7ff;
+  color: #102036;
+  font-weight: 800;
+}
+
+@media (max-width: 480px) {
+  .profile-trigger-name,
+  .profile-chevron {
+    display: none;
+  }
+
+  .header-actions #account .profile-trigger {
+    padding: 3px;
+  }
+
+  .profile-dropdown {
+    right: -4px;
+    width: min(255px, calc(100vw - 24px));
+  }
+}
