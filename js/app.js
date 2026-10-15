@@ -525,6 +525,149 @@ function openPost(post) {
 }
 
 
+function openEditPost(post, admin = false) {
+  const dialog = document.createElement('dialog');
+  dialog.className = 'gv-edit-dialog';
+
+  const form = document.createElement('form');
+  form.className = 'gv-edit-form';
+
+  const heading = document.createElement('h2');
+  heading.textContent = 'Edit post';
+
+  const subtitle = document.createElement('p');
+  subtitle.textContent = 'Update your post details. Your media will stay unchanged.';
+
+  const titleLabel = document.createElement('label');
+  titleLabel.textContent = 'Post title';
+
+  const titleInput = document.createElement('input');
+  titleInput.type = 'text';
+  titleInput.maxLength = 120;
+  titleInput.required = true;
+  titleInput.value = post.title || '';
+
+  titleLabel.append(titleInput);
+
+  const descriptionLabel = document.createElement('label');
+  descriptionLabel.textContent = 'Description';
+
+  const descriptionInput = document.createElement('textarea');
+  descriptionInput.rows = 4;
+  descriptionInput.maxLength = 2000;
+  descriptionInput.value = post.description || '';
+
+  descriptionLabel.append(descriptionInput);
+
+  const categoryLabel = document.createElement('label');
+  categoryLabel.textContent = 'Category';
+
+  const categoryInput = document.createElement('select');
+
+  // Keep these options aligned with the categories in your upload form.
+  const categories = [
+    'Genshin Impact',
+    'Wuthering Waves',
+    'Arknights: Endfield',
+    'Other'
+  ];
+
+  categories.forEach(category => {
+    const option = document.createElement('option');
+    option.value = category;
+    option.textContent = category;
+    categoryInput.append(option);
+  });
+
+  // Preserve a category already used by a post, even if it is not listed above.
+  if (post.category && !categories.includes(post.category)) {
+    const option = document.createElement('option');
+    option.value = post.category;
+    option.textContent = post.category;
+    categoryInput.append(option);
+  }
+
+  categoryInput.value = post.category || categories[0];
+  categoryLabel.append(categoryInput);
+
+  const actions = document.createElement('div');
+  actions.className = 'gv-edit-actions';
+
+  const cancel = document.createElement('button');
+  cancel.type = 'button';
+  cancel.className = 'gv-edit-cancel';
+  cancel.textContent = 'Cancel';
+  cancel.onclick = () => dialog.close();
+
+  const save = document.createElement('button');
+  save.type = 'submit';
+  save.className = 'gv-edit-save';
+  save.textContent = 'Save changes';
+
+  actions.append(cancel, save);
+  form.append(heading, subtitle, titleLabel, descriptionLabel,
+    categoryLabel, actions);
+  dialog.append(form);
+  document.body.append(dialog);
+
+  dialog.addEventListener('click', event => {
+    if (event.target === dialog) dialog.close();
+  });
+
+  dialog.addEventListener('close', () => dialog.remove(), { once: true });
+
+  form.onsubmit = async event => {
+    event.preventDefault();
+
+    const newTitle = titleInput.value.trim();
+    if (!newTitle) {
+      titleInput.focus();
+      return;
+    }
+
+    save.disabled = true;
+    save.textContent = 'Saving…';
+
+    try {
+      let query = sb.from('posts')
+        .update({
+          title: newTitle,
+          description: descriptionInput.value.trim(),
+          category: categoryInput.value
+        })
+        .eq('id', post.id);
+
+      // Non-admins may only edit their own posts.
+      if (!admin) query = query.eq('user_id', user.id);
+
+      const { data, error } = await query.select('id');
+
+      if (error) throw error;
+
+      if (!data?.length) {
+        throw new Error(
+          'No post was updated. Check your permissions or refresh the page.'
+        );
+      }
+
+      dialog.close();
+      await loadPosts();
+
+      const message = $('admin-message');
+      if (admin && message) {
+        message.textContent = 'Post updated successfully.';
+      }
+    } catch (error) {
+      alert('Could not update post: ' + error.message);
+      save.disabled = false;
+      save.textContent = 'Save changes';
+    }
+  };
+
+  dialog.showModal();
+  titleInput.focus();
+}
+
 function makePostCard(post, admin = false) {
   const c = document.createElement('article');
   c.className = 'card';
