@@ -185,7 +185,7 @@ function renderAccount() {
   }
 
   const name = document.createElement('span');
-  name.className = 'profile-username';
+  name.className = 'profile-trigger-name';
   name.textContent = username;
 
   const arrow = document.createElement('span');
@@ -268,7 +268,7 @@ function renderAccount() {
 
       const change = document.createElement('button');
       change.type = 'button';
-      change.className = 'profile-change-button';
+      change.className = 'profile-dialog-action';
       change.textContent = 'Change profile picture';
       change.onclick = () => {
         dialog.close();
@@ -337,7 +337,7 @@ function renderAccount() {
   }
 
   const separator = document.createElement('div');
-  separator.className = 'profile-menu-separator';
+  separator.className = 'profile-menu-divider';
   dropdown.append(separator);
 
   addItem('Sign Out', async () => {
