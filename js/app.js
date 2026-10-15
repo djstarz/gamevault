@@ -584,6 +584,97 @@ function makePostCard(post, admin = false) {
   return c;
 }
 async function loadPosts(){if(!sb)return;const g=$('gallery-grid');g.textContent='Loading…';const r=await sb.from('posts').select('id,user_id,title,description,category,media_url,media_type,created_at,storage_path').order('created_at',{ascending:false}).limit(60);if(r.error){g.textContent=r.error.message;return}postsCache=r.data||[];if(!postsCache.length){g.textContent='The vault is empty. Be the first to share a gaming moment!'}else g.replaceChildren(...postsCache.map(p=>makePostCard(p,false)));if(isAdmin)renderAdminPosts()}
-async function deletePost(p,admin=false){if(!confirm(`${admin?'Admin removal':'Delete'} “${p.title}”?`))return;const r=await sb.from('posts').delete().eq('id',p.id);if(r.error){alert(r.error.message);return}if(p.storage_path){const f=await sb.storage.from('gamevault-media').remove([p.storage_path]);if(f.error)alert('Post row deleted, but media removal failed: '+f.error.message)}await loadPosts();if(admin)$('admin-message').textContent='Post removed.'}
+
+function confirmDeletePost(post, admin = false) {
+  return new Promise(resolve => {
+    const dialog = document.createElement('dialog');
+    dialog.className = 'gv-delete-dialog';
+
+    const content = document.createElement('div');
+    content.className = 'gv-delete-content';
+
+    const icon = document.createElement('div');
+    icon.className = 'gv-delete-icon';
+    icon.textContent = '⌫';
+
+    const title = document.createElement('h2');
+    title.textContent = admin ? 'Remove this post?' : 'Delete your post?';
+
+    const message = document.createElement('p');
+    message.textContent =
+      'This action cannot be undone. Are you sure you want to continue?';
+
+    const postTitle = document.createElement('p');
+    postTitle.className = 'gv-delete-post-title';
+    postTitle.textContent = post.title || 'Untitled post';
+    postTitle.style.marginTop = '12px';
+
+    const actions = document.createElement('div');
+    actions.className = 'gv-delete-actions';
+
+    const cancel = document.createElement('button');
+    cancel.type = 'button';
+    cancel.className = 'gv-delete-cancel';
+    cancel.textContent = 'Cancel';
+
+    const confirm = document.createElement('button');
+    confirm.type = 'button';
+    confirm.className = 'gv-delete-confirm';
+    confirm.textContent = admin ? 'Remove post' : 'Delete post';
+
+    actions.append(cancel, confirm);
+    content.append(icon, title, message, postTitle, actions);
+    dialog.append(content);
+    document.body.append(dialog);
+
+    let finished = false;
+
+    function finish(confirmed) {
+      if (finished) return;
+      finished = true;
+      if (dialog.open) dialog.close();
+      dialog.remove();
+      resolve(confirmed);
+    }
+
+    cancel.onclick = () => finish(false);
+    confirm.onclick = () => finish(true);
+
+    dialog.addEventListener('cancel', event => {
+      event.preventDefault();
+      finish(false);
+    });
+
+    dialog.addEventListener('click', event => {
+      if (event.target === dialog) finish(false);
+    });
+
+    dialog.showModal();
+    cancel.focus();
+  });
+}
+
+async function deletePost(p, admin = false) {
+  if (!await confirmDeletePost(p, admin)) return;
+
+  const r = await sb.from('posts').delete().eq('id', p.id);
+
+  if (r.error) {
+    alert(r.error.message);
+    return;
+  }
+
+  if (p.storage_path) {
+    const f = await sb.storage.from('gamevault-media').remove([p.storage_path]);
+
+    if (f.error) {
+      alert('Post row deleted, but media removal failed: ' + f.error.message);
+    }
+  }
+
+  await loadPosts();
+
+  if (admin) $('admin-message').textContent = 'Post removed.';
+}
 function renderAdminPosts(){const g=$('admin-posts');$('admin-post-count').textContent=String(postsCache.length);g.replaceChildren(...postsCache.map(p=>makePostCard(p,true)));if(!postsCache.length)g.textContent='No posts to moderate.'}
 $('admin-refresh').onclick=async()=>{if(!isAdmin)return;$('admin-message').textContent='Refreshing…';await loadPosts();$('admin-message').textContent='Posts refreshed.'};$('admin-close').onclick=()=>$('admin-panel').hidden=true;
