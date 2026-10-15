@@ -5,7 +5,30 @@ const $=id=>document.getElementById(id); let sb=null,user=null,signup=false,isAd
 const accountEmail = name => `${name.toLowerCase()}@username.gamevault.invalid`;
 const configured=SUPABASE_URL.startsWith('https://')&&!SUPABASE_URL.includes('PASTE_YOUR')&&SUPABASE_PUBLISHABLE_KEY&&!SUPABASE_PUBLISHABLE_KEY.includes('PASTE_YOUR');
 if(configured){sb=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);start()}else{$('gallery-grid').textContent='Add your Supabase URL and publishable key in js/config.js to connect the vault.';$('upload-status').textContent='Waiting for Supabase configuration.'}
-async function start(){const {data}=await sb.auth.getSession();user=data.session?.user||null;await refreshAdmin();renderAccount();await loadPosts();sb.auth.onAuthStateChange((_e,s)=>{user=s?.user||null;setTimeout(async()=>{await refreshAdmin();renderAccount();updateUpload();await loadPosts()},0)});updateUpload()}
+async function start() {
+  const { data } = await sb.auth.getSession();
+  user = data.session?.user || null;
+
+  await refreshAdmin();
+  await loadAvatar();
+  renderAccount();
+
+  await loadPosts();
+
+  sb.auth.onAuthStateChange((_e, s) => {
+    user = s?.user || null;
+
+    setTimeout(async () => {
+      await refreshAdmin();
+      await loadAvatar();
+      renderAccount();
+      updateUpload();
+      await loadPosts();
+    }, 0);
+  });
+
+  updateUpload();
+}
 function usernameOf(u){return u?.user_metadata?.username||u?.email?.split('@')[0]||'Player'}
 
 async function loadAvatar() {
@@ -102,34 +125,81 @@ async function refreshAdmin() {
 }
 
 
+
 function renderAccount() {
   const a = $('account');
   a.replaceChildren();
 
   $('admin-panel').hidden = true;
-
-  // Hide Sign in when logged in; show it when signed out.
   $('auth-open').hidden = !!user;
 
   if (!user) {
     isAdmin = false;
+    avatarUrl = null;
     return;
   }
 
+  const avatar = document.createElement('img');
+  avatar.alt = 'Profile picture';
+  avatar.width = 40;
+  avatar.height = 40;
+  avatar.style.cssText =
+    'width:40px;height:40px;border-radius:50%;' +
+    'object-fit:cover;vertical-align:middle;margin-right:8px;';
+
+  if (avatarUrl) {
+    avatar.src = avatarUrl;
+  } else {
+    avatar.src =
+      'data:image/svg+xml;charset=utf-8,' +
+      encodeURIComponent(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40">' +
+        '<rect width="40" height="40" rx="20" fill="#263447"/>' +
+        '<text x="20" y="27" text-anchor="middle" fill="white" font-size="22">?</text>' +
+        '</svg>'
+      );
+  }
+
+  a.append(avatar);
   a.append(document.createTextNode(usernameOf(user) + ' '));
 
-  const b = document.createElement('button');
-  b.textContent = 'Sign out';
-  b.onclick = async () => {
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/jpeg,image/png,image/webp';
+  fileInput.hidden = true;
+
+  const changeButton = document.createElement('button');
+  changeButton.type = 'button';
+  changeButton.textContent = 'Change picture';
+  changeButton.onclick = () => fileInput.click();
+
+  fileInput.onchange = async () => {
+    const file = fileInput.files?.[0];
+    if (file) await uploadAvatar(file);
+    fileInput.value = '';
+  };
+
+  a.append(changeButton, fileInput);
+
+  const signOut = document.createElement('button');
+  signOut.type = 'button';
+  signOut.textContent = 'Sign out';
+
+  signOut.onclick = async () => {
     await sb.auth.signOut();
+    user = null;
     isAdmin = false;
+    avatarUrl = null;
     $('admin-panel').hidden = true;
     renderAccount();
+    updateUpload();
   };
-  a.append(b);
+
+  a.append(signOut);
 
   if (isAdmin) {
     const adm = document.createElement('button');
+    adm.type = 'button';
     adm.textContent = 'Admin portal';
     adm.onclick = () => {
       $('admin-panel').hidden = false;
@@ -193,8 +263,8 @@ $('auth-form').onsubmit = async e => {
     // Refresh the UI after successful authentication.
     const { data } = await sb.auth.getSession();
     user = data.session?.user || null;
-
     await refreshAdmin();
+    await loadAvatar();
     renderAccount();
     updateUpload();
     await loadPosts();
