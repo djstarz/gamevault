@@ -69,7 +69,72 @@ function renderAccount() {
 function updateUpload(){$('upload-button').disabled=!user;$('upload-status').textContent=user?'Signed in. Files are limited to 20 MB.':'Sign in before uploading.'}
 function openAuth(){$('auth-status').textContent='';$('auth-dialog').showModal()}$('auth-open').onclick=openAuth;
 $('auth-toggle').onclick=()=>{signup=!signup;$('auth-heading').textContent=signup?'Create your account':'Enter the vault';$('auth-submit').textContent=signup?'Create account':'Sign in';$('auth-toggle').textContent=signup?'Already have an account? Sign in':'Need an account? Sign up';$('password').autocomplete=signup?'new-password':'current-password';$('auth-status').textContent=signup?'Choose a unique username and a password of at least 8 characters.':''};
-$('auth-form').onsubmit=async e=>{e.preventDefault();if(!sb)return;const name=$('username').value.trim();if(!/^[A-Za-z0-9_]{3,24}$/.test(name)){$('auth-status').textContent='Username must be 3–24 letters, numbers, or underscores.';return}$('auth-submit').disabled=true;$('auth-status').textContent=signup?'Creating account…':'Signing in…';try{let r;if(signup){r=await sb.auth.signUp({email:accountEmail(name),password:$('password').value,options:{data:{username:name}}});if(r.error)throw r.error;if(!r.data.session){$('auth-status').textContent='Account created, but confirmation is enabled. For username-only accounts, turn OFF Confirm email in Supabase Authentication settings, then try again.';return}$('auth-status').textContent='Account created!';}else{r=await sb.auth.signInWithPassword({email:accountEmail(name),password:$('password').value});if(r.error)throw r.error;$('auth-status').textContent='Signed in!'}setTimeout(()=>$('auth-dialog').close(),400)}catch(err){$('auth-status').textContent=err.message||'Authentication failed.'}finally{$('auth-submit').disabled=false}};
+
+$('auth-form').onsubmit = async e => {
+  e.preventDefault();
+  if (!sb) return;
+
+  const name = $('username').value.trim();
+
+  if (!/^[A-Za-z0-9_]{3,24}$/.test(name)) {
+    $('auth-status').textContent =
+      'Username must be 3–24 letters, numbers, or underscores.';
+    return;
+  }
+
+  $('auth-submit').disabled = true;
+  $('auth-status').textContent = signup
+    ? 'Creating account…'
+    : 'Signing in…';
+
+  try {
+    let r;
+
+    if (signup) {
+      r = await sb.auth.signUp({
+        email: accountEmail(name),
+        password: $('password').value,
+        options: { data: { username: name } }
+      });
+
+      if (r.error) throw r.error;
+
+      if (!r.data.session) {
+        $('auth-status').textContent =
+          'Account created, but confirmation is enabled. Turn OFF Confirm email in Supabase Authentication settings for username-only accounts.';
+        return;
+      }
+
+      $('auth-status').textContent = 'Account created!';
+    } else {
+      r = await sb.auth.signInWithPassword({
+        email: accountEmail(name),
+        password: $('password').value
+      });
+
+      if (r.error) throw r.error;
+
+      $('auth-status').textContent = 'Signed in!';
+    }
+
+    // Refresh the UI after successful authentication.
+    const { data } = await sb.auth.getSession();
+    user = data.session?.user || null;
+
+    await refreshAdmin();
+    renderAccount();
+    updateUpload();
+    await loadPosts();
+
+    $('auth-dialog').close();
+
+  } catch (err) {
+    $('auth-status').textContent =
+      err.message || 'Authentication failed.';
+  } finally {
+    $('auth-submit').disabled = false;
+  }
+};
 $('upload-form').onsubmit=async e=>{e.preventDefault();if(!user)return openAuth();const f=$('media').files[0];if(!f)return;if(f.size>20*1024*1024){$('upload-status').textContent='File exceeds 20 MB. Choose a smaller file.';return}if(!f.type.startsWith('image/')&&!['video/mp4','video/webm','video/quicktime'].includes(f.type)){$('upload-status').textContent='Choose an image, MP4, WebM, or QuickTime video.';return}$('upload-button').disabled=true;$('upload-status').textContent='Uploading…';let path='';try{const safe=f.name.toLowerCase().replace(/[^a-z0-9._-]+/g,'-').slice(-90);path=`${user.id}/${crypto.randomUUID()}-${safe}`;const up=await sb.storage.from('gamevault-media').upload(path,f,{contentType:f.type,upsert:false});if(up.error)throw up.error;const url=sb.storage.from('gamevault-media').getPublicUrl(path).data.publicUrl;const ins=await sb.from('posts').insert({user_id:user.id,title:$('title').value.trim(),description:$('description').value.trim(),category:$('category').value,media_url:url,media_type:f.type.startsWith('video/')?'video':'image',storage_path:path});if(ins.error){await sb.storage.from('gamevault-media').remove([path]);throw ins.error}$('upload-form').reset();$('upload-status').textContent='Uploaded successfully!';await loadPosts()}catch(err){$('upload-status').textContent=err.message||'Upload failed. Check Storage and RLS policies.'}finally{updateUpload()}};
 
 function openPost(post) {
