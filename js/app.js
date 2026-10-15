@@ -8,6 +8,79 @@ if(configured){sb=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);start()}el
 async function start(){const {data}=await sb.auth.getSession();user=data.session?.user||null;await refreshAdmin();renderAccount();await loadPosts();sb.auth.onAuthStateChange((_e,s)=>{user=s?.user||null;setTimeout(async()=>{await refreshAdmin();renderAccount();updateUpload();await loadPosts()},0)});updateUpload()}
 function usernameOf(u){return u?.user_metadata?.username||u?.email?.split('@')[0]||'Player'}
 
+async function loadAvatar() {
+  avatarUrl = null;
+  if (!sb || !user) return;
+
+  const { data, error } = await sb
+    .from('profiles')
+    .select('avatar_path')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Could not load avatar:', error.message);
+    return;
+  }
+
+  if (data?.avatar_path) {
+    const { data: imageData } = sb.storage
+      .from('gamevault-avatars')
+      .getPublicUrl(data.avatar_path);
+
+    avatarUrl = imageData.publicUrl;
+  }
+}
+
+async function uploadAvatar(file) {
+  if (!sb || !user || !file) return;
+
+  const types = {
+    'image/jpeg': 'jpg',
+    'image/png': 'png',
+    'image/webp': 'webp'
+  };
+
+  if (!types[file.type]) {
+    alert('Choose a JPG, PNG, or WebP image.');
+    return;
+  }
+
+  if (file.size > 2 * 1024 * 1024) {
+    alert('Profile pictures must be 2 MB or smaller.');
+    return;
+  }
+
+  const path = `${user.id}/avatar.${types[file.type]}`;
+
+  const { error: uploadError } = await sb.storage
+    .from('gamevault-avatars')
+    .upload(path, file, {
+      upsert: true,
+      contentType: file.type,
+      cacheControl: '3600'
+    });
+
+  if (uploadError) {
+    alert('Picture upload failed: ' + uploadError.message);
+    return;
+  }
+
+  const { error: profileError } = await sb
+    .from('profiles')
+    .update({ avatar_path: path })
+    .eq('id', user.id);
+
+  if (profileError) {
+    alert('Image uploaded, but saving the profile failed: ' +
+      profileError.message);
+    return;
+  }
+
+  await loadAvatar();
+  renderAccount();
+}
+
 async function refreshAdmin() {
   isAdmin = false;
   $('admin-panel').hidden = true;
