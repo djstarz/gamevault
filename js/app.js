@@ -7,7 +7,26 @@ const configured=SUPABASE_URL.startsWith('https://')&&!SUPABASE_URL.includes('PA
 if(configured){sb=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);start()}else{$('gallery-grid').textContent='Add your Supabase URL and publishable key in js/config.js to connect the vault.';$('upload-status').textContent='Waiting for Supabase configuration.'}
 async function start(){const {data}=await sb.auth.getSession();user=data.session?.user||null;await refreshAdmin();renderAccount();await loadPosts();sb.auth.onAuthStateChange((_e,s)=>{user=s?.user||null;setTimeout(async()=>{await refreshAdmin();renderAccount();updateUpload();await loadPosts()},0)});updateUpload()}
 function usernameOf(u){return u?.user_metadata?.username||u?.email?.split('@')[0]||'Player'}
-async function refreshAdmin(){isAdmin=false;if(!sb||!user)return;const r=await sb.from('profiles').select('is_admin').eq('id',user.id).maybeSingle();isAdmin=!!r.data?.is_admin;$('admin-panel').hidden=!isAdmin;if(isAdmin){$('admin-username').textContent=usernameOf(user);}}
+
+async function refreshAdmin() {
+  isAdmin = false;
+  $('admin-panel').hidden = true;
+
+  if (!sb || !user) return;
+
+  const r = await sb
+    .from('profiles')
+    .select('is_admin')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  isAdmin = !!r.data?.is_admin;
+  $('admin-panel').hidden = !isAdmin;
+
+  if (isAdmin) {
+    $('admin-username').textContent = usernameOf(user);
+  }
+}
 function renderAccount(){const a=$('account');a.replaceChildren();if(user){a.append(document.createTextNode(usernameOf(user)+' '));const b=document.createElement('button');b.textContent='Sign out';b.onclick=()=>sb.auth.signOut();a.append(b);if(isAdmin){const adm=document.createElement('button');adm.textContent='Admin portal';adm.onclick=()=>{$('admin-panel').hidden=false;$('admin-panel').scrollIntoView({behavior:'smooth'})};a.append(adm)}}}
 function updateUpload(){$('upload-button').disabled=!user;$('upload-status').textContent=user?'Signed in. Files are limited to 20 MB.':'Sign in before uploading.'}
 function openAuth(){$('auth-status').textContent='';$('auth-dialog').showModal()}$('auth-open').onclick=openAuth;
