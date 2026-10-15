@@ -714,14 +714,23 @@ function makePostCard(post, admin = false) {
   view.onclick = () => openPost(post);
   b.append(view);
 
-  if (user && (user.id === post.user_id || admin)) {
-    const d = document.createElement('button');
-    d.type = 'button';
-    d.className = 'delete';
-    d.textContent = admin ? 'Remove post' : 'Delete my post';
-    d.onclick = () => deletePost(post, admin);
-    b.append(d);
-  }
+  
+if (user && (user.id === post.user_id || admin)) {
+  const edit = document.createElement('button');
+  edit.type = 'button';
+  edit.className = 'gv-edit-button';
+  edit.textContent = 'Edit post';
+  edit.onclick = () => openEditPost(post, admin);
+  b.append(edit);
+
+  const d = document.createElement('button');
+  d.type = 'button';
+  d.className = 'delete';
+  d.textContent = admin ? 'Remove post' : 'Delete my post';
+  d.onclick = () => deletePost(post, admin);
+  b.append(d);
+}
+
 
   c.append(m, b);
   return c;
