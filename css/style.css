@@ -459,3 +459,25 @@
     scroll-behavior: auto;
   }
 }
+@media (max-width: 480px) {
+  .gv-edit-form {
+    padding: 20px;
+    gap: 14px;
+  }
+
+  .gv-edit-dialog {
+    max-height: 85vh;
+  }
+
+  .gv-edit-actions {
+    flex-wrap: wrap;
+  }
+
+  .gv-edit-actions button {
+    flex: 1;
+  }
+
+  .gv-delete-content {
+    padding: 22px;
+  }
+}
