@@ -1,6 +1,6 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from './config.js';
-const $=id=>document.getElementById(id); let sb=null,user=null,signup=false,isAdmin=false,postsCache=[];
+const $=id=>document.getElementById(id); let sb=null,user=null,signup=false,isAdmin=false,postsCache=[],avatarUrl=null;
 // Username accounts are mapped to a synthetic, non-deliverable address. Disable email confirmation in Supabase Auth.
 const accountEmail = name => `${name.toLowerCase()}@username.gamevault.invalid`;
 const configured=SUPABASE_URL.startsWith('https://')&&!SUPABASE_URL.includes('PASTE_YOUR')&&SUPABASE_PUBLISHABLE_KEY&&!SUPABASE_PUBLISHABLE_KEY.includes('PASTE_YOUR');
