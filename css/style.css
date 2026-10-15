@@ -438,14 +438,15 @@
 
 .gv-edit-save,
 .gv-edit-button {
-  color: #fff;
-  background: #596bdb;
-  border: 1px solid transparent;
+  color: #102036;
+  background: var(--blue);
+  border: 1px solid var(--blue);
 }
 
-.gv-edit-save:hover,
+.gv-edit-save:hover:not(:disabled),
 .gv-edit-button:hover {
-  background: #6b7df0;
+  background: #9bceff;
+  border-color: #9bceff;
 }
 
 .gv-edit-actions button:disabled {
