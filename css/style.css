@@ -214,3 +214,131 @@
     width: min(255px, calc(100vw - 24px));
   }
 }
+
+
+/* GameVault custom delete confirmation */
+.gv-delete-dialog {
+  width: min(420px, calc(100vw - 32px));
+  padding: 0;
+  color: #f4f6fb;
+  background: #151923;
+  border: 1px solid #343b4b;
+  border-radius: 18px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.65);
+  overflow: hidden;
+}
+
+.gv-delete-dialog[open] {
+  animation: gv-delete-enter 180ms ease-out;
+}
+
+.gv-delete-dialog::backdrop {
+  background: rgba(5, 7, 12, 0.76);
+  backdrop-filter: blur(5px);
+}
+
+.gv-delete-content {
+  padding: 28px;
+}
+
+.gv-delete-icon {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 82, 103, 0.25);
+  border-radius: 16px;
+  background: rgba(255, 65, 89, 0.12);
+  color: #ff6278;
+  font-size: 26px;
+}
+
+.gv-delete-dialog h2 {
+  margin: 0 0 10px;
+  color: #f7f8fc;
+  font-size: 22px;
+  font-weight: 750;
+  letter-spacing: -0.5px;
+}
+
+.gv-delete-dialog p {
+  margin: 0;
+  color: #aab2c3;
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.gv-delete-post-title {
+  color: #e8ecf5;
+  font-weight: 650;
+}
+
+.gv-delete-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+.gv-delete-actions button {
+  min-height: 42px;
+  padding: 0 17px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 150ms ease, transform 150ms ease;
+}
+
+.gv-delete-actions button:hover {
+  transform: translateY(-1px);
+}
+
+.gv-delete-cancel {
+  color: #e2e7f1;
+  background: #252b38;
+  border-color: #394153 !important;
+}
+
+.gv-delete-cancel:hover {
+  background: #303849;
+}
+
+.gv-delete-confirm {
+  color: #fff;
+  background: #e5485d;
+}
+
+.gv-delete-confirm:hover {
+  background: #f15a6d;
+}
+
+.gv-delete-actions button:focus-visible {
+  outline: 2px solid #9caeff;
+  outline-offset: 3px;
+}
+
+@keyframes gv-delete-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gv-delete-dialog[open] {
+    animation: none;
+  }
+
+  .gv-delete-actions button {
+    transition: none;
+  }
+}
