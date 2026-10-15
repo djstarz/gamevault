@@ -27,7 +27,41 @@ async function refreshAdmin() {
     $('admin-username').textContent = usernameOf(user);
   }
 }
-function renderAccount(){const a=$('account');a.replaceChildren();if(user){a.append(document.createTextNode(usernameOf(user)+' '));const b=document.createElement('button');b.textContent='Sign out';b.onclick=()=>sb.auth.signOut();a.append(b);if(isAdmin){const adm=document.createElement('button');adm.textContent='Admin portal';adm.onclick=()=>{$('admin-panel').hidden=false;$('admin-panel').scrollIntoView({behavior:'smooth'})};a.append(adm)}}}
+
+function renderAccount() {
+  const a = $('account');
+  a.replaceChildren();
+
+  // Always hide admin UI first when rendering the account area.
+  $('admin-panel').hidden = true;
+
+  if (!user) {
+    isAdmin = false;
+    return;
+  }
+
+  a.append(document.createTextNode(usernameOf(user) + ' '));
+
+  const b = document.createElement('button');
+  b.textContent = 'Sign out';
+  b.onclick = async () => {
+    await sb.auth.signOut();
+    isAdmin = false;
+    $('admin-panel').hidden = true;
+    renderAccount();
+  };
+  a.append(b);
+
+  if (isAdmin) {
+    const adm = document.createElement('button');
+    adm.textContent = 'Admin portal';
+    adm.onclick = () => {
+      $('admin-panel').hidden = false;
+      $('admin-panel').scrollIntoView({ behavior: 'smooth' });
+    };
+    a.append(adm);
+  }
+}
 function updateUpload(){$('upload-button').disabled=!user;$('upload-status').textContent=user?'Signed in. Files are limited to 20 MB.':'Sign in before uploading.'}
 function openAuth(){$('auth-status').textContent='';$('auth-dialog').showModal()}$('auth-open').onclick=openAuth;
 $('auth-toggle').onclick=()=>{signup=!signup;$('auth-heading').textContent=signup?'Create your account':'Enter the vault';$('auth-submit').textContent=signup?'Create account':'Sign in';$('auth-toggle').textContent=signup?'Already have an account? Sign in':'Need an account? Sign up';$('password').autocomplete=signup?'new-password':'current-password';$('auth-status').textContent=signup?'Choose a unique username and a password of at least 8 characters.':''};
