@@ -78,7 +78,65 @@ function openPost(post) {
   if (!dialog.open) dialog.showModal();
 }
 
-function makePostCard(post,admin=false){const c=document.createElement('article');c.className='card';const m=document.createElement('div');m.className='media';let el;if(post.media_type==='video'){el=document.createElement('video');el.controls=true;el.preload='metadata'}else{el=document.createElement('img');el.loading='lazy';el.alt=post.title}el.src=post.media_url;m.append(el);const b=document.createElement('div');b.className='cardbody';const tag=document.createElement('span');tag.className='tag';tag.textContent=post.category||'Gaming';const h=document.createElement('h3');h.textContent=post.title;b.append(tag,h);if(post.description){const p=document.createElement('p');p.textContent=post.description;b.append(p)}if(user&&(user.id===post.user_id||admin)){const d=document.createElement('button');d.className='delete';d.textContent=admin?'Remove post':'Delete my post';d.onclick=()=>deletePost(post,admin);b.append(d)}c.append(m,b);return c}
+
+function makePostCard(post, admin = false) {
+  const c = document.createElement('article');
+  c.className = 'card';
+
+  const m = document.createElement('div');
+  m.className = 'media';
+
+  let el;
+
+  if (post.media_type === 'video') {
+    el = document.createElement('video');
+    el.controls = true;
+    el.preload = 'metadata';
+  } else {
+    el = document.createElement('img');
+    el.loading = 'lazy';
+    el.alt = post.title || 'Gaming media';
+  }
+
+  el.src = post.media_url;
+  m.append(el);
+
+  const b = document.createElement('div');
+  b.className = 'cardbody';
+
+  const tag = document.createElement('span');
+  tag.className = 'tag';
+  tag.textContent = post.category || 'Gaming';
+
+  const h = document.createElement('h3');
+  h.textContent = post.title || 'Untitled post';
+  b.append(tag, h);
+
+  if (post.description) {
+    const p = document.createElement('p');
+    p.textContent = post.description;
+    b.append(p);
+  }
+
+  const view = document.createElement('button');
+  view.type = 'button';
+  view.className = 'view-post';
+  view.textContent = 'Open post';
+  view.onclick = () => openPost(post);
+  b.append(view);
+
+  if (user && (user.id === post.user_id || admin)) {
+    const d = document.createElement('button');
+    d.type = 'button';
+    d.className = 'delete';
+    d.textContent = admin ? 'Remove post' : 'Delete my post';
+    d.onclick = () => deletePost(post, admin);
+    b.append(d);
+  }
+
+  c.append(m, b);
+  return c;
+}
 async function loadPosts(){if(!sb)return;const g=$('gallery-grid');g.textContent='Loading…';const r=await sb.from('posts').select('id,user_id,title,description,category,media_url,media_type,created_at,storage_path').order('created_at',{ascending:false}).limit(60);if(r.error){g.textContent=r.error.message;return}postsCache=r.data||[];if(!postsCache.length){g.textContent='The vault is empty. Be the first to share a gaming moment!'}else g.replaceChildren(...postsCache.map(p=>makePostCard(p,false)));if(isAdmin)renderAdminPosts()}
 async function deletePost(p,admin=false){if(!confirm(`${admin?'Admin removal':'Delete'} “${p.title}”?`))return;const r=await sb.from('posts').delete().eq('id',p.id);if(r.error){alert(r.error.message);return}if(p.storage_path){const f=await sb.storage.from('gamevault-media').remove([p.storage_path]);if(f.error)alert('Post row deleted, but media removal failed: '+f.error.message)}await loadPosts();if(admin)$('admin-message').textContent='Post removed.'}
 function renderAdminPosts(){const g=$('admin-posts');$('admin-post-count').textContent=String(postsCache.length);g.replaceChildren(...postsCache.map(p=>makePostCard(p,true)));if(!postsCache.length)g.textContent='No posts to moderate.'}
