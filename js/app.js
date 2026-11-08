@@ -1,6 +1,9 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from './config.js';
-const $=id=>document.getElementById(id); let sb=null,user=null,signup=false,isAdmin=false,postsCache=[],avatarUrl=null;
+const $=id=>document.getElementById(id);
+let sb=null,user=null,signup=false,isAdmin=false,postsCache=[],avatarUrl=null;
+let chatChannel = null;
+let chatStarted = false;
 // Username accounts are mapped to a synthetic, non-deliverable address. Disable email confirmation in Supabase Auth.
 const accountEmail = name => `${name.toLowerCase()}@username.gamevault.invalid`;
 const configured=SUPABASE_URL.startsWith('https://')&&!SUPABASE_URL.includes('PASTE_YOUR')&&SUPABASE_PUBLISHABLE_KEY&&!SUPABASE_PUBLISHABLE_KEY.includes('PASTE_YOUR');
@@ -14,6 +17,7 @@ async function start() {
   renderAccount();
 
   await loadPosts();
+  await initializeChat();
 
   sb.auth.onAuthStateChange((_e, s) => {
     user = s?.user || null;
@@ -22,7 +26,7 @@ async function start() {
       await refreshAdmin();
       await loadAvatar();
       renderAccount();
-      updateUpload();
+      updateUpload();updateChatAccess();
       await loadPosts();
     }, 0);
   });
@@ -149,10 +153,10 @@ function renderAccount() {
   fileInput.hidden = true;
 
   fileInput.onchange = async () => {
-    const file = fileInput.files?.[0];
-    if (file) await uploadAvatar(file);
-    fileInput.value = '';
-  };
+  const file = fileInput.files?.[0];
+  if (file) await openAvatarCrop(file);
+  fileInput.value = '';
+};
 
   // Profile dropdown wrapper
   const menu = document.createElement('div');
@@ -327,6 +331,13 @@ function renderAccount() {
     closeMenu();
     fileInput.click();
   }, '✎');
+
+  addItem('Account Settings', () => {
+  closeMenu();
+  $('settings-status').textContent = '';
+  $('settings-form').reset();
+  $('settings-dialog').showModal();
+}, '⚙');
 
   if (isAdmin) {
     addItem('Admin Portal', () => {
@@ -829,4 +840,345 @@ async function deletePost(p, admin = false) {
   if (admin) $('admin-message').textContent = 'Post removed.';
 }
 function renderAdminPosts(){const g=$('admin-posts');$('admin-post-count').textContent=String(postsCache.length);g.replaceChildren(...postsCache.map(p=>makePostCard(p,true)));if(!postsCache.length)g.textContent='No posts to moderate.'}
+// ================= COMMUNITY CHAT =================
+
+function updateChatAccess() {
+  const input = $('chat-input');
+  const send = $('chat-send');
+  const feedback = $('chat-feedback');
+
+  input.disabled = !user;
+  send.disabled = !user;
+
+  feedback.textContent = user
+    ? 'You are signed in. Keep the conversation friendly.'
+    : 'Sign in to participate in the conversation.';
+}
+
+function addChatMessage(message) {
+  const container = $('chat-messages');
+
+  // Prevent duplicate messages when both the insert response
+  // and Realtime deliver the same message.
+  if (container.querySelector(`[data-message-id="${message.id}"]`)) {
+    return;
+  }
+
+  const item = document.createElement('article');
+  item.className = 'chat-message';
+  item.dataset.messageId = message.id;
+
+  const heading = document.createElement('div');
+  heading.className = 'chat-message-heading';
+
+  const name = document.createElement('strong');
+  name.textContent = message.username || 'Player';
+
+  const time = document.createElement('time');
+  const date = new Date(message.created_at);
+  time.dateTime = date.toISOString();
+  time.textContent = date.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  const body = document.createElement('p');
+  body.textContent = message.message;
+
+  heading.append(name, time);
+  item.append(heading, body);
+  container.append(item);
+
+  while (container.children.length > 50) {
+    container.firstElementChild.remove();
+  }
+
+  container.scrollTop = container.scrollHeight;
+}
+
+async function initializeChat() {
+  if (!sb || chatStarted) return;
+
+  chatStarted = true;
+  $('chat-status').textContent = 'Loading…';
+
+  const { data, error } = await sb
+    .from('chat_messages')
+    .select('id,user_id,username,message,created_at')
+    .order('created_at', { ascending: false })
+    .limit(50);
+
+  if (error) {
+    $('chat-status').textContent = 'Chat unavailable';
+    $('chat-messages').textContent = error.message;
+    chatStarted = false;
+    return;
+  }
+
+  $('chat-messages').replaceChildren();
+  (data || []).reverse().forEach(addChatMessage);
+
+  updateChatAccess();
+  $('chat-status').textContent = 'Connected';
+
+  chatChannel = sb
+    .channel('gamevault-community-chat')
+    .on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'chat_messages'
+      },
+      payload => addChatMessage(payload.new)
+    )
+    .subscribe(status => {
+      $('chat-status').textContent =
+        status === 'SUBSCRIBED' ? 'Connected' : 'Connecting…';
+    });
+}
+
+$('chat-form').onsubmit = async event => {
+  event.preventDefault();
+
+  if (!user) {
+    $('chat-feedback').textContent = 'Please sign in first.';
+    return openAuth();
+  }
+
+  const input = $('chat-input');
+  const message = input.value.trim();
+
+  if (!message || message.length > 500) return;
+
+  $('chat-send').disabled = true;
+  $('chat-feedback').textContent = 'Sending…';
+
+  const { data, error } = await sb
+    .from('chat_messages')
+    .insert({
+      user_id: user.id,
+      username: usernameOf(user),
+      message
+    })
+    .select('id,user_id,username,message,created_at')
+    .single();
+
+  if (error) {
+    $('chat-feedback').textContent =
+      'Message failed: ' + error.message;
+  } else {
+    addChatMessage(data);
+    input.value = '';
+    $('chat-feedback').textContent = 'Message sent.';
+  }
+
+  updateChatAccess();
+};
+// ================= ACCOUNT SETTINGS =================
+
+$('settings-close').onclick = () => {
+  $('settings-dialog').close();
+};
+
+$('settings-form').onsubmit = async event => {
+  event.preventDefault();
+
+  if (!user) return openAuth();
+
+  const password = $('new-password').value;
+  const confirm = $('confirm-password').value;
+  const button = $('password-save');
+  const status = $('settings-status');
+
+  if (password.length < 8) {
+    status.textContent = 'Password must be at least 8 characters.';
+    return;
+  }
+
+  if (password !== confirm) {
+    status.textContent = 'The passwords do not match.';
+    return;
+  }
+
+  button.disabled = true;
+  status.textContent = 'Updating password…';
+
+  try {
+    const { error } = await sb.auth.updateUser({ password });
+
+    if (error) throw error;
+
+    status.textContent = 'Password updated successfully.';
+    $('settings-form').reset();
+  } catch (error) {
+    status.textContent = 'Could not update password: ' + error.message;
+  } finally {
+    button.disabled = false;
+  }
+};
+// ================= AVATAR CROPPING =================
+
+let cropImage = null;
+let cropZoom = 1;
+let cropX = 0;
+let cropY = 0;
+let cropDragging = false;
+let cropLastX = 0;
+let cropLastY = 0;
+
+const cropCanvas = $('avatar-crop-canvas');
+const cropContext = cropCanvas.getContext('2d');
+
+function drawAvatarCrop() {
+  if (!cropImage) return;
+
+  const size = 300;
+  const base = Math.max(
+    size / cropImage.width,
+    size / cropImage.height
+  );
+
+  const width = cropImage.width * base * cropZoom;
+  const height = cropImage.height * base * cropZoom;
+
+  cropX = Math.min(0, Math.max(size - width, cropX));
+  cropY = Math.min(0, Math.max(size - height, cropY));
+
+  cropContext.clearRect(0, 0, size, size);
+  cropContext.drawImage(cropImage, cropX, cropY, width, height);
+}
+
+async function openAvatarCrop(file) {
+  if (!file.type.startsWith('image/')) {
+    $('crop-status').textContent = 'Choose an image file.';
+    return;
+  }
+
+  if (file.size > 10 * 1024 * 1024) {
+    $('crop-status').textContent = 'Choose an image smaller than 10 MB.';
+    return;
+  }
+
+  try {
+    const image = new Image();
+    const url = URL.createObjectURL(file);
+
+    image.onload = () => {
+      URL.revokeObjectURL(url);
+
+      cropImage = image;
+      cropZoom = 1;
+
+      const base = Math.max(
+        300 / image.width,
+        300 / image.height
+      );
+
+      cropX = (300 - image.width * base) / 2;
+      cropY = (300 - image.height * base) / 2;
+
+      $('avatar-zoom').value = '1';
+      $('crop-status').textContent =
+        'Drag the image to reposition it.';
+
+      drawAvatarCrop();
+      $('avatar-crop-dialog').showModal();
+    };
+
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      $('crop-status').textContent = 'Could not open this image.';
+    };
+
+    image.src = url;
+  } catch (error) {
+    $('crop-status').textContent = error.message;
+  }
+}
+
+$('avatar-zoom').oninput = () => {
+  if (!cropImage) return;
+
+  const oldZoom = cropZoom;
+  cropZoom = Number($('avatar-zoom').value);
+
+  // Keep the image position centred as zoom changes.
+  const ratio = cropZoom / oldZoom;
+  cropX = 150 - (150 - cropX) * ratio;
+  cropY = 150 - (150 - cropY) * ratio;
+
+  drawAvatarCrop();
+};
+
+cropCanvas.addEventListener('pointerdown', event => {
+  if (!cropImage) return;
+
+  cropDragging = true;
+  cropLastX = event.clientX;
+  cropLastY = event.clientY;
+  cropCanvas.setPointerCapture(event.pointerId);
+});
+
+cropCanvas.addEventListener('pointermove', event => {
+  if (!cropDragging) return;
+
+  const rect = cropCanvas.getBoundingClientRect();
+  const scaleX = 300 / rect.width;
+  const scaleY = 300 / rect.height;
+
+  cropX += (event.clientX - cropLastX) * scaleX;
+  cropY += (event.clientY - cropLastY) * scaleY;
+
+  cropLastX = event.clientX;
+  cropLastY = event.clientY;
+
+  drawAvatarCrop();
+});
+
+cropCanvas.addEventListener('pointerup', () => {
+  cropDragging = false;
+});
+
+cropCanvas.addEventListener('pointercancel', () => {
+  cropDragging = false;
+});
+
+function closeCrop() {
+  $('avatar-crop-dialog').close();
+  cropImage = null;
+}
+
+$('crop-close').onclick = closeCrop;
+$('crop-cancel').onclick = closeCrop;
+
+$('crop-save').onclick = async () => {
+  if (!cropImage || !user) return;
+
+  const button = $('crop-save');
+  button.disabled = true;
+  $('crop-status').textContent = 'Preparing your avatar…';
+
+  cropCanvas.toBlob(async blob => {
+    if (!blob) {
+      $('crop-status').textContent = 'Could not prepare the image.';
+      button.disabled = false;
+      return;
+    }
+
+    const file = new File([blob], 'gamevault-avatar.jpg', {
+      type: 'image/jpeg'
+    });
+
+    const success = await uploadAvatar(file);
+
+    if (success) {
+      closeCrop();
+    } else {
+      $('crop-status').textContent = 'Upload failed. Please try again.';
+    }
+
+    button.disabled = false;
+  }, 'image/jpeg', 0.90);
+};
 $('admin-refresh').onclick=async()=>{if(!isAdmin)return;$('admin-message').textContent='Refreshing…';await loadPosts();$('admin-message').textContent='Posts refreshed.'};$('admin-close').onclick=()=>$('admin-panel').hidden=true;
