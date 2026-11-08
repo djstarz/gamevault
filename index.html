@@ -63,6 +63,49 @@
           <div id="gallery-grid" class="grid">Loading community posts…</div>
         </section>
 
+        
+<section id="community-chat" class="panel chat-panel">
+  <div class="panel-heading">
+    <div>
+      <span class="eyebrow">LIVE COMMUNITY</span>
+      <h2>Community Chat</h2>
+      <p>Meet other players and talk about your favourite games.</p>
+    </div>
+    <span class="panel-icon">⌁</span>
+  </div>
+
+  <div class="chat-toolbar">
+    <span class="chat-room-status">
+      <span class="status-dot"></span>
+      General chat
+    </span>
+    <span id="chat-status">Connecting…</span>
+  </div>
+
+  <div id="chat-messages" class="chat-messages" aria-live="polite">
+    Loading messages…
+  </div>
+
+  <form id="chat-form" class="chat-form">
+    <input
+      id="chat-input"
+      type="text"
+      maxlength="500"
+      placeholder="Write a message..."
+      autocomplete="off"
+      required
+    >
+    <button id="chat-send" class="button button-primary" type="submit">
+      Send ↗
+    </button>
+  </form>
+
+  <p id="chat-feedback" role="status">
+    Sign in to participate in the conversation.
+  </p>
+</section>
+
+
         <section id="share" class="panel share-panel" aria-labelledby="share-title">
           <div class="panel-heading"><div><span class="eyebrow">ADD TO THE COMMUNITY</span><h2 id="share-title">Share your moment</h2><p>Got a screenshot, clip or build to show off? Drop it here.</p></div><span class="panel-icon" aria-hidden="true">＋</span></div>
           <form id="upload-form" class="upload-form">
@@ -116,6 +159,65 @@
     <p id="auth-status" role="status"></p>
     <p class="auth-note">Keep your password safe. Username-based accounts use GameVault's username login.</p>
   </dialog>
+  
+<dialog id="settings-dialog" class="gv-settings-dialog">
+  <form id="settings-form" class="gv-settings-form">
+    <button type="button" class="gv-dialog-close"
+      id="settings-close" aria-label="Close">×</button>
+
+    <span class="eyebrow">ACCOUNT SECURITY</span>
+    <h2>Account Settings</h2>
+    <p>Change your GameVault account password.</p>
+
+    <label>
+      New password
+      <input id="new-password" type="password"
+        minlength="8" autocomplete="new-password" required>
+    </label>
+
+    <label>
+      Confirm new password
+      <input id="confirm-password" type="password"
+        minlength="8" autocomplete="new-password" required>
+    </label>
+
+    <button class="button button-primary" type="submit"
+      id="password-save">Update password</button>
+
+    <p id="settings-status" role="status"></p>
+  </form>
+</dialog>
+
+<dialog id="avatar-crop-dialog" class="gv-crop-dialog">
+  <div class="gv-crop-content">
+    <button type="button" id="crop-close"
+      class="gv-dialog-close" aria-label="Close">×</button>
+
+    <span class="eyebrow">PROFILE CUSTOMIZATION</span>
+    <h2>Crop your avatar</h2>
+    <p>Adjust your picture before uploading it.</p>
+
+    <div class="gv-crop-preview">
+      <canvas id="avatar-crop-canvas" width="300" height="300"></canvas>
+    </div>
+
+    <label>
+      Zoom
+      <input id="avatar-zoom" type="range"
+        min="1" max="3" step="0.05" value="1">
+    </label>
+
+    <p id="crop-status" role="status"></p>
+
+    <div class="gv-crop-actions">
+      <button type="button" id="crop-cancel"
+        class="button button-quiet">Cancel</button>
+      <button type="button" id="crop-save"
+        class="button button-primary">Save avatar</button>
+    </div>
+  </div>
+</dialog>
+
   <script type="module" src="js/app.js"></script>
 </body>
 </html>
