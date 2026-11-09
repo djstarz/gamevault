@@ -326,6 +326,49 @@ async function loadDmMessages() {
 
   container.scrollTop = container.scrollHeight;
 }
+$('dm-message-form')?.addEventListener('submit', sendDmMessage);
+async function sendDmMessage(event) {
+  event.preventDefault();
+
+  if (!user || !activeDmConversation) {
+    $('dm-message-feedback').textContent =
+      'Select a conversation first.';
+    return;
+  }
+
+  const input = $('dm-message-input');
+  const button = $('dm-message-form').querySelector('button[type="submit"]');
+  const body = input.value.trim();
+
+  if (!body) return;
+
+  button.disabled = true;
+  $('dm-message-feedback').textContent = 'Sending...';
+
+  const { error } = await sb
+    .from('dm_messages')
+    .insert({
+      conversation_id: activeDmConversation.conversation_id,
+      sender_id: user.id,
+      body
+    });
+
+  if (error) {
+    console.error('DM send error:', error);
+    $('dm-message-feedback').textContent =
+      'Could not send message. Please try again.';
+    button.disabled = false;
+    return;
+  }
+
+  input.value = '';
+  $('dm-message-feedback').textContent = 'Message sent.';
+
+  await loadDmMessages();
+
+  button.disabled = false;
+  input.focus();
+}
 async function loadAvatar() {
   avatarUrl = null;
   if (!sb || !user) return;
