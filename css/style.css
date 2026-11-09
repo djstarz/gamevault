@@ -887,3 +887,21 @@ button:disabled {
     max-height: 240px;
   }
 }
+/* Keep chat controls compact on mobile */
+@media (max-width: 600px) {
+  .chat-form {
+    flex-wrap: nowrap;
+  }
+
+  .chat-form #chat-input {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .chat-form #chat-attach,
+  .chat-form #chat-send {
+    width: auto;
+    flex: 0 0 auto;
+  }
+}
