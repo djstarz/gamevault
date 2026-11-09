@@ -967,3 +967,44 @@ body.chat-page #community-chat {
   margin: 0 auto;
   border-radius: 0;
 }
+/* ================= FLAT CHAT INTERFACE ================= */
+
+/* Remove the outer chat card */
+body.chat-page #community-chat {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 20px 0 !important;
+}
+
+/* Remove card styling from chat header and message area */
+body.chat-page #community-chat .chat-header,
+body.chat-page #community-chat .chat-messages,
+body.chat-page #community-chat .chat-form,
+body.chat-page #community-chat .chat-composer {
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Keep a simple divider between chat sections */
+body.chat-page #community-chat .chat-header {
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+
+body.chat-page #community-chat .chat-messages {
+  border: none !important;
+}
+
+/* Make the composer feel like a normal messaging input */
+body.chat-page #community-chat .chat-form {
+  border-top: 1px solid rgba(255,255,255,.1);
+  padding: 14px 0;
+}
+
+/* Remove excessive nested card borders */
+body.chat-page #community-chat .chat-composer {
+  border: none !important;
+  padding: 0;
+}
