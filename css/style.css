@@ -905,3 +905,30 @@ button:disabled {
     flex: 0 0 auto;
   }
 }
+/* ================= DEDICATED CHAT PAGE ================= */
+
+body.chat-page .welcome-banner,
+body.chat-page .community-heading,
+body.chat-page #gallery,
+body.chat-page #share,
+body.chat-page .sidebar,
+body.chat-page #admin-panel {
+  display: none !important;
+}
+
+body.chat-page .content-layout {
+  display: block;
+}
+
+body.chat-page .primary-column {
+  width: 100%;
+  min-width: 0;
+}
+
+body.chat-page #community-chat {
+  display: block;
+  width: 100%;
+  max-width: 1000px;
+  margin: 32px auto;
+  min-height: 65vh;
+}
