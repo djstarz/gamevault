@@ -958,26 +958,28 @@ $('chat-form').onsubmit = async event => {
   $('chat-send').disabled = true;
   $('chat-feedback').textContent = 'Sending…';
 
-  const { data, error } = await sb
-    .from('chat_messages')
-    .insert({
-      user_id: user.id,
-      username: usernameOf(user),
-      message
-    })
-    .select('id,user_id,username,message,created_at')
-    .single();
+  try {
+    const { data, error } = await sb
+      .from('chat_messages')
+      .insert({
+        user_id: user.id,
+        username: usernameOf(user),
+        message
+      })
+      .select('id,user_id,username,message,created_at')
+      .single();
 
-  if (error) {
-    $('chat-feedback').textContent =
-      'Message failed: ' + error.message;
-  } else {
+    if (error) throw error;
+
     addChatMessage(data);
     input.value = '';
     $('chat-feedback').textContent = 'Message sent.';
+  } catch (error) {
+    $('chat-feedback').textContent =
+      'Message failed: ' + error.message;
+  } finally {
+    updateChatAccess();
   }
-
-  updateChatAccess();
 };
 // ================= ACCOUNT SETTINGS =================
 
