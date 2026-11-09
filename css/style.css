@@ -1284,3 +1284,11 @@ select,
   font-weight: 700;
   text-decoration: none;
 }
+/* Fix chat dropdown layering */
+.chat-message {
+  z-index: 1;
+}
+
+.chat-message.menu-open {
+  z-index: 10;
+}
