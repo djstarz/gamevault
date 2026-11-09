@@ -805,3 +805,85 @@ button:disabled {
     padding: 22px;
   }
 }
+/* ================= CHAT MEDIA ATTACHMENTS ================= */
+
+.chat-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#chat-input {
+  flex: 1;
+  min-width: 0;
+}
+
+#chat-attach {
+  flex-shrink: 0;
+  min-width: 44px;
+  padding: 10px;
+  font-size: 18px;
+}
+
+#chat-attach:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chat-attachment-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.chat-attachment-preview[hidden] {
+  display: none;
+}
+
+.chat-attachment-preview img,
+.chat-attachment-preview video {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.chat-attachment-info {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+
+.chat-attachment-remove {
+  border: 0;
+  background: transparent;
+  color: #ff7777;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 6px;
+}
+
+.chat-message-media {
+  display: block;
+  max-width: 100%;
+  max-height: 320px;
+  margin-top: 10px;
+  border-radius: 10px;
+  object-fit: contain;
+}
+
+@media (max-width: 480px) {
+  .chat-form {
+    gap: 6px;
+  }
+
+  .chat-message-media {
+    max-height: 240px;
+  }
+}
