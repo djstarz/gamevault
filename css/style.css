@@ -1457,3 +1457,51 @@ button[type="submit"]:hover:not(:disabled),
   border-color: var(--gv-blue);
   box-shadow: 0 0 0 3px rgba(0, 217, 255, .10);
 }
+/* ================= POST REACTIONS ================= */
+
+.post-reactions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.post-reaction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 32px;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease,
+    color .18s ease, transform .18s ease;
+}
+
+.post-reaction:hover {
+  background: var(--surface-3);
+  border-color: var(--blue);
+  color: var(--text);
+}
+
+.post-reaction.selected {
+  background: rgba(117, 183, 255, .13);
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+.post-reaction:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+.post-reaction:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
