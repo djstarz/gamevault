@@ -15,7 +15,7 @@ async function start() {
   await refreshAdmin();
   await loadAvatar();
   renderAccount();
-
+  updateChatAccess();
   await loadPosts();
   await initializeChat();
 
@@ -26,7 +26,8 @@ async function start() {
       await refreshAdmin();
       await loadAvatar();
       renderAccount();
-      updateUpload();updateChatAccess();
+      updateUpload();
+      updateChatAccess();
       await loadPosts();
     }, 0);
   });
@@ -59,8 +60,9 @@ async function loadAvatar() {
   }
 }
 
+
 async function uploadAvatar(file) {
-  if (!sb || !user || !file) return;
+  if (!sb || !user || !file) return false;
 
   const types = {
     'image/jpeg': 'jpg',
@@ -70,15 +72,15 @@ async function uploadAvatar(file) {
 
   if (!types[file.type]) {
     alert('Choose a JPG, PNG, or WebP image.');
-    return;
+    return false;
   }
 
   if (file.size > 2 * 1024 * 1024) {
     alert('Profile pictures must be 2 MB or smaller.');
-    return;
+    return false;
   }
 
-const path = `${user.id}/avatar-${crypto.randomUUID()}.${types[file.type]}`;
+  const path = `${user.id}/avatar-${crypto.randomUUID()}.${types[file.type]}`;
 
   const { error: uploadError } = await sb.storage
     .from('gamevault-avatars')
@@ -90,7 +92,7 @@ const path = `${user.id}/avatar-${crypto.randomUUID()}.${types[file.type]}`;
 
   if (uploadError) {
     alert('Picture upload failed: ' + uploadError.message);
-    return;
+    return false;
   }
 
   const { error: profileError } = await sb
@@ -101,12 +103,14 @@ const path = `${user.id}/avatar-${crypto.randomUUID()}.${types[file.type]}`;
   if (profileError) {
     alert('Image uploaded, but saving the profile failed: ' +
       profileError.message);
-    return;
+    return false;
   }
 
   await loadAvatar();
   renderAccount();
+  return true;
 }
+
 
 async function refreshAdmin() {
   isAdmin = false;
