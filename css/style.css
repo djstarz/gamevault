@@ -1229,7 +1229,7 @@ select,
     top: 8px;
     right: 6px;
     display: block;
-    z-index: 50;
+    z-index: 5;
   }
 
   .chat-menu-button {
@@ -1243,7 +1243,7 @@ select,
   .chat-message-menu {
     top: 32px;
     right: 0;
-    z-index: 100;
+    z-index: 6;
   }
 }
 /* GAMEVAULT UPDATE NOTIFICATION */
