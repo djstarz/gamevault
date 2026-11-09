@@ -1106,47 +1106,182 @@ function addChatMessage(message) {
 async function editChatMessage(message) {
   if (!user || message.user_id !== user.id) return;
 
-  const updated = prompt('Edit your message:', message.message || '');
+  const dialog = document.createElement('dialog');
+  dialog.className = 'gv-edit-dialog';
 
-  if (updated === null) return;
+  const form = document.createElement('form');
+  form.className = 'gv-edit-form';
 
-  const newMessage = updated.trim();
+  const heading = document.createElement('h2');
+  heading.textContent = 'Edit message';
 
-  if (newMessage.length > 500) {
-    alert('Messages cannot exceed 500 characters.');
-    return;
-  }
+  const subtitle = document.createElement('p');
+  subtitle.textContent = 'Make changes to your chat message.';
 
-  if (!newMessage && !message.media_url) {
-    alert('A message cannot be empty without an attachment.');
-    return;
-  }
+  const label = document.createElement('label');
+  label.textContent = 'Your message';
 
-  const { data, error } = await sb
-    .from('chat_messages')
-    .update({ message: newMessage })
-    .eq('id', message.id)
-    .eq('user_id', user.id)
-    .select('id,user_id,username,message,media_url,media_type,storage_path,created_at')
-    .single();
+  const textarea = document.createElement('textarea');
+  textarea.rows = 4;
+  textarea.maxLength = 500;
+  textarea.value = message.message || '';
+  textarea.required = !message.media_url;
 
-  if (error) {
-    alert('Could not edit message: ' + error.message);
-    return;
-  }
+  label.append(textarea);
 
-  const oldItem = $('chat-messages')
-    .querySelector(`[data-message-id="${message.id}"]`);
+  const status = document.createElement('p');
+  status.className = 'chat-edit-status';
 
-  if (oldItem) oldItem.remove();
+  const actions = document.createElement('div');
+  actions.className = 'gv-edit-actions';
 
-  addChatMessage(data);
+  const cancel = document.createElement('button');
+  cancel.type = 'button';
+  cancel.className = 'gv-edit-cancel';
+  cancel.textContent = 'Cancel';
+  cancel.onclick = () => dialog.close();
+
+  const save = document.createElement('button');
+  save.type = 'submit';
+  save.className = 'gv-edit-save';
+  save.textContent = 'Save changes';
+
+  actions.append(cancel, save);
+  form.append(heading, subtitle, label, status, actions);
+  dialog.append(form);
+  document.body.append(dialog);
+
+  dialog.addEventListener('click', event => {
+    if (event.target === dialog) dialog.close();
+  });
+
+  dialog.addEventListener('close', () => dialog.remove(), { once: true });
+
+  form.onsubmit = async event => {
+    event.preventDefault();
+
+    const newMessage = textarea.value.trim();
+
+    if (newMessage.length > 500) {
+      status.textContent = 'Messages cannot exceed 500 characters.';
+      return;
+    }
+
+    if (!newMessage && !message.media_url) {
+      status.textContent = 'A message cannot be empty without an attachment.';
+      return;
+    }
+
+    save.disabled = true;
+    save.textContent = 'Saving…';
+    status.textContent = '';
+
+    try {
+      const { data, error } = await sb
+        .from('chat_messages')
+        .update({ message: newMessage })
+        .eq('id', message.id)
+        .eq('user_id', user.id)
+        .select('id,user_id,username,message,media_url,media_type,storage_path,created_at')
+        .single();
+
+      if (error) throw error;
+
+      dialog.close();
+
+      const oldItem = $('chat-messages')
+        .querySelector(`[data-message-id="${message.id}"]`);
+
+      if (oldItem) oldItem.remove();
+
+      addChatMessage(data);
+      $('chat-feedback').textContent = 'Message updated successfully.';
+    } catch (error) {
+      status.textContent = 'Could not edit message: ' + error.message;
+      save.disabled = false;
+      save.textContent = 'Save changes';
+    }
+  };
+
+  dialog.showModal();
+  textarea.focus();
 }
+
+
+function confirmDeleteChatMessage(message) {
+  return new Promise(resolve => {
+    const dialog = document.createElement('dialog');
+    dialog.className = 'gv-delete-dialog';
+
+    const content = document.createElement('div');
+    content.className = 'gv-delete-content';
+
+    const icon = document.createElement('div');
+    icon.className = 'gv-delete-icon';
+    icon.textContent = '⌫';
+
+    const title = document.createElement('h2');
+    title.textContent = 'Delete this message?';
+
+    const description = document.createElement('p');
+    description.textContent =
+      'This action cannot be undone. Are you sure?';
+
+    const preview = document.createElement('p');
+    preview.className = 'gv-delete-post-title';
+    preview.textContent = message.message || 'Message with attachment';
+
+    const actions = document.createElement('div');
+    actions.className = 'gv-delete-actions';
+
+    const cancel = document.createElement('button');
+    cancel.type = 'button';
+    cancel.className = 'gv-delete-cancel';
+    cancel.textContent = 'Cancel';
+
+    const confirm = document.createElement('button');
+    confirm.type = 'button';
+    confirm.className = 'gv-delete-confirm';
+    confirm.textContent = 'Delete message';
+
+    actions.append(cancel, confirm);
+    content.append(icon, title, description, preview, actions);
+    dialog.append(content);
+    document.body.append(dialog);
+
+    let finished = false;
+
+    function finish(result) {
+      if (finished) return;
+      finished = true;
+
+      if (dialog.open) dialog.close();
+      dialog.remove();
+      resolve(result);
+    }
+
+    cancel.onclick = () => finish(false);
+    confirm.onclick = () => finish(true);
+
+    dialog.addEventListener('cancel', event => {
+      event.preventDefault();
+      finish(false);
+    });
+
+    dialog.addEventListener('click', event => {
+      if (event.target === dialog) finish(false);
+    });
+
+    dialog.showModal();
+    cancel.focus();
+  });
+}
+
 
 async function deleteChatMessage(message) {
   if (!user || message.user_id !== user.id) return;
 
-  if (!confirm('Delete this message? This cannot be undone.')) return;
+  if (!await confirmDeleteChatMessage(message)) return;
 
   const { data, error } = await sb
     .from('chat_messages')
@@ -1157,12 +1292,14 @@ async function deleteChatMessage(message) {
     .maybeSingle();
 
   if (error) {
-    alert('Could not delete message: ' + error.message);
+    $('chat-feedback').textContent =
+      'Could not delete message: ' + error.message;
     return;
   }
 
   if (!data) {
-    alert('Message was not deleted. Check your permissions.');
+    $('chat-feedback').textContent =
+      'Message was not deleted. Check your permissions.';
     return;
   }
 
@@ -1177,10 +1314,14 @@ async function deleteChatMessage(message) {
       .remove([message.storage_path]);
 
     if (storageError) {
-      alert('Message deleted, but its attachment could not be removed: ' +
-        storageError.message);
+      $('chat-feedback').textContent =
+        'Message deleted, but its attachment could not be removed: ' +
+        storageError.message;
+      return;
     }
   }
+
+  $('chat-feedback').textContent = 'Message deleted successfully.';
 }
 
 
