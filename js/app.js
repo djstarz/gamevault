@@ -1491,7 +1491,10 @@ function makePostCard(post, admin = false) {
   share.type = 'button';
   share.className = 'gv-share-post';
   share.textContent = 'Share post';
-  share.onclick = () => openSharePost(post);
+  share.onclick = () => {
+  console.log('Share button clicked:', post.id);
+  openSharePost(post);
+};
   b.append(share);
   
 if (user && (user.id === post.user_id || admin)) {
