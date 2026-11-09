@@ -1217,3 +1217,32 @@ select,
 .chat-message-menu .chat-menu-delete:hover {
   background: rgba(255, 80, 100, .12);
 }
+/* Mobile chat message menu */
+@media (max-width: 600px) {
+  .chat-message {
+    position: relative;
+    padding-right: 44px;
+  }
+
+  .chat-message-actions {
+    position: absolute;
+    top: 8px;
+    right: 6px;
+    display: block;
+    z-index: 50;
+  }
+
+  .chat-menu-button {
+    display: grid;
+    visibility: visible;
+    opacity: 1;
+    width: 30px;
+    height: 30px;
+  }
+
+  .chat-message-menu {
+    top: 32px;
+    right: 0;
+    z-index: 100;
+  }
+}
