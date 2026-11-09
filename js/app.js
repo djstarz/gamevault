@@ -255,6 +255,75 @@ $('dm-conversations')?.addEventListener('click', event => {
     item.classList.toggle('active', item === button);
   });
 });
+async function loadDmMessages() {
+  const container = $('dm-messages');
+
+  if (!container || !sb || !user || !activeDmConversation) return;
+
+  const conversationId = activeDmConversation.conversation_id;
+
+  container.textContent = 'Loading messages...';
+
+  const { data, error } = await sb
+    .from('dm_messages')
+    .select('id,conversation_id,sender_id,body,shared_post_id,created_at')
+    .eq('conversation_id', conversationId)
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    console.error('DM messages error:', error);
+    container.textContent = 'Could not load messages.';
+    return;
+  }
+
+  // Ignore results if the user switched conversations while loading.
+  if (activeDmConversation?.conversation_id !== conversationId) return;
+
+  container.replaceChildren();
+
+  if (!data || !data.length) {
+    container.textContent = 'No messages yet. Say hello!';
+    return;
+  }
+
+  data.forEach(message => {
+    const bubble = document.createElement('div');
+    bubble.className = 'gv-dm-bubble';
+
+    const own = message.sender_id === user.id;
+
+    if (own) bubble.classList.add('own');
+
+    const sender = document.createElement('strong');
+    sender.textContent = own
+      ? 'You'
+      : activeDmConversation.username || 'Player';
+
+    const time = document.createElement('time');
+    const date = new Date(message.created_at);
+    time.dateTime = date.toISOString();
+    time.textContent = date.toLocaleString();
+
+    const body = document.createElement('p');
+    body.textContent = message.body || '';
+
+    bubble.append(sender, time);
+
+    if (message.body) {
+      bubble.append(body);
+    }
+
+    if (message.shared_post_id) {
+      const shared = document.createElement('p');
+      shared.textContent = 'Shared a post';
+      bubble.append(shared);
+    }
+
+    container.appendChild(bubble);
+  });
+
+  container.scrollTop = container.scrollHeight;
+}
 async function loadAvatar() {
   avatarUrl = null;
   if (!sb || !user) return;
