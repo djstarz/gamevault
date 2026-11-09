@@ -1123,3 +1123,16 @@ body.chat-page #chat-feedback {
     flex-basis: 66px;
   }
 }
+/* GAMEVAULT MOBILE TAP EFFECT */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a,
+input,
+textarea,
+select,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
