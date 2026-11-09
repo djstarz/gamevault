@@ -256,6 +256,7 @@ document.querySelectorAll('.gv-dm-conversation').forEach(item => {
 });
 
 loadDmMessages();
+subscribeToDmConversation(conversation.conversation_id);
 });
 async function loadDmMessages() {
   const container = $('dm-messages');
@@ -277,6 +278,7 @@ async function loadDmMessages() {
     container.textContent = 'Could not load messages.';
     return;
   }
+  
 
   // Ignore results if the user switched conversations while loading.
   if (activeDmConversation?.conversation_id !== conversationId) return;
@@ -325,6 +327,30 @@ async function loadDmMessages() {
   });
 
   container.scrollTop = container.scrollHeight;
+}
+function subscribeToDmConversation(conversationId) {
+  if (dmChannel) {
+    sb.removeChannel(dmChannel);
+    dmChannel = null;
+  }
+
+  if (!sb || !conversationId) return;
+
+  dmChannel = sb
+    .channel(`dm-${conversationId}`)
+    .on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'dm_messages',
+        filter: `conversation_id=eq.${conversationId}`
+      },
+      () => {
+        loadDmMessages();
+      }
+    )
+    .subscribe();
 }
 $('dm-message-form')?.addEventListener('submit', sendDmMessage);
 async function sendDmMessage(event) {
