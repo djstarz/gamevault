@@ -751,7 +751,14 @@ if (user && (user.id === post.user_id || admin)) {
   return c;
 }
 async function loadPosts(){if(!sb)return;const g=$('gallery-grid');g.textContent='Loading…';const r=await sb.from('posts').select('id,user_id,title,description,category,media_url,media_type,created_at,storage_path').order('created_at',{ascending:false}).limit(60);if(r.error){g.textContent=r.error.message;return}postsCache=r.data||[];if(!postsCache.length){g.textContent='The vault is empty. Be the first to share a gaming moment!'}else g.replaceChildren(...postsCache.map(p=>makePostCard(p,false)));if(isAdmin)renderAdminPosts()}
+$('show-all-posts').onclick = async () => {
+  $('show-all-posts').hidden = true;
 
+  const heading = document.querySelector('.community-heading h2');
+  if (heading) heading.textContent = 'Explore the vault';
+
+  await loadPosts();
+};
 function confirmDeletePost(post, admin = false) {
   return new Promise(resolve => {
     const dialog = document.createElement('dialog');
