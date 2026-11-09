@@ -830,26 +830,44 @@ function confirmDeletePost(post, admin = false) {
 }
 
 async function deletePost(p, admin = false) {
+  if (!user) return openAuth();
+
+  if (!admin && p.user_id !== user.id) {
+    alert('You can only delete your own posts.');
+    return;
+  }
+
   if (!await confirmDeletePost(p, admin)) return;
 
-  const r = await sb.from('posts').delete().eq('id', p.id);
+  let query = sb.from('posts').delete().eq('id', p.id);
 
-  if (r.error) {
-    alert(r.error.message);
+  if (!admin) {
+    query = query.eq('user_id', user.id);
+  }
+
+  const { error } = await query;
+
+  if (error) {
+    alert('Could not delete post: ' + error.message);
     return;
   }
 
   if (p.storage_path) {
-    const f = await sb.storage.from('gamevault-media').remove([p.storage_path]);
+    const { error: storageError } = await sb.storage
+      .from('gamevault-media')
+      .remove([p.storage_path]);
 
-    if (f.error) {
-      alert('Post row deleted, but media removal failed: ' + f.error.message);
+    if (storageError) {
+      alert('Post deleted, but its media could not be removed: ' +
+        storageError.message);
     }
   }
 
   await loadPosts();
 
-  if (admin) $('admin-message').textContent = 'Post removed.';
+  if (admin) {
+    $('admin-message').textContent = 'Post removed.';
+  }
 }
 function renderAdminPosts(){const g=$('admin-posts');$('admin-post-count').textContent=String(postsCache.length);g.replaceChildren(...postsCache.map(p=>makePostCard(p,true)));if(!postsCache.length)g.textContent='No posts to moderate.'}
 // ================= COMMUNITY CHAT =================
