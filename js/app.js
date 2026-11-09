@@ -1525,6 +1525,7 @@ function openSharePost(post) {
   if (existing) existing.remove();
 
   const overlay = document.createElement('div');
+  console.log('Share overlay created');
   overlay.id = 'gv-share-overlay';
   overlay.className = 'gv-modal-overlay';
 
