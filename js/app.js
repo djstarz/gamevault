@@ -2,6 +2,7 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from './config.js';
 const $=id=>document.getElementById(id);
 let sb=null,user=null,signup=false,isAdmin=false,postsCache=[],avatarUrl=null;
+let reactionsCache = {};
 let chatChannel = null;
 let chatStarted = false;
 // Username accounts are mapped to a synthetic, non-deliverable address. Disable email confirmation in Supabase Auth.
@@ -1008,8 +1009,54 @@ if (user && (user.id === post.user_id || admin)) {
   c.append(m, b);
   return c;
 }
-async function loadPosts(){if(!sb)return;const g=$('gallery-grid');g.textContent='Loading…';const r=await sb.from('posts').select('id,user_id,title,description,category,media_url,media_type,created_at,storage_path').order('created_at',{ascending:false}).limit(60);if(r.error){g.textContent=r.error.message;return}postsCache=r.data||[];if(!postsCache.length){g.textContent='The vault is empty. Be the first to share a gaming moment!'}else g.replaceChildren(...postsCache.map(p=>makePostCard(p,false)));if(isAdmin)renderAdminPosts()}
-$('show-all-posts').onclick = async () => {
+async function loadPosts() {
+  if (!sb) return;
+
+  const g = $('gallery-grid');
+  g.textContent = 'Loading…';
+
+  const r = await sb
+    .from('posts')
+    .select('id,user_id,title,description,category,media_url,media_type,created_at,storage_path')
+    .order('created_at', { ascending: false })
+    .limit(60);
+
+  if (r.error) {
+    g.textContent = r.error.message;
+    return;
+  }
+
+  postsCache = r.data || [];
+  reactionsCache = {};
+
+  if (postsCache.length) {
+    const { data, error } = await sb
+      .from('post_reactions')
+      .select('post_id,user_id,reaction')
+      .in('post_id', postsCache.map(post => post.id));
+
+    if (error) {
+      console.error('Could not load reactions:', error.message);
+    } else {
+      (data || []).forEach(reaction => {
+        if (!reactionsCache[reaction.post_id]) {
+          reactionsCache[reaction.post_id] = [];
+        }
+
+        reactionsCache[reaction.post_id].push(reaction);
+      });
+    }
+  }
+
+  if (!postsCache.length) {
+    g.textContent =
+      'The vault is empty. Be the first to share a gaming moment!';
+  } else {
+    g.replaceChildren(...postsCache.map(post => makePostCard(post, false)));
+  }
+
+  if (isAdmin) renderAdminPosts();
+}$('show-all-posts').onclick = async () => {
   $('show-all-posts').hidden = true;
 
   const heading = document.querySelector('.community-heading h2');
