@@ -5,6 +5,10 @@ let sb=null,user=null,signup=false,isAdmin=false,postsCache=[],avatarUrl=null;
 let reactionsCache = {};
 let chatChannel = null;
 let chatStarted = false;
+let dmConversationsCache = [];
+let dmRequestsCache = [];
+let activeDmConversation = null;
+let dmChannel = null;
 // Username accounts are mapped to a synthetic, non-deliverable address. Disable email confirmation in Supabase Auth.
 const accountEmail = name => `${name.toLowerCase()}@username.gamevault.invalid`;
 const configured=SUPABASE_URL.startsWith('https://')&&!SUPABASE_URL.includes('PASTE_YOUR')&&SUPABASE_PUBLISHABLE_KEY&&!SUPABASE_PUBLISHABLE_KEY.includes('PASTE_YOUR');
@@ -36,6 +40,54 @@ async function start() {
   updateUpload();
 }
 function usernameOf(u){return u?.user_metadata?.username||u?.email?.split('@')[0]||'Player'}
+async function searchGameVaultUsers() {
+  const input = $('dm-user-search');
+  const results = $('dm-search-results');
+  const term = input.value.trim();
+
+  results.replaceChildren();
+
+  if (!user) {
+    results.textContent = 'Please sign in to search for users.';
+    return;
+  }
+
+  if (!/^[A-Za-z0-9_]{3,24}$/.test(term)) {
+    results.textContent = 'Enter a username (3–24 characters).';
+    return;
+  }
+
+  results.textContent = 'Searching...';
+
+  const { data, error } = await sb.rpc(
+    'search_gamevault_users',
+    { search_term: term }
+  );
+
+  results.replaceChildren();
+
+  if (error) {
+    results.textContent = 'Could not search users. Please try again.';
+    console.error('DM user search error:', error);
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    results.textContent = 'No matching users found.';
+    return;
+  }
+
+  data.forEach(result => {
+    const item = document.createElement('div');
+    item.className = 'gv-dm-search-result';
+
+    const name = document.createElement('span');
+    name.textContent = '@' + result.username;
+
+    item.appendChild(name);
+    results.appendChild(item);
+  });
+}
 
 async function loadAvatar() {
   avatarUrl = null;
