@@ -755,13 +755,12 @@ body {
 
 #avatar-crop-canvas {
   display: block;
-  width: min(300px, 100%);
+  width: 100%;
   height: auto;
   aspect-ratio: 1;
-  border-radius: 50%;
-  object-fit: cover;
-  cursor: grab;
   touch-action: none;
+  cursor: grab;
+  border-radius: 50%;
 }
 
 #avatar-crop-canvas:active {
