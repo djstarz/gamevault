@@ -1136,16 +1136,19 @@ select,
 [role="button"] {
   -webkit-tap-highlight-color: transparent;
 }
+
 /* ================= CHAT MESSAGE THREE-DOT MENU ================= */
 
 .chat-message {
   position: relative;
+  padding-right: 48px;
 }
 
 .chat-message-actions {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
   z-index: 5;
 }
 
@@ -1155,32 +1158,35 @@ select,
   width: 32px;
   height: 32px;
   padding: 0;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--gv-text);
+  border: 1px solid var(--gv-border);
+  border-radius: 9px;
+  background: var(--gv-panel-light);
+  color: var(--gv-blue);
   font-size: 23px;
   line-height: 1;
   cursor: pointer;
+  transition: .2s;
 }
 
 .chat-menu-button:hover,
 .chat-menu-button[aria-expanded="true"] {
-  background: rgba(155, 107, 255, .16);
-  border-color: var(--gv-border);
+  background: rgba(155, 107, 255, .2);
+  border-color: var(--gv-blue);
+  box-shadow: 0 0 12px rgba(0, 217, 255, .15);
 }
 
 .chat-message-menu {
   position: absolute;
-  top: calc(100% + 5px);
-  right: 0;
+  top: 50%;
+  right: 40px;
+  transform: translateY(-50%);
   z-index: 20;
-  min-width: 160px;
+  min-width: 165px;
   padding: 6px;
-  background: #19172b;
+  background: var(--gv-panel);
   border: 1px solid var(--gv-border);
   border-radius: 11px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, .45);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, .5);
 }
 
 .chat-message-menu[hidden] {
@@ -1203,9 +1209,15 @@ select,
 
 .chat-message-menu button:hover {
   background: rgba(155, 107, 255, .16);
+  color: var(--gv-blue);
 }
 
 .chat-message-menu .chat-menu-delete {
+  color: #ff8f9b;
+}
+
+.chat-message-menu .chat-menu-delete:hover {
+  background: rgba(255, 80, 100, .12);
   color: #ff8f9b;
 }
 
