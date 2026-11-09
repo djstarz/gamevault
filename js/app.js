@@ -1743,10 +1743,12 @@ async function checkGameVaultUpdate() {
       fetch('https://djstarz.github.io/gamevault/version.json?t=' + Date.now())
     ]);
 
-    if (!installedResponse.ok || !remoteResponse.ok) return;
+if (!remoteResponse.ok) return;
+const installed = installedResponse.ok
+  ? await installedResponse.json()
+  : { version: '1.0.2' };
 
-    const installed = await installedResponse.json();
-    const update = await remoteResponse.json();
+const update = await remoteResponse.json();
 
     const parseVersion = v => v.split('.').map(Number);
 
