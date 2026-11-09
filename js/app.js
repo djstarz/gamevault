@@ -476,6 +476,117 @@ $('auth-form').onsubmit = async e => {
 };
 $('upload-form').onsubmit=async e=>{e.preventDefault();if(!user)return openAuth();const f=$('media').files[0];if(!f)return;if(f.size>20*1024*1024){$('upload-status').textContent='File exceeds 20 MB. Choose a smaller file.';return}if(!f.type.startsWith('image/')&&!['video/mp4','video/webm','video/quicktime'].includes(f.type)){$('upload-status').textContent='Choose an image, MP4, WebM, or QuickTime video.';return}$('upload-button').disabled=true;$('upload-status').textContent='Uploading…';let path='';try{const safe=f.name.toLowerCase().replace(/[^a-z0-9._-]+/g,'-').slice(-90);path=`${user.id}/${crypto.randomUUID()}-${safe}`;const up=await sb.storage.from('gamevault-media').upload(path,f,{contentType:f.type,upsert:false});if(up.error)throw up.error;const url=sb.storage.from('gamevault-media').getPublicUrl(path).data.publicUrl;const ins=await sb.from('posts').insert({user_id:user.id,title:$('title').value.trim(),description:$('description').value.trim(),category:$('category').value,media_url:url,media_type:f.type.startsWith('video/')?'video':'image',storage_path:path});if(ins.error){await sb.storage.from('gamevault-media').remove([path]);throw ins.error}$('upload-form').reset();$('upload-status').textContent='Uploaded successfully!';await loadPosts()}catch(err){$('upload-status').textContent=err.message||'Upload failed. Check Storage and RLS policies.'}finally{updateUpload()}};
 
+async function loadPostComments(postId, dialog) {
+  const list = dialog.querySelector('#post-comments-list');
+  list.textContent = 'Loading comments...';
+
+  const { data, error } = await sb
+    .from('post_comments')
+    .select('id,post_id,user_id,parent_id,username,content,created_at')
+    .eq('post_id', postId)
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    list.textContent = 'Could not load comments: ' + error.message;
+    return;
+  }
+
+  const comments = data || [];
+  const roots = comments.filter(comment => !comment.parent_id);
+
+  list.replaceChildren();
+
+  if (!comments.length) {
+    list.textContent = 'No comments yet. Be the first!';
+    return;
+  }
+
+  function renderComment(comment, depth = 0) {
+    const item = document.createElement('div');
+    item.style.cssText =
+      `margin:12px 0 12px ${depth ? '22px' : '0'};` +
+      'padding:10px;border-left:2px solid #394150;';
+
+    const heading = document.createElement('strong');
+    heading.textContent = comment.username || 'Player';
+
+    const time = document.createElement('small');
+    time.textContent = ' · ' +
+      new Date(comment.created_at).toLocaleString();
+
+    const content = document.createElement('p');
+    content.textContent = comment.content;
+    content.style.cssText = 'margin:6px 0;white-space:pre-wrap;';
+
+    item.append(heading, time, content);
+
+    if (user) {
+      const reply = document.createElement('button');
+      reply.type = 'button';
+      reply.textContent = 'Reply';
+      reply.style.cssText = 'cursor:pointer;margin-top:4px;';
+
+      reply.onclick = () => {
+        if (item.querySelector('.comment-reply-form')) return;
+
+        const form = document.createElement('form');
+        form.className = 'comment-reply-form';
+
+        const input = document.createElement('textarea');
+        input.maxLength = 1000;
+        input.required = true;
+        input.placeholder = 'Write a reply...';
+        input.style.cssText =
+          'display:block;width:100%;min-height:60px;margin:8px 0;' +
+          'padding:8px;background:#1c222d;color:#fff;' +
+          'border:1px solid #394150;border-radius:8px;';
+
+        const send = document.createElement('button');
+        send.type = 'submit';
+        send.textContent = 'Send reply';
+
+        form.append(input, send);
+
+        form.onsubmit = async event => {
+          event.preventDefault();
+          const text = input.value.trim();
+          if (!text || !user) return;
+
+          send.disabled = true;
+
+          const { error } = await sb.from('post_comments').insert({
+            post_id: postId,
+            parent_id: comment.id,
+            user_id: user.id,
+            username: usernameOf(user),
+            content: text
+          });
+
+          if (error) {
+            alert('Could not post reply: ' + error.message);
+            send.disabled = false;
+            return;
+          }
+
+          await loadPostComments(postId, dialog);
+        };
+
+        item.append(form);
+        input.focus();
+      };
+
+      item.append(reply);
+    }
+
+    comments
+      .filter(child => child.parent_id === comment.id)
+      .forEach(child => item.append(renderComment(child, depth + 1)));
+
+    return item;
+  }
+
+  roots.forEach(comment => list.append(renderComment(comment)));
+}
 function openPost(post) {
   let dialog = document.getElementById('post-viewer');
 
@@ -487,16 +598,37 @@ function openPost(post) {
       'background:#151923;color:#fff;border:1px solid #394150;' +
       'border-radius:14px;padding:20px;';
 
-    dialog.innerHTML = `
-      <button type="button" id="post-viewer-close"
-        style="float:right;padding:8px 14px;cursor:pointer">
-        Close ✕
+   dialog.innerHTML = `
+  <button type="button" id="post-viewer-close"
+    style="float:right;padding:8px 14px;cursor:pointer">
+    Close ✕
+  </button>
+
+  <h2 id="post-viewer-title"></h2>
+  <div id="post-viewer-media"></div>
+  <p id="post-viewer-description"></p>
+  <p id="post-viewer-category"></p>
+
+  <hr style="border-color:#394150;margin:20px 0">
+
+  <section id="post-comments">
+    <h3>Comments</h3>
+    <div id="post-comments-list">Loading comments...</div>
+
+    <form id="post-comment-form" style="margin-top:16px">
+      <textarea id="post-comment-input"
+        placeholder="Write a comment..."
+        maxlength="1000"
+        required
+        style="width:100%;min-height:80px;padding:10px;background:#1c222d;color:#fff;border:1px solid #394150;border-radius:8px;resize:vertical"></textarea>
+
+      <button type="submit"
+        style="margin-top:8px;padding:9px 16px;cursor:pointer">
+        Post comment
       </button>
-      <h2 id="post-viewer-title"></h2>
-      <div id="post-viewer-media"></div>
-      <p id="post-viewer-description"></p>
-      <p id="post-viewer-category"></p>
-    `;
+    </form>
+  </section>
+`;
 
     dialog.addEventListener('click', e => {
       if (e.target === dialog) dialog.close();
@@ -534,9 +666,44 @@ function openPost(post) {
     'display:block;max-width:100%;max-height:65vh;' +
     'width:auto;height:auto;margin:16px auto;object-fit:contain;';
 
-  media.append(el);
+media.append(el);
 
-  if (!dialog.open) dialog.showModal();
+const commentForm = dialog.querySelector('#post-comment-form');
+const commentInput = dialog.querySelector('#post-comment-input');
+
+commentForm.hidden = !user;
+
+commentForm.onsubmit = async event => {
+  event.preventDefault();
+
+  if (!user) return openAuth();
+
+  const content = commentInput.value.trim();
+  if (!content) return;
+
+  const button = commentForm.querySelector('button[type="submit"]');
+  button.disabled = true;
+
+  const { error } = await sb.from('post_comments').insert({
+    post_id: post.id,
+    user_id: user.id,
+    username: usernameOf(user),
+    content
+  });
+
+  if (error) {
+    alert('Could not post comment: ' + error.message);
+  } else {
+    commentInput.value = '';
+    await loadPostComments(post.id, dialog);
+  }
+
+  button.disabled = false;
+};
+
+loadPostComments(post.id, dialog);
+
+if (!dialog.open) dialog.showModal();
 }
 
 
