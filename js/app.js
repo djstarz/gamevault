@@ -23,7 +23,8 @@ async function start() {
   renderAccount();
   updateChatAccess();
   await loadPosts();
-  await initializeChat();
+await initializeChat();
+await loadDmRequests();
 
   sb.auth.onAuthStateChange((_e, s) => {
     user = s?.user || null;
@@ -35,6 +36,7 @@ async function start() {
       updateUpload();
       updateChatAccess();
       await loadPosts();
+      await loadDmRequests();
     }, 0);
   });
 
@@ -122,7 +124,80 @@ async function searchGameVaultUsers() {
     results.appendChild(item);
   });
 }
+async function loadDmRequests() {
+  const list = $('dm-requests');
+  const count = $('dm-request-count');
 
+  if (!list || !count) return;
+
+  list.replaceChildren();
+  count.textContent = '0';
+
+  if (!user) return;
+
+  const { data, error } = await sb.rpc('get_dm_requests');
+
+  if (error) {
+    list.textContent = 'Could not load message requests.';
+    console.error('DM requests error:', error);
+    return;
+  }
+
+  count.textContent = String(data.length);
+
+  if (!data.length) {
+    list.textContent = 'No pending requests.';
+    return;
+  }
+
+  data.forEach(request => {
+    const item = document.createElement('div');
+    item.className = 'gv-dm-request';
+
+    const username = document.createElement('strong');
+    username.textContent = request.username;
+
+    const message = document.createElement('p');
+    message.textContent = 'Wants to start a conversation.';
+
+    const actions = document.createElement('div');
+    actions.className = 'gv-dm-request-actions';
+
+    const accept = document.createElement('button');
+    accept.type = 'button';
+    accept.textContent = 'Accept';
+
+    const decline = document.createElement('button');
+    decline.type = 'button';
+    decline.textContent = 'Decline';
+
+    async function respond(status) {
+      accept.disabled = true;
+      decline.disabled = true;
+
+      const { error } = await sb
+        .from('dm_requests')
+        .update({ status })
+        .eq('id', request.request_id);
+
+      if (error) {
+        console.error('DM request response error:', error);
+        accept.disabled = false;
+        decline.disabled = false;
+        return;
+      }
+
+      await loadDmRequests();
+    }
+
+    accept.addEventListener('click', () => respond('accepted'));
+    decline.addEventListener('click', () => respond('declined'));
+
+    actions.append(accept, decline);
+    item.append(username, message, actions);
+    list.append(item);
+  });
+}
 async function loadAvatar() {
   avatarUrl = null;
   if (!sb || !user) return;
