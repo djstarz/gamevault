@@ -1292,3 +1292,20 @@ select,
 .chat-message.menu-open {
   z-index: 10;
 }
+/* GameVault v1.0.6 — compact chat messages */
+.chat-message {
+  padding: 4px 48px 4px 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.chat-message-heading {
+  margin-bottom: 2px;
+}
+
+.chat-messages {
+  gap: 7px;
+  padding: 10px 12px;
+}
