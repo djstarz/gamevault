@@ -337,7 +337,7 @@ async function sendDmMessage(event) {
   }
 
   const input = $('dm-message-input');
-  const button = $('dm-message-form').querySelector('button[type="submit"]');
+const button = $('dm-message-form').querySelector('button');
   const body = input.value.trim();
 
   if (!body) return;
