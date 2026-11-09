@@ -9,17 +9,3 @@ if ("serviceWorker" in navigator) {
     }
   });
 }
-// Hide GameVault loading screen after page loads
-window.addEventListener("load", () => {
-  const loader = document.getElementById("gamevault-loader");
-
-  if (loader) {
-    setTimeout(() => {
-      loader.classList.add("hidden");
-
-      setTimeout(() => {
-        loader.remove();
-      }, 500);
-    }, 700);
-  }
-});
