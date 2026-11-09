@@ -581,12 +581,13 @@ function openEditPost(post, admin = false) {
 
   // Keep these options aligned with the categories in your upload form.
   const categories = [
-    'Genshin Impact',
-    'Wuthering Waves',
-    'Arknights: Endfield',
-    'Other'
-  ];
-
+  'Screenshots',
+  'Wallpapers',
+  'Edits',
+  'Clips',
+  'Builds',
+  'Guides'
+];
   categories.forEach(category => {
     const option = document.createElement('option');
     option.value = category;
