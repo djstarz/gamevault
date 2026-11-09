@@ -1712,3 +1712,37 @@ $('crop-save').onclick = async () => {
   }, 'image/jpeg', 0.90);
 };
 $('admin-refresh').onclick=async()=>{if(!isAdmin)return;$('admin-message').textContent='Refreshing…';await loadPosts();$('admin-message').textContent='Posts refreshed.'};$('admin-close').onclick=()=>$('admin-panel').hidden=true;
+// ================= GAMEVAULT APP UPDATE CHECKER =================
+
+async function checkGameVaultUpdate() {
+  try {
+    const response = await fetch(
+      'https://djstarz.github.io/gamevault/version.json?t=' + Date.now()
+    );
+
+    if (!response.ok) return;
+
+    const update = await response.json();
+
+    const currentVersion = '1.0.0';
+
+    if (update.version !== currentVersion) {
+      const notice = document.createElement('div');
+      notice.className = 'gv-update-notice';
+
+      notice.innerHTML = `
+        <strong>GameVault Update Available!</strong>
+        <p>${update.message || 'A new version is available.'}</p>
+        <a href="${update.download_url}" target="_blank">
+          Download Update
+        </a>
+      `;
+
+      document.body.appendChild(notice);
+    }
+  } catch (error) {
+    console.log('GameVault update check failed:', error);
+  }
+}
+
+checkGameVaultUpdate();
