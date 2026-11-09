@@ -25,7 +25,8 @@ async function start() {
   await loadPosts();
 await initializeChat();
 await loadDmRequests();
-
+await loadDmConversations();
+  
   sb.auth.onAuthStateChange((_e, s) => {
     user = s?.user || null;
 
@@ -36,7 +37,8 @@ await loadDmRequests();
       updateUpload();
       updateChatAccess();
       await loadPosts();
-      await loadDmRequests();
+await loadDmRequests();
+await loadDmConversations();
     }, 0);
   });
 
@@ -188,6 +190,7 @@ async function loadDmRequests() {
       }
 
       await loadDmRequests();
+      await loadDmConversations();
     }
 
     accept.addEventListener('click', () => respond('accepted'));
@@ -198,6 +201,60 @@ async function loadDmRequests() {
     list.append(item);
   });
 }
+async function loadDmConversations() {
+  const container = $('dm-conversations');
+  if (!container || !sb || !user) return;
+
+  const { data, error } = await sb.rpc('get_dm_conversations');
+
+  if (error) {
+    console.error('DM conversations error:', error);
+    container.textContent = 'Could not load conversations.';
+    return;
+  }
+
+  dmConversationsCache = data || [];
+  container.replaceChildren();
+
+  if (!dmConversationsCache.length) {
+    container.textContent = 'No conversations yet.';
+    return;
+  }
+
+  dmConversationsCache.forEach(conversation => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'gv-dm-conversation';
+    button.dataset.conversationId = conversation.conversation_id;
+    button.dataset.username = conversation.username;
+    button.textContent = conversation.username || 'Player';
+
+    container.appendChild(button);
+  });
+}
+$('dm-conversations')?.addEventListener('click', event => {
+  const button = event.target.closest('.gv-dm-conversation');
+  if (!button) return;
+
+  const conversation = dmConversationsCache.find(
+    item => item.conversation_id === button.dataset.conversationId
+  );
+
+  if (!conversation) return;
+
+  activeDmConversation = conversation;
+
+  $('dm-chat-empty').hidden = true;
+  $('dm-chat-active').hidden = false;
+  $('dm-chat-username').textContent = conversation.username || 'Player';
+
+  $('dm-messages').replaceChildren();
+  $('dm-message-feedback').textContent = '';
+
+  document.querySelectorAll('.gv-dm-conversation').forEach(item => {
+    item.classList.toggle('active', item === button);
+  });
+});
 async function loadAvatar() {
   avatarUrl = null;
   if (!sb || !user) return;
