@@ -278,7 +278,6 @@ async function loadDmMessages() {
     container.textContent = 'Could not load messages.';
     return;
   }
-  
 
   // Ignore results if the user switched conversations while loading.
   if (activeDmConversation?.conversation_id !== conversationId) return;
@@ -290,7 +289,7 @@ async function loadDmMessages() {
     return;
   }
 
-  data.forEach(message => {
+  for (const message of data) {
     const bubble = document.createElement('div');
     bubble.className = 'gv-dm-bubble';
 
@@ -318,13 +317,58 @@ async function loadDmMessages() {
     }
 
     if (message.shared_post_id) {
-      const shared = document.createElement('p');
-      shared.textContent = 'Shared a post';
+      const shared = document.createElement('button');
+      shared.type = 'button';
+      shared.className = 'gv-shared-post-card';
+      shared.textContent = 'Loading shared post…';
+
+      const { data: sharedPost, error: sharedError } = await sb
+        .from('posts')
+        .select('id,user_id,title')
+        .eq('id', message.shared_post_id)
+        .maybeSingle();
+
+      if (sharedError || !sharedPost) {
+        shared.textContent = 'Shared post unavailable';
+      } else {
+        const { data: author } = await sb
+          .from('profiles')
+          .select('username')
+          .eq('id', sharedPost.user_id)
+          .maybeSingle();
+
+        shared.textContent =
+          `📎 ${sharedPost.title || 'Untitled post'} · By ${author?.username || 'Player'} — View post`;
+
+        shared.onclick = async () => {
+          let post = postsCache.find(
+            item => item.id === message.shared_post_id
+          );
+
+          if (!post) {
+            const { data, error } = await sb
+              .from('posts')
+              .select('id,user_id,title,description,category,media_url,media_type,created_at')
+              .eq('id', message.shared_post_id)
+              .maybeSingle();
+
+            if (error || !data) {
+              shared.textContent = 'Shared post unavailable';
+              return;
+            }
+
+            post = data;
+          }
+
+          openPost(post);
+        };
+      }
+
       bubble.append(shared);
     }
 
     container.appendChild(bubble);
-  });
+  }
 
   container.scrollTop = container.scrollHeight;
 }
@@ -1036,6 +1080,11 @@ async function loadPostComments(postId, dialog) {
 
   roots.forEach(comment => list.append(renderComment(comment)));
 }
+function getPostShareUrl(post) {
+  const url = new URL(window.location.href);
+  url.searchParams.set('post', post.id);
+  return url.toString();
+}
 function openPost(post) {
   let dialog = document.getElementById('post-viewer');
 
@@ -1438,6 +1487,12 @@ function makePostCard(post, admin = false) {
   view.onclick = () => openPost(post);
   b.append(view);
 
+  const share = document.createElement('button');
+  share.type = 'button';
+  share.className = 'gv-share-post';
+  share.textContent = 'Share post';
+  share.onclick = () => openSharePost(post);
+  b.append(share);
   
 if (user && (user.id === post.user_id || admin)) {
   const edit = document.createElement('button');
@@ -1458,6 +1513,141 @@ if (user && (user.id === post.user_id || admin)) {
 
   c.append(m, b);
   return c;
+}
+function openSharePost(post) {
+  const existing = document.getElementById('gv-share-overlay');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'gv-share-overlay';
+  overlay.className = 'gv-modal-overlay';
+
+  const modal = document.createElement('div');
+  modal.className = 'gv-modal';
+
+  const heading = document.createElement('h3');
+  heading.textContent = 'Share post';
+
+  const description = document.createElement('p');
+  description.textContent = post.title || 'Untitled post';
+
+  const copy = document.createElement('button');
+  copy.type = 'button';
+  copy.textContent = 'Copy link';
+
+  copy.onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(getPostShareUrl(post));
+      copy.textContent = 'Link copied!';
+    } catch (error) {
+      copy.textContent = 'Could not copy link';
+      console.error('Copy post link error:', error);
+    }
+  };
+  const nativeShare = document.createElement('button');
+  nativeShare.type = 'button';
+  nativeShare.textContent = 'Share…';
+
+  nativeShare.onclick = async () => {
+    const url = getPostShareUrl(post);
+
+    if (!navigator.share) {
+      nativeShare.textContent = 'Sharing not supported';
+      return;
+    }
+
+    try {
+      await navigator.share({
+        title: post.title || 'GameVault post',
+        text: 'Check out this gaming post on GameVault!',
+        url
+      });
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        console.error('Native share error:', error);
+      }
+    }
+  };
+    const dmLabel = document.createElement('p');
+  dmLabel.textContent = 'Share with a GameVault user';
+
+  const dmSelect = document.createElement('select');
+  dmSelect.id = 'gv-share-dm-select';
+
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = 'Choose a conversation';
+  dmSelect.append(placeholder);
+
+  dmConversationsCache.forEach(conversation => {
+    const option = document.createElement('option');
+    option.value = conversation.conversation_id;
+    option.textContent = conversation.username || 'Player';
+    dmSelect.append(option);
+  });
+
+  const sendDm = document.createElement('button');
+  sendDm.type = 'button';
+  sendDm.textContent = 'Send to DM';
+  sendDm.disabled = dmConversationsCache.length === 0;
+
+  sendDm.onclick = async () => {
+    if (!user) {
+      overlay.remove();
+      openAuth();
+      return;
+    }
+
+    const conversationId = dmSelect.value;
+
+    if (!conversationId) {
+      sendDm.textContent = 'Choose a conversation first';
+      return;
+    }
+
+    sendDm.disabled = true;
+    sendDm.textContent = 'Sending...';
+
+    const { error } = await sb
+      .from('dm_messages')
+      .insert({
+        conversation_id: conversationId,
+        sender_id: user.id,
+        body: 'Shared a post',
+        shared_post_id: post.id
+      });
+
+    if (error) {
+      console.error('Share post DM error:', error);
+      sendDm.textContent = 'Could not send';
+      sendDm.disabled = false;
+      return;
+    }
+
+    sendDm.textContent = 'Post shared!';
+  };
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.textContent = 'Close';
+  close.onclick = () => overlay.remove();
+
+  modal.append(
+    heading,
+    description,
+    copy,
+    nativeShare,
+    dmLabel,
+    dmSelect,
+    sendDm,
+    close
+  );
+  overlay.append(modal);
+
+  overlay.addEventListener('click', event => {
+    if (event.target === overlay) overlay.remove();
+  });
+
+  document.body.append(overlay);
 }
 async function loadPosts() {
   if (!sb) return;
