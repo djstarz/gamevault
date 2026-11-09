@@ -1090,8 +1090,11 @@ menuButton.onclick = () => {
   document.querySelectorAll('.chat-message-menu').forEach(openMenu => {
     openMenu.hidden = true;
 
-    const button = openMenu.parentElement
-      ?.querySelector('.chat-menu-button');
+    const actions = openMenu.parentElement;
+    const button = actions?.querySelector('.chat-menu-button');
+    const messageItem = actions?.closest('.chat-message');
+
+    messageItem?.classList.remove('menu-open');
 
     if (button) {
       button.setAttribute('aria-expanded', 'false');
@@ -1101,6 +1104,7 @@ menuButton.onclick = () => {
   if (shouldOpen) {
     menu.hidden = false;
     menuButton.setAttribute('aria-expanded', 'true');
+    item.classList.add('menu-open');
   }
 };
 
