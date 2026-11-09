@@ -1655,6 +1655,7 @@ function openSharePost(post) {
   });
 
   document.body.append(overlay);
+  console.log('Share overlay appended:', document.getElementById('gv-share-overlay'));
 }
 async function loadPosts() {
   if (!sb) return;
