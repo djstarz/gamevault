@@ -870,26 +870,138 @@ async function deletePost(p, admin = false) {
   }
 }
 function renderAdminPosts(){const g=$('admin-posts');$('admin-post-count').textContent=String(postsCache.length);g.replaceChildren(...postsCache.map(p=>makePostCard(p,true)));if(!postsCache.length)g.textContent='No posts to moderate.'}
+
 // ================= COMMUNITY CHAT =================
+
+let selectedChatFile = null;
+let chatPreviewUrl = null;
+let chatSending = false;
+
+const CHAT_MAX_SIZE = 20 * 1024 * 1024;
+
+const CHAT_FILE_TYPES = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/gif': 'gif',
+  'video/mp4': 'mp4',
+  'video/webm': 'webm',
+  'video/quicktime': 'mov'
+};
 
 function updateChatAccess() {
   const input = $('chat-input');
   const send = $('chat-send');
+  const attach = $('chat-attach');
+  const fileInput = $('chat-media-input');
   const feedback = $('chat-feedback');
 
-  input.disabled = !user;
-  send.disabled = !user;
+  const disabled = !user || chatSending;
 
-  feedback.textContent = user
-    ? 'You are signed in. Keep the conversation friendly.'
-    : 'Sign in to participate in the conversation.';
+  input.disabled = disabled;
+  send.disabled = disabled;
+  attach.disabled = disabled;
+  fileInput.disabled = disabled;
+
+  if (!user) {
+    feedback.textContent = 'Sign in to participate in the conversation.';
+  } else if (!chatSending) {
+    feedback.textContent = 'You are signed in. Keep the conversation friendly.';
+  }
 }
+
+function clearChatAttachment() {
+  selectedChatFile = null;
+
+  if (chatPreviewUrl) {
+    URL.revokeObjectURL(chatPreviewUrl);
+    chatPreviewUrl = null;
+  }
+
+  $('chat-media-input').value = '';
+  $('chat-attachment-preview').replaceChildren();
+  $('chat-attachment-preview').hidden = true;
+}
+
+function showChatAttachment(file) {
+  clearChatAttachment();
+
+  selectedChatFile = file;
+  chatPreviewUrl = URL.createObjectURL(file);
+
+  const preview = $('chat-attachment-preview');
+
+  const media = file.type.startsWith('image/')
+    ? document.createElement('img')
+    : document.createElement('video');
+
+  media.src = chatPreviewUrl;
+  media.alt = file.name;
+
+  if (media.tagName === 'VIDEO') {
+    media.controls = true;
+    media.muted = true;
+  }
+
+  const info = document.createElement('div');
+  info.className = 'chat-attachment-info';
+
+  const filename = document.createElement('strong');
+  filename.textContent = file.name;
+
+  const size = document.createElement('div');
+  size.textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+
+  info.append(filename, size);
+
+  const remove = document.createElement('button');
+  remove.type = 'button';
+  remove.className = 'chat-attachment-remove';
+  remove.textContent = '✕';
+  remove.title = 'Remove attachment';
+  remove.setAttribute('aria-label', 'Remove attachment');
+
+  remove.onclick = () => {
+    clearChatAttachment();
+    $('chat-feedback').textContent = 'Attachment removed.';
+  };
+
+  preview.append(media, info, remove);
+  preview.hidden = false;
+}
+
+$('chat-attach').onclick = () => {
+  if (!user) return openAuth();
+  if (!chatSending) $('chat-media-input').click();
+};
+
+$('chat-media-input').onchange = () => {
+  const file = $('chat-media-input').files?.[0];
+
+  if (!file) return;
+
+  if (!CHAT_FILE_TYPES[file.type]) {
+    clearChatAttachment();
+    $('chat-feedback').textContent =
+      'Unsupported file. Choose JPG, PNG, WebP, GIF, MP4, WebM, or MOV.';
+    return;
+  }
+
+  if (file.size > CHAT_MAX_SIZE) {
+    clearChatAttachment();
+    $('chat-feedback').textContent =
+      'File exceeds 20 MB. Choose a smaller file.';
+    return;
+  }
+
+  showChatAttachment(file);
+  $('chat-feedback').textContent = 'Attachment ready to send.';
+};
 
 function addChatMessage(message) {
   const container = $('chat-messages');
 
-  // Prevent duplicate messages when both the insert response
-  // and Realtime deliver the same message.
+  // Prevent duplicate messages from Realtime and the insert response.
   if (container.querySelector(`[data-message-id="${message.id}"]`)) {
     return;
   }
@@ -912,11 +1024,32 @@ function addChatMessage(message) {
     minute: '2-digit'
   });
 
-  const body = document.createElement('p');
-  body.textContent = message.message;
-
   heading.append(name, time);
-  item.append(heading, body);
+  item.append(heading);
+
+  if (message.message?.trim()) {
+    const body = document.createElement('p');
+    body.textContent = message.message;
+    item.append(body);
+  }
+
+  if (message.media_url && message.media_type === 'image') {
+    const image = document.createElement('img');
+    image.className = 'chat-message-media';
+    image.src = message.media_url;
+    image.alt = 'Chat attachment';
+    image.loading = 'lazy';
+    item.append(image);
+  } else if (message.media_url && message.media_type === 'video') {
+    const video = document.createElement('video');
+    video.className = 'chat-message-media';
+    video.src = message.media_url;
+    video.controls = true;
+    video.preload = 'metadata';
+    video.playsInline = true;
+    item.append(video);
+  }
+
   container.append(item);
 
   while (container.children.length > 50) {
@@ -934,7 +1067,9 @@ async function initializeChat() {
 
   const { data, error } = await sb
     .from('chat_messages')
-    .select('id,user_id,username,message,created_at')
+    .select(
+      'id,user_id,username,message,media_url,media_type,storage_path,created_at'
+    )
     .order('created_at', { ascending: false })
     .limit(50);
 
@@ -978,36 +1113,101 @@ $('chat-form').onsubmit = async event => {
 
   const input = $('chat-input');
   const message = input.value.trim();
+  const file = selectedChatFile;
 
-  if (!message || message.length > 500) return;
+  if (!message && !file) {
+    $('chat-feedback').textContent =
+      'Write a message or attach a file.';
+    return;
+  }
 
-  $('chat-send').disabled = true;
-  $('chat-feedback').textContent = 'Sending…';
+  if (message.length > 500) {
+    $('chat-feedback').textContent =
+      'Messages cannot exceed 500 characters.';
+    return;
+  }
+
+  chatSending = true;
+  updateChatAccess();
+  $('chat-feedback').textContent = file
+    ? 'Uploading attachment…'
+    : 'Sending message…';
+
+  let storagePath = null;
 
   try {
+    let mediaUrl = null;
+    let mediaType = null;
+
+    if (file) {
+      const extension = CHAT_FILE_TYPES[file.type];
+
+      storagePath =
+        `${user.id}/chat-${crypto.randomUUID()}.${extension}`;
+
+      const { error: uploadError } = await sb.storage
+        .from('gamevault-media')
+        .upload(storagePath, file, {
+          contentType: file.type,
+          upsert: false,
+          cacheControl: '3600'
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { data: publicData } = sb.storage
+        .from('gamevault-media')
+        .getPublicUrl(storagePath);
+
+      mediaUrl = publicData.publicUrl;
+      mediaType = file.type.startsWith('image/') ? 'image' : 'video';
+    }
+
     const { data, error } = await sb
       .from('chat_messages')
       .insert({
         user_id: user.id,
         username: usernameOf(user),
-        message
+        message: message || '',
+        media_url: mediaUrl,
+        media_type: mediaType,
+        storage_path: storagePath
       })
-      .select('id,user_id,username,message,created_at')
+      .select(
+        'id,user_id,username,message,media_url,media_type,storage_path,created_at'
+      )
       .single();
 
     if (error) throw error;
 
     addChatMessage(data);
+
     input.value = '';
-    $('chat-feedback').textContent = 'Message sent.';
+    clearChatAttachment();
+
+    $('chat-feedback').textContent = 'Message sent successfully.';
   } catch (error) {
+    // Remove uploaded media if saving the chat message failed.
+    if (storagePath) {
+      const { error: cleanupError } = await sb.storage
+        .from('gamevault-media')
+        .remove([storagePath]);
+
+      if (cleanupError) {
+        console.error('Could not clean up failed chat upload:', cleanupError);
+      }
+    }
+
     $('chat-feedback').textContent =
       'Message failed: ' + error.message;
   } finally {
+    chatSending = false;
     updateChatAccess();
   }
 };
+
 // ================= ACCOUNT SETTINGS =================
+
 
 $('settings-close').onclick = () => {
   $('settings-dialog').close();
