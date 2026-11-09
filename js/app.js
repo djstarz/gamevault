@@ -519,6 +519,96 @@ async function loadPostComments(postId, dialog) {
     content.style.cssText = 'margin:6px 0;white-space:pre-wrap;';
 
     item.append(heading, time, content);
+    if (user && user.id === comment.user_id) {
+  const actions = document.createElement('div');
+  actions.style.cssText = 'display:flex;gap:8px;margin-top:6px;';
+
+  const edit = document.createElement('button');
+  edit.type = 'button';
+  edit.textContent = 'Edit';
+
+  edit.onclick = () => {
+    if (item.querySelector('.comment-edit-form')) return;
+
+    const form = document.createElement('form');
+    form.className = 'comment-edit-form';
+
+    const input = document.createElement('textarea');
+    input.value = comment.content;
+    input.maxLength = 1000;
+    input.required = true;
+    input.style.cssText =
+      'display:block;width:100%;min-height:60px;margin:8px 0;' +
+      'padding:8px;background:#1c222d;color:#fff;' +
+      'border:1px solid #394150;border-radius:8px;';
+
+    const save = document.createElement('button');
+    save.type = 'submit';
+    save.textContent = 'Save';
+
+    const cancel = document.createElement('button');
+    cancel.type = 'button';
+    cancel.textContent = 'Cancel';
+    cancel.onclick = () => form.remove();
+
+    form.append(input, save, cancel);
+
+    form.onsubmit = async event => {
+      event.preventDefault();
+
+      const updated = input.value.trim();
+      if (!updated) return;
+
+      save.disabled = true;
+
+      const { error } = await sb
+        .from('post_comments')
+        .update({ content: updated })
+        .eq('id', comment.id)
+        .eq('user_id', user.id);
+
+      if (error) {
+        alert('Could not edit comment: ' + error.message);
+        save.disabled = false;
+        return;
+      }
+
+      await loadPostComments(postId, dialog);
+    };
+
+    item.append(form);
+    input.focus();
+  };
+
+  const remove = document.createElement('button');
+  remove.type = 'button';
+  remove.textContent = 'Delete';
+
+  remove.onclick = async () => {
+    if (!confirm('Delete this comment? Any replies beneath it will also be deleted.')) {
+      return;
+    }
+
+    remove.disabled = true;
+
+    const { error } = await sb
+      .from('post_comments')
+      .delete()
+      .eq('id', comment.id)
+      .eq('user_id', user.id);
+
+    if (error) {
+      alert('Could not delete comment: ' + error.message);
+      remove.disabled = false;
+      return;
+    }
+
+    await loadPostComments(postId, dialog);
+  };
+
+  actions.append(edit, remove);
+  item.append(actions);
+}
 
     if (user) {
       const reply = document.createElement('button');
