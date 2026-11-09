@@ -139,12 +139,12 @@ function renderAccount() {
   const a = $('account');
   a.replaceChildren();
 
-  $('admin-panel').hidden = true;
   $('auth-open').hidden = !!user;
 
-  if (!user) {
+    if (!user) {
     isAdmin = false;
     avatarUrl = null;
+    $('admin-panel').hidden = true;
     return;
   }
 
