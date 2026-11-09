@@ -1051,21 +1051,46 @@ function addChatMessage(message) {
   }
 
   // Show controls only on the current user's messages.
+    // Three-dot menu for the current user's messages.
   if (user && user.id === message.user_id) {
     const actions = document.createElement('div');
     actions.className = 'chat-message-actions';
 
+    const menuButton = document.createElement('button');
+    menuButton.type = 'button';
+    menuButton.className = 'chat-menu-button';
+    menuButton.textContent = '⋮';
+    menuButton.setAttribute('aria-label', 'Message options');
+    menuButton.setAttribute('aria-expanded', 'false');
+
+    const menu = document.createElement('div');
+    menu.className = 'chat-message-menu';
+    menu.hidden = true;
+
     const edit = document.createElement('button');
     edit.type = 'button';
-    edit.textContent = 'Edit';
-    edit.onclick = () => editChatMessage(message);
+    edit.textContent = 'Edit message';
+    edit.onclick = () => {
+      menu.hidden = true;
+      editChatMessage(message);
+    };
 
     const remove = document.createElement('button');
     remove.type = 'button';
-    remove.textContent = 'Delete';
-    remove.onclick = () => deleteChatMessage(message);
+    remove.textContent = 'Delete message';
+    remove.className = 'chat-menu-delete';
+    remove.onclick = () => {
+      menu.hidden = true;
+      deleteChatMessage(message);
+    };
 
-    actions.append(edit, remove);
+    menuButton.onclick = () => {
+      menu.hidden = !menu.hidden;
+      menuButton.setAttribute('aria-expanded', String(!menu.hidden));
+    };
+
+    actions.append(menuButton, menu);
+    menu.append(edit, remove);
     item.append(actions);
   }
 
