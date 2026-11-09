@@ -942,6 +942,97 @@ function openEditPost(post, admin = false) {
   titleInput.focus();
 }
 
+const POST_REACTION_EMOJIS = ['👍', '❤️', '😂', '🔥', '🎮'];
+
+function createPostReactions(post) {
+  const container = document.createElement('div');
+  container.className = 'post-reactions';
+
+  const reactions = reactionsCache[post.id] || [];
+  const myReaction = reactions.find(
+    reaction => user && reaction.user_id === user.id
+  );
+
+  POST_REACTION_EMOJIS.forEach(emoji => {
+    const count = reactions.filter(
+      reaction => reaction.reaction === emoji
+    ).length;
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'post-reaction';
+    button.textContent = `${emoji} ${count}`;
+    button.title = `${emoji} reaction`;
+    button.setAttribute(
+      'aria-pressed',
+      String(myReaction?.reaction === emoji)
+    );
+
+    if (myReaction?.reaction === emoji) {
+      button.classList.add('selected');
+    }
+
+    button.onclick = async () => {
+      if (!user) {
+        openAuth();
+        return;
+      }
+
+      if (button.disabled) return;
+
+      container.querySelectorAll('button').forEach(
+        item => item.disabled = true
+      );
+
+      let result;
+
+      if (myReaction?.reaction === emoji) {
+        result = await sb
+          .from('post_reactions')
+          .delete()
+          .eq('post_id', post.id)
+          .eq('user_id', user.id);
+      } else {
+        result = await sb
+          .from('post_reactions')
+          .upsert(
+            {
+              post_id: post.id,
+              user_id: user.id,
+              reaction: emoji
+            },
+            { onConflict: 'post_id,user_id' }
+          );
+      }
+
+      if (result.error) {
+        alert('Could not save reaction: ' + result.error.message);
+        container.querySelectorAll('button').forEach(
+          item => item.disabled = false
+        );
+        return;
+      }
+
+      const refreshed = await sb
+        .from('post_reactions')
+        .select('post_id,user_id,reaction')
+        .eq('post_id', post.id);
+
+      if (refreshed.error) {
+        alert('Reaction saved, but counts could not refresh: ' +
+          refreshed.error.message);
+        return;
+      }
+
+      reactionsCache[post.id] = refreshed.data || [];
+      container.replaceWith(createPostReactions(post));
+    };
+
+    container.append(button);
+  });
+
+  return container;
+}
 function makePostCard(post, admin = false) {
   const c = document.createElement('article');
   c.className = 'card';
@@ -980,6 +1071,7 @@ function makePostCard(post, admin = false) {
     p.textContent = post.description;
     b.append(p);
   }
+    b.append(createPostReactions(post));
 
   const view = document.createElement('button');
   view.type = 'button';
