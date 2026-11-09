@@ -14,6 +14,7 @@ const accountEmail = name => `${name.toLowerCase()}@username.gamevault.invalid`;
 const configured=SUPABASE_URL.startsWith('https://')&&!SUPABASE_URL.includes('PASTE_YOUR')&&SUPABASE_PUBLISHABLE_KEY&&!SUPABASE_PUBLISHABLE_KEY.includes('PASTE_YOUR');
 if(configured){sb=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);start()}else{$('gallery-grid').textContent='Add your Supabase URL and publishable key in js/config.js to connect the vault.';$('upload-status').textContent='Waiting for Supabase configuration.'}
 async function start() {
+  $('dm-search-button')?.addEventListener('click', searchGameVaultUsers);
   const { data } = await sb.auth.getSession();
   user = data.session?.user || null;
 
@@ -40,6 +41,7 @@ async function start() {
   updateUpload();
 }
 function usernameOf(u){return u?.user_metadata?.username||u?.email?.split('@')[0]||'Player'}
+
 async function searchGameVaultUsers() {
   const input = $('dm-user-search');
   const results = $('dm-search-results');
@@ -84,7 +86,39 @@ async function searchGameVaultUsers() {
     const name = document.createElement('span');
     name.textContent = '@' + result.username;
 
-    item.appendChild(name);
+    const requestButton = document.createElement('button');
+    requestButton.type = 'button';
+    requestButton.textContent = 'Send request';
+
+    requestButton.addEventListener('click', async () => {
+      requestButton.disabled = true;
+      requestButton.textContent = 'Sending...';
+
+      const { error: requestError } = await sb
+        .from('dm_requests')
+        .insert({
+          sender_id: user.id,
+          recipient_id: result.user_id,
+          status: 'pending'
+        });
+
+      if (requestError) {
+        requestButton.disabled = false;
+
+        if (requestError.code === '23505') {
+          requestButton.textContent = 'Already requested';
+        } else {
+          requestButton.textContent = 'Try again';
+          console.error('DM request error:', requestError);
+        }
+
+        return;
+      }
+
+      requestButton.textContent = 'Request sent';
+    });
+
+    item.append(name, requestButton);
     results.appendChild(item);
   });
 }
