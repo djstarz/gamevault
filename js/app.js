@@ -998,10 +998,10 @@ $('chat-media-input').onchange = () => {
   $('chat-feedback').textContent = 'Attachment ready to send.';
 };
 
+
 function addChatMessage(message) {
   const container = $('chat-messages');
 
-  // Prevent duplicate messages from Realtime and the insert response.
   if (container.querySelector(`[data-message-id="${message.id}"]`)) {
     return;
   }
@@ -1050,6 +1050,25 @@ function addChatMessage(message) {
     item.append(video);
   }
 
+  // Show controls only on the current user's messages.
+  if (user && user.id === message.user_id) {
+    const actions = document.createElement('div');
+    actions.className = 'chat-message-actions';
+
+    const edit = document.createElement('button');
+    edit.type = 'button';
+    edit.textContent = 'Edit';
+    edit.onclick = () => editChatMessage(message);
+
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.textContent = 'Delete';
+    remove.onclick = () => deleteChatMessage(message);
+
+    actions.append(edit, remove);
+    item.append(actions);
+  }
+
   container.append(item);
 
   while (container.children.length > 50) {
@@ -1058,6 +1077,87 @@ function addChatMessage(message) {
 
   container.scrollTop = container.scrollHeight;
 }
+
+async function editChatMessage(message) {
+  if (!user || message.user_id !== user.id) return;
+
+  const updated = prompt('Edit your message:', message.message || '');
+
+  if (updated === null) return;
+
+  const newMessage = updated.trim();
+
+  if (newMessage.length > 500) {
+    alert('Messages cannot exceed 500 characters.');
+    return;
+  }
+
+  if (!newMessage && !message.media_url) {
+    alert('A message cannot be empty without an attachment.');
+    return;
+  }
+
+  const { data, error } = await sb
+    .from('chat_messages')
+    .update({ message: newMessage })
+    .eq('id', message.id)
+    .eq('user_id', user.id)
+    .select('id,user_id,username,message,media_url,media_type,storage_path,created_at')
+    .single();
+
+  if (error) {
+    alert('Could not edit message: ' + error.message);
+    return;
+  }
+
+  const oldItem = $('chat-messages')
+    .querySelector(`[data-message-id="${message.id}"]`);
+
+  if (oldItem) oldItem.remove();
+
+  addChatMessage(data);
+}
+
+async function deleteChatMessage(message) {
+  if (!user || message.user_id !== user.id) return;
+
+  if (!confirm('Delete this message? This cannot be undone.')) return;
+
+  const { data, error } = await sb
+    .from('chat_messages')
+    .delete()
+    .eq('id', message.id)
+    .eq('user_id', user.id)
+    .select('id')
+    .maybeSingle();
+
+  if (error) {
+    alert('Could not delete message: ' + error.message);
+    return;
+  }
+
+  if (!data) {
+    alert('Message was not deleted. Check your permissions.');
+    return;
+  }
+
+  const item = $('chat-messages')
+    .querySelector(`[data-message-id="${message.id}"]`);
+
+  if (item) item.remove();
+
+  if (message.storage_path) {
+    const { error: storageError } = await sb.storage
+      .from('gamevault-media')
+      .remove([message.storage_path]);
+
+    if (storageError) {
+      alert('Message deleted, but its attachment could not be removed: ' +
+        storageError.message);
+    }
+  }
+}
+
 
 async function initializeChat() {
   if (!sb || chatStarted) return;
@@ -1086,6 +1186,7 @@ async function initializeChat() {
   updateChatAccess();
   $('chat-status').textContent = 'Connected';
 
+
   chatChannel = sb
     .channel('gamevault-community-chat')
     .on(
@@ -1097,10 +1198,41 @@ async function initializeChat() {
       },
       payload => addChatMessage(payload.new)
     )
+    .on(
+      'postgres_changes',
+      {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'chat_messages'
+      },
+      payload => {
+        const oldItem = $('chat-messages')
+          .querySelector(`[data-message-id="${payload.new.id}"]`);
+
+        if (oldItem) oldItem.remove();
+
+        addChatMessage(payload.new);
+      }
+    )
+    .on(
+      'postgres_changes',
+      {
+        event: 'DELETE',
+        schema: 'public',
+        table: 'chat_messages'
+      },
+      payload => {
+        const oldItem = $('chat-messages')
+          .querySelector(`[data-message-id="${payload.old.id}"]`);
+
+        if (oldItem) oldItem.remove();
+      }
+    )
     .subscribe(status => {
       $('chat-status').textContent =
         status === 'SUBSCRIBED' ? 'Connected' : 'Connecting…';
     });
+
 }
 
 $('chat-form').onsubmit = async event => {
