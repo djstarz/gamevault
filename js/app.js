@@ -1084,10 +1084,25 @@ function addChatMessage(message) {
       deleteChatMessage(message);
     };
 
-    menuButton.onclick = () => {
-      menu.hidden = !menu.hidden;
-      menuButton.setAttribute('aria-expanded', String(!menu.hidden));
-    };
+menuButton.onclick = () => {
+  const shouldOpen = menu.hidden;
+
+  document.querySelectorAll('.chat-message-menu').forEach(openMenu => {
+    openMenu.hidden = true;
+
+    const button = openMenu.parentElement
+      ?.querySelector('.chat-menu-button');
+
+    if (button) {
+      button.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  if (shouldOpen) {
+    menu.hidden = false;
+    menuButton.setAttribute('aria-expanded', 'true');
+  }
+};
 
     actions.append(menuButton, menu);
     menu.append(edit, remove);
