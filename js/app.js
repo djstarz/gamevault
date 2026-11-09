@@ -1716,7 +1716,6 @@ $('admin-refresh').onclick=async()=>{if(!isAdmin)return;$('admin-message').textC
 // ================= GAMEVAULT APP UPDATE CHECKER =================
 
 async function checkGameVaultUpdate() {
-  // Do not show Android update notices in ordinary web browsers.
   const isAndroidApp =
     /Android/i.test(navigator.userAgent) &&
     (window.Capacitor?.isNativePlatform?.() === true);
@@ -1724,29 +1723,55 @@ async function checkGameVaultUpdate() {
   if (!isAndroidApp) return;
 
   try {
-    const response = await fetch(
-      'https://djstarz.github.io/gamevault/version.json?t=' + Date.now()
-    );
+    const [installedResponse, remoteResponse] = await Promise.all([
+      fetch('./app-version.json?t=' + Date.now()),
+      fetch('https://djstarz.github.io/gamevault/version.json?t=' + Date.now())
+    ]);
 
-    if (!response.ok) return;
+    if (!installedResponse.ok || !remoteResponse.ok) return;
 
-    const update = await response.json();
-    const currentVersion = '1.0.0';
+    const installed = await installedResponse.json();
+    const update = await remoteResponse.json();
 
-    if (update.version === currentVersion) return;
+    const parseVersion = v => v.split('.').map(Number);
+
+    const isNewer = (remote, current) => {
+      const a = parseVersion(remote);
+      const b = parseVersion(current);
+
+      for (let i = 0; i < 3; i++) {
+        if ((a[i] || 0) > (b[i] || 0)) return true;
+        if ((a[i] || 0) < (b[i] || 0)) return false;
+      }
+
+      return false;
+    };
+
+    if (!installed.version || !update.version) return;
+    if (!isNewer(update.version, installed.version)) return;
 
     const notice = document.createElement('div');
     notice.className = 'gv-update-notice';
 
-    notice.innerHTML = `
-      <strong>GameVault Update Available!</strong>
-      <p>${update.message || 'A new GameVault update is available.'}</p>
-      <a href="${update.download_url}" target="_blank">
-        Download Update
-      </a>
-    `;
+    const heading = document.createElement('strong');
+    heading.textContent = 'GameVault Update Available!';
+
+    const message = document.createElement('p');
+    message.textContent = update.message || 'A new GameVault update is available.';
+
+    notice.append(heading, message);
+
+    if (update.download_url) {
+      const link = document.createElement('a');
+      link.href = update.download_url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = 'Download Update';
+      notice.append(link);
+    }
 
     document.body.appendChild(notice);
+
   } catch (error) {
     console.log('GameVault update check failed:', error);
   }
