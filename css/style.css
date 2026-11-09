@@ -1008,3 +1008,47 @@ body.chat-page #community-chat .chat-composer {
   border: none !important;
   padding: 0;
 }
+/* ================= CHAT SPACE LAYOUT ================= */
+
+body.chat-page {
+  height: 100vh;
+  overflow: hidden;
+}
+
+body.chat-page main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+body.chat-page .content-layout,
+body.chat-page .primary-column {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+body.chat-page #community-chat {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 24px !important;
+  margin: 0;
+}
+
+body.chat-page #community-chat .chat-messages {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+  max-height: none;
+  overflow-y: auto;
+}
+
+body.chat-page #community-chat .chat-form {
+  flex-shrink: 0;
+  margin-top: auto;
+}
