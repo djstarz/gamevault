@@ -975,13 +975,13 @@ body.chat-page #community-chat .chat-composer {
   padding: 0;
 }
 
-/* ================= GAMEVAULT FULLSCREEN CHAT ================= */
+
+/* ================= GAMEVAULT FULLSCREEN CHAT FIX ================= */
 
 html,
 body.chat-page {
   width: 100%;
   height: 100%;
-  min-height: 100%;
   margin: 0;
 }
 
@@ -993,12 +993,13 @@ body.chat-page {
   overflow: hidden;
 }
 
-/* Keep navigation at the top */
+/* Header */
 body.chat-page .site-header {
-  flex: 0 0 auto;
+  position: relative;
+  flex: 0 0 76px;
 }
 
-/* Hide homepage elements */
+/* Hide unnecessary homepage content */
 body.chat-page .welcome-banner,
 body.chat-page .community-heading,
 body.chat-page #gallery,
@@ -1009,9 +1010,9 @@ body.chat-page .site-footer {
   display: none !important;
 }
 
-/* Main area fills everything below navigation */
+/* Main viewport */
 body.chat-page main.page-shell {
-  flex: 1 1 auto;
+  flex: 1 1 0;
   min-height: 0;
   width: 100%;
   max-width: none;
@@ -1021,55 +1022,58 @@ body.chat-page main.page-shell {
   flex-direction: column;
 }
 
-/* Expand all parent containers */
+/* Important: stack and stretch the containers */
 body.chat-page .content-layout {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex: 1 1 0;
   min-height: 0;
   width: 100%;
-  max-width: none;
   margin: 0;
-  display: flex;
 }
 
 body.chat-page .primary-column {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
   min-width: 0;
   min-height: 0;
   width: 100%;
-  display: flex;
-  flex-direction: column;
 }
 
-/* Flat chat interface */
+/* Flat chat surface */
 body.chat-page #community-chat {
-  flex: 1 1 auto;
+  display: flex !important;
+  flex-direction: column;
+  flex: 1 1 0;
   min-height: 0;
   width: 100%;
   max-width: none;
   height: auto;
   margin: 0;
   padding: 12px 0 !important;
-  display: flex !important;
-  flex-direction: column;
   background: transparent !important;
   border: none !important;
   border-radius: 0 !important;
   box-shadow: none !important;
 }
 
-/* Remove the large introductory heading */
+/* Hide introductory chat heading */
 body.chat-page #community-chat > .panel-heading {
   display: none !important;
 }
 
-/* Room status */
+/* Room toolbar */
 body.chat-page #community-chat .chat-toolbar {
   flex: 0 0 auto;
-  margin-bottom: 12px;
+  margin: 5px 0 12px;
 }
 
-/* Message history gets all remaining space */
+/* Message history takes all remaining space */
 body.chat-page #chat-messages {
+  display: flex;
+  flex-direction: column;
   flex: 1 1 0;
   min-height: 0;
   height: auto;
@@ -1077,24 +1081,45 @@ body.chat-page #chat-messages {
   width: 100%;
   overflow-y: auto;
   margin: 0;
-  border: none;
-  border-radius: 0;
+  padding: 16px;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
 }
 
-/* Composer stays at the bottom */
+/* Message composer */
 body.chat-page #chat-form {
+  display: flex;
   flex: 0 0 auto;
   width: 100%;
-  margin-top: 12px;
+  margin: 12px 0 0;
+  padding: 14px 0;
+  border-top: 1px solid var(--gv-border);
+  background: transparent !important;
 }
 
+/* Input expands */
 body.chat-page #chat-input {
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
 }
 
+/* Attachment preview and feedback */
 body.chat-page #chat-attachment-preview,
 body.chat-page #chat-feedback {
   flex: 0 0 auto;
 }
 
+body.chat-page #chat-feedback {
+  margin: 5px 0;
+}
+
+@media (max-width: 720px) {
+  body.chat-page main.page-shell {
+    padding: 0 12px;
+  }
+
+  body.chat-page .site-header {
+    flex-basis: 66px;
+  }
+}
