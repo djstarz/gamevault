@@ -248,12 +248,14 @@ $('dm-conversations')?.addEventListener('click', event => {
   $('dm-chat-active').hidden = false;
   $('dm-chat-username').textContent = conversation.username || 'Player';
 
-  $('dm-messages').replaceChildren();
-  $('dm-message-feedback').textContent = '';
+$('dm-messages').replaceChildren();
+$('dm-message-feedback').textContent = '';
 
-  document.querySelectorAll('.gv-dm-conversation').forEach(item => {
-    item.classList.toggle('active', item === button);
-  });
+document.querySelectorAll('.gv-dm-conversation').forEach(item => {
+  item.classList.toggle('active', item === button);
+});
+
+loadDmMessages();
 });
 async function loadDmMessages() {
   const container = $('dm-messages');
