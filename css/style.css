@@ -1505,3 +1505,313 @@ button[type="submit"]:hover:not(:disabled),
   outline: 2px solid var(--blue);
   outline-offset: 2px;
 }
+/* ================================
+   GAMEVAULT PRIVATE INBOX
+================================ */
+
+.gv-inbox-panel {
+  margin-top: 24px;
+  scroll-margin-top: 100px;
+}
+
+.gv-inbox-search {
+  display: flex;
+  gap: 10px;
+  margin: 22px 0 12px;
+}
+
+.gv-inbox-search input,
+.gv-dm-message-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 13px 15px;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  outline: none;
+}
+
+.gv-inbox-search input:focus,
+.gv-dm-message-form input:focus {
+  border-color: var(--blue);
+}
+
+.gv-dm-search-results {
+  margin-bottom: 20px;
+}
+
+.gv-dm-search-results p,
+.gv-dm-requests p,
+.gv-dm-conversations p {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.gv-inbox-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.75fr) minmax(0, 1.6fr);
+  gap: 16px;
+  min-height: 420px;
+}
+
+.gv-inbox-sidebar,
+.gv-inbox-chat {
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 13px;
+}
+
+.gv-inbox-sidebar {
+  padding: 15px;
+}
+
+.gv-inbox-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 3px 0 12px;
+}
+
+.gv-inbox-heading:not(:first-child) {
+  margin-top: 24px;
+}
+
+.gv-inbox-heading h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.gv-inbox-heading > span {
+  display: grid;
+  place-items: center;
+  min-width: 23px;
+  height: 23px;
+  padding: 0 6px;
+  color: var(--blue);
+  background: var(--surface-3);
+  border-radius: 20px;
+  font-size: 11px;
+}
+
+.gv-dm-requests,
+.gv-dm-conversations {
+  display: grid;
+  gap: 8px;
+}
+
+.gv-inbox-chat {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.gv-dm-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 35px 20px;
+  text-align: center;
+}
+
+.gv-dm-empty > span {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin-bottom: 15px;
+  color: var(--blue);
+  background: var(--surface-3);
+  border-radius: 16px;
+  font-size: 25px;
+}
+
+.gv-dm-empty h3 {
+  margin: 0 0 7px;
+  color: var(--text);
+}
+
+.gv-dm-empty p {
+  max-width: 280px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.gv-dm-chat-header {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.gv-dm-chat-header h3 {
+  margin: 0 0 4px;
+  color: var(--text);
+  font-size: 15px;
+}
+
+.gv-dm-chat-header span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.gv-dm-messages {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 280px;
+  max-height: 420px;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.gv-dm-message-form {
+  display: flex;
+  gap: 9px;
+  padding: 13px;
+  border-top: 1px solid var(--line);
+}
+
+.gv-dm-message-form button {
+  flex-shrink: 0;
+}
+
+#dm-message-feedback {
+  margin: 0;
+  padding: 0 13px 10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.gv-dm-search-result,
+.gv-dm-request,
+.gv-dm-conversation {
+  padding: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+}
+
+.gv-dm-search-result,
+.gv-dm-request {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.gv-dm-user-info {
+  min-width: 0;
+}
+
+.gv-dm-user-info strong {
+  display: block;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 13px;
+  text-overflow: ellipsis;
+}
+
+.gv-dm-user-info small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.gv-dm-request-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.gv-dm-request-actions button {
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  color: var(--text);
+  background: var(--surface-3);
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.gv-dm-conversation {
+  width: 100%;
+  text-align: left;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.gv-dm-conversation:hover,
+.gv-dm-conversation.active {
+  background: var(--surface-3);
+  border-color: var(--blue);
+}
+
+.gv-dm-bubble {
+  max-width: 78%;
+  padding: 10px 13px;
+  color: var(--text);
+  background: var(--surface-3);
+  border-radius: 12px 12px 12px 3px;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.gv-dm-bubble.own {
+  align-self: flex-end;
+  background: #24466a;
+  border-radius: 12px 12px 3px 12px;
+}
+
+.gv-dm-bubble small {
+  display: block;
+  margin-top: 5px;
+  color: #b7c8dc;
+  font-size: 10px;
+}
+
+/* Responsive Inbox */
+
+@media (max-width: 700px) {
+  .gv-inbox-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .gv-inbox-sidebar {
+    order: 1;
+  }
+
+  .gv-inbox-chat {
+    order: 2;
+    min-height: 360px;
+  }
+
+  .gv-inbox-search {
+    flex-wrap: wrap;
+  }
+
+  .gv-inbox-search input {
+    width: 100%;
+  }
+
+  .gv-inbox-search button {
+    width: 100%;
+  }
+
+  .gv-dm-message-form {
+    gap: 7px;
+  }
+
+  .gv-dm-message-form button {
+    padding-inline: 12px;
+  }
+}
