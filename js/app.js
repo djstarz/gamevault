@@ -535,7 +535,7 @@ async function loadAvatar() {
 
   const { data, error } = await sb
     .from('profiles')
-    .select('avatar_path')
+.select('avatar_path, display_name')
     .eq('id', user.id)
     .maybeSingle();
 
