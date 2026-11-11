@@ -2075,19 +2075,24 @@ async function loadPosts() {
 
     const { data: profiles, error: profilesError } = await sb
       .from('profiles')
-      .select('id, username')
+      .select('id, username, avatar_path')
       .in('id', userIds);
 
     if (profilesError) {
       console.error('Could not load post authors:', profilesError.message);
     } else {
-      const usernames = Object.fromEntries(
-        (profiles || []).map(profile => [profile.id, profile.username])
-      );
+      const authorProfiles = Object.fromEntries(
+  (profiles || []).map(profile => [profile.id, profile])
+);
 
-      postsCache.forEach(post => {
-        post.username = usernames[post.user_id] || 'Player';
-      });
+postsCache.forEach(post => {
+  const profile = authorProfiles[post.user_id];
+  post.username = profile?.username || 'Player';
+
+  post.avatar_url = profile?.avatar_path
+    ? sb.storage.from('gamevault-avatars').getPublicUrl(profile.avatar_path).data.publicUrl
+    : null;
+});
     }
   }
   if (postsCache.length) {
