@@ -379,6 +379,53 @@ $('upload-close')?.addEventListener('click', () => {
   $('upload-dialog')?.close();
 });
 
+let uploadPreviewUrl = '';
+
+$('media')?.addEventListener('change', () => {
+  const file = $('media').files?.[0];
+  const preview = $('upload-preview');
+  if (!preview) return;
+
+  if (uploadPreviewUrl) {
+    URL.revokeObjectURL(uploadPreviewUrl);
+    uploadPreviewUrl = '';
+  }
+
+  const mediaBox = $('upload-preview-media');
+  mediaBox.replaceChildren();
+
+  if (!file) {
+    preview.hidden = true;
+    return;
+  }
+
+  preview.hidden = false;
+  $('upload-file-name').textContent = file.name;
+  $('upload-file-size').textContent =
+    `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+
+  const media = document.createElement(
+    file.type.startsWith('video/') ? 'video' : 'img'
+  );
+
+  uploadPreviewUrl = URL.createObjectURL(file);
+  media.src = uploadPreviewUrl;
+
+  if (file.type.startsWith('video/')) {
+    media.controls = true;
+    media.preload = 'metadata';
+  } else {
+    media.alt = file.name;
+  }
+
+  mediaBox.appendChild(media);
+  $('upload-progress-label').textContent = 'Ready to upload';
+  $('upload-progress-percent').textContent = '0%';
+  $('upload-progress-bar').style.width = '0%';
+  $('upload-progress-size').textContent = '0 MB uploaded';
+});
+
+
 $('upload-form').onsubmit = async event => {
   event.preventDefault();
 
