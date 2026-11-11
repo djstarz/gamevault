@@ -351,7 +351,7 @@ async function loadDmMessages() {
 
   const { data: dmProfiles } = await sb
     .from('profiles')
-    .select('id, username, avatar_path')
+    .select('id, username, display_name, avatar_path')
     .in('id', dmUserIds);
 
   const dmProfileMap = Object.fromEntries(
