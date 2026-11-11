@@ -1948,3 +1948,26 @@ select,
   color: #ffffff !important;
   box-shadow: none !important;
 }
+/* GameVault v1.0.6 — Post page comment buttons */
+
+#post-page button:not(.post-reaction) {
+  border: 1px solid #39465a !important;
+  border-radius: 8px !important;
+  padding: 8px 11px !important;
+  background: #232c3a !important;
+  color: #dce8f7 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  cursor: pointer;
+  box-shadow: none !important;
+}
+
+#post-page button:not(.post-reaction):hover {
+  background: #2b394b !important;
+  border-color: #6489b5 !important;
+}
+
+#post-page button:focus-visible {
+  outline: 2px solid var(--blue) !important;
+  outline-offset: 2px;
+}
