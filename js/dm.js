@@ -403,6 +403,9 @@ $('dm-conversations').addEventListener('click', event => {
 
   activeDmConversation = conversation;
 
+  $('dm-friends-view').hidden = true;
+  $('dm-chat-view').hidden = false;
+
   $('dm-chat-empty').hidden = true;
   $('dm-chat-active').hidden = false;
   $('dm-chat-username').textContent = conversation.username || 'Player';
@@ -410,12 +413,18 @@ $('dm-conversations').addEventListener('click', event => {
   $('dm-messages').replaceChildren();
   $('dm-message-feedback').textContent = '';
 
-  document.querySelectorAll('.gv-dm-conversation').forEach(item => {
-    item.classList.toggle('active', item === button);
-  });
-
   loadDmMessages();
   subscribeToDmConversation(conversation.conversation_id);
+});
+
+$('dm-back-to-friends').addEventListener('click', () => {
+  $('dm-chat-view').hidden = true;
+  $('dm-friends-view').hidden = false;
+
+  if (dmChannel) {
+    sb.removeChannel(dmChannel);
+    dmChannel = null;
+  }
 });
 
 async function loadDmMessages() {
