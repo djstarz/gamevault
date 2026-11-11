@@ -2632,3 +2632,86 @@ body.chat-page #chat-messages::-webkit-scrollbar {
     grid-template-columns: 1fr;
   }
 }
+
+/* GameVault upload preview and live progress */
+.upload-preview {
+  display: grid;
+  gap: 12px;
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: #111720;
+}
+
+.upload-preview[hidden] {
+  display: none;
+}
+
+.upload-preview-media {
+  display: grid;
+  place-items: center;
+  min-height: 100px;
+  max-height: 260px;
+  overflow: hidden;
+  border-radius: 9px;
+  background: #090d13;
+}
+
+.upload-preview-media img,
+.upload-preview-media video {
+  display: block;
+  max-width: 100%;
+  max-height: 250px;
+  object-fit: contain;
+}
+
+.upload-preview-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.upload-preview-details strong {
+  overflow-wrap: anywhere;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.upload-preview-details span,
+#upload-progress-size {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.upload-progress-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+#upload-progress-percent {
+  color: var(--blue);
+  font-variant-numeric: tabular-nums;
+}
+
+.upload-progress-track {
+  height: 9px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #293342;
+}
+
+.upload-progress-bar {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--blue);
+  transition: width .15s linear;
+}
+
+#upload-progress-size {
+  margin: 0;
+}
