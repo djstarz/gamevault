@@ -2254,3 +2254,20 @@ body.chat-page #chat-messages {
 body.chat-page #chat-messages::-webkit-scrollbar {
   display: none;
 }
+/* GameVault v1.0.6 — Match Comment button to Share Post */
+
+.gv-comment-post {
+  border: 1px solid #39465a !important;
+  border-radius: 8px !important;
+  padding: 8px 11px !important;
+  background: #232c3a !important;
+  color: #dce8f7 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  cursor: pointer;
+}
+
+.gv-comment-post:hover {
+  background: #2b394b !important;
+  border-color: #6489b5 !important;
+}
