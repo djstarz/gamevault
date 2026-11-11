@@ -657,6 +657,7 @@ async function initializePage() {
   }
 
   user = data.session?.user || null;
+startGameVaultPresence();
 await loadAvatar();
 renderAccount();
 
