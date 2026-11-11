@@ -178,6 +178,91 @@ function renderReactions(reactions) {
   });
 }
 
+function openReplyModal(comment) {
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+      position:fixed;inset:0;z-index:9999;
+      display:flex;align-items:center;justify-content:center;
+      padding:20px;background:rgba(0,0,0,.75);
+    `;
+
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+      width:100%;max-width:440px;padding:24px;
+      background:#171b23;border:1px solid #2b3341;
+      border-radius:16px;color:#f2f5fb;
+      box-shadow:0 15px 50px rgba(0,0,0,.5);
+    `;
+
+    const title = document.createElement('h3');
+    title.textContent = 'Reply to comment';
+
+    const original = document.createElement('p');
+    original.textContent = `${comment.username || 'Player'}: ${comment.content}`;
+    original.style.cssText = `
+      padding:12px;background:#222a37;border-radius:9px;
+      color:#9aa5b6;font-size:14px;overflow-wrap:anywhere;
+    `;
+
+    const input = document.createElement('textarea');
+    input.placeholder = 'Write your reply...';
+    input.rows = 4;
+    input.style.cssText = `
+      box-sizing:border-box;width:100%;resize:vertical;
+      padding:12px;background:#101318;color:#f2f5fb;
+      border:1px solid #2b3341;border-radius:9px;
+      font:inherit;outline:none;
+    `;
+
+    const actions = document.createElement('div');
+    actions.style.cssText = `
+      display:flex;justify-content:flex-end;gap:10px;margin-top:16px;
+    `;
+
+    const cancel = document.createElement('button');
+    cancel.textContent = 'Cancel';
+
+    const send = document.createElement('button');
+    send.textContent = 'Send Reply';
+
+    [cancel, send].forEach(button => {
+      button.type = 'button';
+      button.style.cssText = `
+        padding:10px 16px;border:0;border-radius:8px;
+        cursor:pointer;font-weight:600;
+      `;
+    });
+
+    cancel.style.background = '#2b3341';
+    cancel.style.color = '#f2f5fb';
+    send.style.background = '#4b91e2';
+    send.style.color = '#fff';
+
+    function close(value) {
+      overlay.remove();
+      resolve(value);
+    }
+
+    cancel.onclick = () => close(null);
+    send.onclick = () => {
+      const value = input.value.trim();
+      if (value) close(value);
+    };
+
+    overlay.onclick = event => {
+      if (event.target === overlay) close(null);
+    };
+
+    actions.append(cancel, send);
+    modal.append(title, original, input, actions);
+    overlay.append(modal);
+    document.body.append(overlay);
+
+    input.focus();
+  });
+}
+
 async function loadComments(postId) {
   const list = $('post-comments-list');
   list.textContent = 'Loading comments...';
