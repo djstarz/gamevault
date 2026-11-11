@@ -1872,18 +1872,18 @@ select,
   box-shadow: none;
 }
 
-/* GameVault v1.0.6 — Restore Share Post buttons to blue/grey theme */
+
+/* GameVault v1.0.6 — Match Share Post to the post-page theme */
 
 .gv-share-post {
   border: 1px solid #39465a !important;
   border-radius: 8px !important;
   padding: 8px 11px !important;
-  background: #222b39 !important;
+  background: #232c3a !important;
   color: #dce8f7 !important;
   font-size: 11px !important;
   font-weight: 700 !important;
   cursor: pointer;
-  transition: background .18s, border-color .18s;
 }
 
 .gv-share-post:hover {
@@ -1891,21 +1891,39 @@ select,
   border-color: #6489b5 !important;
 }
 
-.gv-modal button {
-  border-color: #39465a;
-  border-radius: 9px;
-  background: #222b39;
-  color: var(--text);
-  box-shadow: none;
+.gv-modal {
+  background: var(--surface) !important;
+  border-color: var(--line) !important;
+  color: var(--text) !important;
+}
+
+.gv-modal h3 {
+  color: var(--text) !important;
+}
+
+.gv-modal p {
+  color: var(--muted) !important;
+}
+
+.gv-modal button,
+.gv-modal select {
+  border: 1px solid #39465a !important;
+  border-radius: 10px !important;
+  background: #222b39 !important;
+  color: #dce8f7 !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  box-shadow: none !important;
 }
 
 .gv-modal button:hover:not(:disabled) {
-  border-color: #6489b5;
-  background: #2b394b;
-  box-shadow: none;
+  background: #2b394b !important;
+  border-color: #6489b5 !important;
+  box-shadow: none !important;
 }
 
 .gv-modal button:focus-visible,
 .gv-modal select:focus-visible {
-  outline-color: var(--blue);
+  outline: 2px solid var(--blue) !important;
+  outline-offset: 2px;
 }
