@@ -2564,3 +2564,71 @@ body.chat-page #chat-messages::-webkit-scrollbar {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+/* GameVault upload popup */
+.upload-open-button {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #42658b;
+  border-radius: 12px;
+  background: #243449;
+  color: var(--blue);
+  font-size: 27px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background .2s, border-color .2s, transform .2s;
+}
+
+.upload-open-button:hover {
+  background: #304763;
+  border-color: var(--blue);
+  transform: translateY(-1px);
+}
+
+.upload-dialog {
+  width: min(720px, calc(100% - 28px));
+  max-width: none;
+  max-height: calc(100% - 28px);
+  overflow-y: auto;
+  margin: auto;
+  padding: 26px;
+  border: 1px solid #354154;
+  border-radius: 19px;
+  background: #171c25;
+  color: var(--text);
+  box-shadow: 0 25px 90px #0009;
+}
+
+.upload-dialog::backdrop {
+  background: #05080dcc;
+  backdrop-filter: blur(5px);
+}
+
+.upload-dialog #upload-close {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #202733;
+  color: var(--muted);
+  font-size: 23px;
+  cursor: pointer;
+}
+
+.upload-dialog #upload-close:hover {
+  color: var(--text);
+  border-color: var(--blue);
+}
+
+@media (max-width: 600px) {
+  .upload-dialog {
+    padding: 19px;
+  }
+
+  .upload-dialog .upload-form {
+    grid-template-columns: 1fr;
+  }
+}
