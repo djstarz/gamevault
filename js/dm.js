@@ -475,6 +475,28 @@ const onlineUsers = new Set(
     const name = document.createElement('strong');
     name.textContent = username;
 
+    const profile = (profiles || []).find(
+  item => item.username === username
+);
+
+const isOnline = profile && onlineUsers.has(profile.id);
+
+const statusDot = document.createElement('span');
+statusDot.className = isOnline
+  ? 'gv-dm-status-dot online'
+  : 'gv-dm-status-dot offline';
+
+statusDot.title = isOnline
+  ? 'Online'
+  : 'Offline';
+
+statusDot.setAttribute(
+  'aria-label',
+  isOnline ? 'Online' : 'Offline'
+);
+
+name.append(statusDot);
+
     const subtitle = document.createElement('small');
     subtitle.textContent = 'Private conversation';
 
