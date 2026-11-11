@@ -2487,8 +2487,8 @@ function confirmDeleteChatMessage(message) {
 }
 
 
-async function deleteChatMessage(message) {
-    if (!$('chat-messages') || !$('chat-feedback')) return;
+function editChatMessage(message) {
+  if (!$('chat-messages') || !$('chat-feedback')) return;
   if (!user || message.user_id !== user.id) return;
 
   if (!await confirmDeleteChatMessage(message)) return;
