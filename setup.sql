@@ -16,6 +16,8 @@ create table if not exists public.profiles (
 );
 ALTER TABLE public.profiles
 ADD COLUMN IF NOT EXISTS display_name text;
+ALTER TABLE public.profiles
+ADD COLUMN IF NOT EXISTS avatar_path text;
 alter table public.profiles enable row level security;
 
 -- Create a profile automatically for every newly created username account.
