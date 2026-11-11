@@ -7,6 +7,7 @@ const $ = id => document.getElementById(id);
 const sb = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
 let currentUser = null;
+let authReady = false;
 let profileUser = null;
 let accountProfile = null;
 function setStatus(message) {
@@ -217,7 +218,7 @@ function renderProfileAccount() {
   account.replaceChildren();
 
   if (!currentUser) {
-    signIn.hidden = false;
+    signIn.hidden = !authReady;
     return;
   }
 
@@ -375,6 +376,7 @@ async function initializeProfilePage() {
   }
 
   const { data, error } = await sb.auth.getSession();
+  authReady = true;
 
   if (error) {
     console.error('Profile session error:', error);
