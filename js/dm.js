@@ -599,7 +599,7 @@ async function loadDmMessages() {
 
 sender.textContent = own
   ? 'You'
-  : '@' + (activeDmConversation.username || 'Player');
+  : `${activeDmConversation.display_name || activeDmConversation.username || 'Player'} · @${activeDmConversation.username || 'Player'}`;
 
 if (!own) {
   sender.className = 'gv-profile-link';
