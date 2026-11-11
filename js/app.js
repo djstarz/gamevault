@@ -2153,12 +2153,12 @@ function showChatAttachment(file) {
   preview.hidden = false;
 }
 
-$('chat-attach').onclick = () => {
+if ($('chat-attach')) $('chat-attach').onclick = () => {
   if (!user) return openAuth();
   if (!chatSending) $('chat-media-input').click();
 };
 
-$('chat-media-input').onchange = () => {
+if ($('chat-media-input')) $('chat-media-input').onchange = () => {
   const file = $('chat-media-input').files?.[0];
 
   if (!file) return;
@@ -2605,7 +2605,7 @@ async function initializeChat() {
 
 }
 
-$('chat-form').onsubmit = async event => {
+if ($('chat-form')) $('chat-form').onsubmit = async event => {
   event.preventDefault();
 
   if (!user) {
