@@ -1179,8 +1179,8 @@ function openMediaViewer(post) {
   };
 
   dialog.querySelector('#gv-media-share').onclick = () => {
-    openSharePost(post);
-  };
+  openSharePost(post, dialog);
+};
 
   dialog.querySelector('#gv-media-close').onclick = () => dialog.close();
 
