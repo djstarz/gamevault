@@ -96,8 +96,7 @@ const displayName = accountDisplayName || username;
 
   const name = document.createElement('span');
   name.className = 'profile-trigger-name';
-  name.textContent = username;
-
+name.textContent = displayName;
   const arrow = document.createElement('span');
   arrow.className = 'profile-chevron';
   arrow.textContent = '⌄';
@@ -112,8 +111,7 @@ const displayName = accountDisplayName || username;
   heading.className = 'profile-dropdown-heading';
 
   const headingName = document.createElement('strong');
-  headingName.textContent = username;
-
+headingName.textContent = displayName;
   const headingLabel = document.createElement('span');
   headingLabel.textContent = 'GameVault member';
 
