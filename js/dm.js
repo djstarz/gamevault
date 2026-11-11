@@ -593,10 +593,19 @@ async function loadDmMessages() {
     const own = message.sender_id === user.id;
     if (own) bubble.classList.add('own');
 
-    const sender = document.createElement('strong');
-    sender.textContent = own
-      ? 'You'
-      : activeDmConversation.username || 'Player';
+   const sender = own
+  ? document.createElement('strong')
+  : document.createElement('a');
+
+sender.textContent = own
+  ? 'You'
+  : '@' + (activeDmConversation.username || 'Player');
+
+if (!own) {
+  sender.className = 'gv-profile-link';
+  sender.href =
+    `profile.html?u=${encodeURIComponent(activeDmConversation.username || '')}`;
+}
 
     const time = document.createElement('time');
     const date = new Date(message.created_at);
