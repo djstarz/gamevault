@@ -60,80 +60,94 @@
         Loading your messages...
       </div>
 
-      <div class="gv-inbox-search">
-        <input
-          id="dm-user-search"
-          type="text"
-          maxlength="24"
-          placeholder="Find a GameVault username..."
-          autocomplete="off"
-        >
-        <button id="dm-search-button" class="button button-primary" type="button">
-          Search
-        </button>
+      
+<div id="dm-friends-view">
+  <div class="gv-inbox-search">
+    <input
+      id="dm-user-search"
+      type="text"
+      maxlength="24"
+      placeholder="Search GameVault players to add..."
+      autocomplete="off"
+    >
+    <button id="dm-search-button" class="button button-primary" type="button">
+      Search
+    </button>
+  </div>
+
+  <div id="dm-search-results" class="gv-dm-search-results">
+    <p>Search for players and add friends.</p>
+  </div>
+
+  <div class="gv-inbox-layout">
+    <aside class="gv-inbox-sidebar">
+      <div class="gv-inbox-heading">
+        <h3>Friend Requests</h3>
+        <span id="dm-request-count">0</span>
       </div>
 
-      <div id="dm-search-results" class="gv-dm-search-results">
-        <p>Search for a player to start a conversation.</p>
+      <div id="dm-requests" class="gv-dm-requests">
+        <p>No pending requests.</p>
       </div>
 
-      <div class="gv-inbox-layout">
-        <aside class="gv-inbox-sidebar">
-          <div class="gv-inbox-heading">
-            <h3>Message requests</h3>
-            <span id="dm-request-count">0</span>
-          </div>
+      <div class="gv-inbox-heading">
+        <h3>Friends</h3>
+      </div>
 
-          <div id="dm-requests" class="gv-dm-requests">
-            <p>No pending requests.</p>
-          </div>
+      <div id="dm-conversations" class="gv-dm-conversations">
+        <p>Your friends will appear here.</p>
+      </div>
+    </aside>
+  </div>
+</div>
 
-          <div class="gv-inbox-heading">
-            <h3>Conversations</h3>
-          </div>
+<div id="dm-chat-view" hidden>
+  <button
+    id="dm-back-to-friends"
+    class="button button-quiet"
+    type="button"
+  >
+    ← Back to Friends
+  </button>
 
-          <div id="dm-conversations" class="gv-dm-conversations">
-            <p>Your conversations will appear here.</p>
-          </div>
-        </aside>
+  <div class="gv-inbox-chat">
+    <div id="dm-chat-empty" class="gv-dm-empty">
+      <span>✉</span>
+      <h3>Your private space</h3>
+      <p>Select a friend to start chatting.</p>
+    </div>
 
-        <div class="gv-inbox-chat">
-          <div id="dm-chat-empty" class="gv-dm-empty">
-            <span>✉</span>
-            <h3>Your private space</h3>
-            <p>Select a conversation or find a player to start messaging.</p>
-          </div>
-
-          <div id="dm-chat-active" hidden>
-            <div class="gv-dm-chat-header">
-              <div>
-                <h3 id="dm-chat-username">Player</h3>
-                <span>Private conversation</span>
-              </div>
-            </div>
-
-            <div id="dm-messages" class="gv-dm-messages" aria-live="polite">
-              Loading messages…
-            </div>
-
-            <form id="dm-message-form" class="gv-dm-message-form">
-              <input
-                id="dm-message-input"
-                type="text"
-                maxlength="2000"
-                placeholder="Write a private message..."
-                autocomplete="off"
-                required
-              >
-              <button class="button button-primary" type="submit">
-                Send ↗
-              </button>
-            </form>
-
-            <p id="dm-message-feedback" role="status"></p>
-          </div>
+    <div id="dm-chat-active" hidden>
+      <div class="gv-dm-chat-header">
+        <div>
+          <h3 id="dm-chat-username">Player</h3>
+          <span>Private conversation</span>
         </div>
       </div>
+
+      <div id="dm-messages" class="gv-dm-messages" aria-live="polite">
+        Loading messages…
+      </div>
+
+      <form id="dm-message-form" class="gv-dm-message-form">
+        <input
+          id="dm-message-input"
+          type="text"
+          maxlength="2000"
+          placeholder="Write a private message..."
+          autocomplete="off"
+          required
+        >
+        <button class="button button-primary" type="submit">
+          Send ↗
+        </button>
+      </form>
+
+      <p id="dm-message-feedback" role="status"></p>
+    </div>
+  </div>
+</div>
+
     </section>
   </main>
 
