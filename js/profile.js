@@ -227,12 +227,14 @@ async function initializeProfilePage() {
 
   currentUser = data.session?.user || null;
 
-  await loadProfile();
+renderProfileAccount();
+await loadProfile();
 
   sb.auth.onAuthStateChange((_event, session) => {
     currentUser = session?.user || null;
+renderProfileAccount();
 
-    setTimeout(() => {
+setTimeout(() => {
       loadProfile();
     }, 0);
   });
