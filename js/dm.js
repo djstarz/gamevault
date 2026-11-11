@@ -107,7 +107,8 @@ function renderAccount() {
   }
 
   addLink('My Profile', 'index.html#home', '◉');
-  addLink('My Posts', 'index.html#gallery', '▤');
+addLink('Friends Chat', 'dm.html', '✉');
+addLink('My Posts', 'index.html#gallery', '▤');
 
   const separator = document.createElement('div');
   separator.className = 'profile-menu-divider';
