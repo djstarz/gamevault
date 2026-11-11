@@ -1,0 +1,63 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101318">
+  <meta name="description" content="View a gaming post on GameVault.">
+  <title>Post — GameVault</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html#home" aria-label="GameVault home">
+      <span class="brand-mark">G</span>
+      <span class="brand-word">GAME<span>VAULT</span><small>YOUR GAMING COMMUNITY</small></span>
+    </a>
+
+    <nav class="top-nav">
+      <a href="index.html#home">Home</a>
+      <a href="index.html#gallery">Discover</a>
+      <a href="chat.html">Chat</a>
+      <a href="index.html#inbox">Inbox</a>
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    <section class="panel" id="post-page">
+      <p id="post-status">Loading post...</p>
+      <div id="post-content" hidden>
+        <div id="post-author"></div>
+        <h1 id="post-title"></h1>
+        <div id="post-media"></div>
+        <p id="post-description"></p>
+        <p id="post-category"></p>
+        <div id="post-reactions"></div>
+        <section id="post-comments">
+          <h2>Comments</h2>
+          <div id="post-comments-list"></div>
+          <form id="post-comment-form" hidden>
+            <textarea id="post-comment-input" maxlength="1000" placeholder="Write a comment..." required></textarea>
+            <button class="button button-primary" type="submit">Post comment</button>
+          </form>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a class="footer-brand" href="index.html#home">GAMEVAULT</a>
+    <span>Made for moments worth keeping.</span>
+    <a href="index.html#home">Back to GameVault ↑</a>
+  </footer>
+
+  <script type="module" src="js/post.js"></script>
+</body>
+</html>
