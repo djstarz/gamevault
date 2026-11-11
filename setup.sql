@@ -46,7 +46,7 @@ WITH CHECK (auth.uid() = id);
 
 REVOKE UPDATE ON TABLE public.profiles FROM authenticated;
 
-GRANT UPDATE (display_name)
+GRANT UPDATE (display_name, avatar_path)
 ON TABLE public.profiles
 TO authenticated;
 -- Allow admins to remove any post. Existing owner-delete policies remain valid.
