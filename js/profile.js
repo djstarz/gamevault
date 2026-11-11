@@ -33,6 +33,28 @@ function avatarUrl(path) {
   return data.publicUrl;
 }
 
+async function loadAccountProfile() {
+  if (!currentUser) {
+    accountProfile = null;
+    return;
+  }
+
+  const { data, error } = await sb
+    .from('profiles')
+    .select('id, username, avatar_path, is_admin')
+    .eq('id', currentUser.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Account profile loading error:', error);
+    accountProfile = null;
+    return;
+  }
+
+  accountProfile = data;
+}
+
+
 async function loadProfile() {
   const requestedUsername =
     new URLSearchParams(location.search).get('u');
