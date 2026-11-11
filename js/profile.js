@@ -8,7 +8,7 @@ const sb = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
 let currentUser = null;
 let profileUser = null;
-
+let accountProfile = null;
 function setStatus(message) {
   $('profile-page-status').textContent = message;
 }
