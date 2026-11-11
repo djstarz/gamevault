@@ -2181,29 +2181,36 @@ select,
 @media (max-width: 750px) {
   #gv-media-viewer {
     width: 96vw !important;
+    height: 94vh !important;
     max-height: 94vh !important;
   }
 
   .gv-media-viewer-layout {
-    grid-template-columns: 1fr;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    height: 94vh;
     max-height: 94vh;
-    overflow-y: auto;
+    overflow: hidden;
   }
 
   #gv-media-display {
-    min-height: 220px;
-    max-height: 48vh;
+    min-height: 0;
+    max-height: none;
     padding: 12px;
+    overflow: hidden;
   }
 
   #gv-media-display img,
   #gv-media-display video {
-    max-height: 45vh;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
   }
 
   .gv-media-side {
-    max-height: 42vh;
+    max-height: 38vh;
     padding: 16px;
+    overflow-y: auto;
     border-left: none;
     border-top: 1px solid var(--line, #39465a);
   }
