@@ -1169,7 +1169,7 @@ async function loadPostComments(postId, dialog) {
 
 const { data: commentProfiles } = await sb
   .from('profiles')
-  .select('id, username, avatar_path')
+  .select('id, username, display_name, avatar_path')
   .in('id', commentUserIds);
 
 const commentProfileMap = Object.fromEntries(
@@ -1177,6 +1177,7 @@ const commentProfileMap = Object.fromEntries(
     profile.id,
     {
       username: profile.username || 'Player',
+displayName: profile.display_name?.trim() || profile.username || 'Player',
       avatarUrl: profile.avatar_path
         ? sb.storage.from('gamevault-avatars').getPublicUrl(profile.avatar_path).data.publicUrl
         : null
