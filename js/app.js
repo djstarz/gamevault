@@ -2481,11 +2481,15 @@ async function addChatMessage(message) {
     minute: '2-digit'
   });
 
-  heading.append(
-  createGameVaultAvatar(messageUsername, messageAvatarUrl),
-  name,
-  time
+  const authorGroup = document.createElement('div');
+authorGroup.style.cssText = 'display:flex;align-items:center;gap:6px;min-width:0;';
+
+authorGroup.append(
+  createGameVaultAvatar(messageUsername, messageAvatarUrl, 'gv-inline-avatar gv-chat-avatar'),
+  name
 );
+
+heading.append(authorGroup, time);
   item.append(heading);
 
   if (message.message?.trim()) {
