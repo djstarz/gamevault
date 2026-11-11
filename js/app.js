@@ -834,10 +834,26 @@ function renderAccount() {
     fileInput.click();
   }, '✎');
 
-  addItem('Account Settings', () => {
+  addItem('Account Settings', async () => {
   closeMenu();
   $('settings-status').textContent = '';
   $('settings-form').reset();
+
+  $('display-name').value = '';
+
+  const { data, error } = await sb
+    .from('profiles')
+    .select('display_name')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (error) {
+    $('settings-status').textContent =
+      'Could not load display name: ' + error.message;
+  } else {
+    $('display-name').value = data?.display_name || '';
+  }
+
   $('settings-dialog').showModal();
 }, '⚙');
 
