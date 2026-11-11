@@ -429,8 +429,7 @@ async function loadDmMessages() {
           .maybeSingle();
 
         shared.textContent =
-          `📎 ${sharedPost.title || 'Untitled post'} · By ${author?.username || 'Player'} — View post`;
-
+          `📎 ${sharedPost.title || 'Untitled post'} · By ${author?.display_name?.trim() || author?.username || 'Player'} — View post`;
         shared.onclick = async () => {
           let post = postsCache.find(
             item => item.id === message.shared_post_id
