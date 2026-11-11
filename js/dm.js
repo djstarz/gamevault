@@ -163,7 +163,29 @@ function renderAccount() {
     window.__gameVaultProfileMenuHandler = true;
   }
 }
+async function loadAvatar() {
+  avatarUrl = null;
+  if (!user) return;
 
+  const { data, error } = await sb
+    .from('profiles')
+    .select('avatar_path')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Could not load avatar:', error.message);
+    return;
+  }
+
+  if (data?.avatar_path) {
+    const { data: imageData } = sb.storage
+      .from('gamevault-avatars')
+      .getPublicUrl(data.avatar_path);
+
+    avatarUrl = imageData.publicUrl;
+  }
+}
 
 async function searchGameVaultUsers() {
   const input = $('dm-user-search');
