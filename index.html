@@ -73,7 +73,70 @@
         </section>
 
         
+<section id="community-chat" class="panel chat-panel">
+  <div class="panel-heading">
+    <div>
+      <span class="eyebrow">LIVE COMMUNITY</span>
+      <h2>Community Chat</h2>
+      <p>Meet other players and talk about your favourite games.</p>
+    </div>
+    <span class="panel-icon">⌁</span>
+  </div>
 
+  <div class="chat-toolbar">
+    <span class="chat-room-status">
+      <span class="status-dot"></span>
+      General chat
+    </span>
+    <span id="chat-status">Connecting…</span>
+  </div>
+
+  <div id="chat-messages" class="chat-messages" aria-live="polite">
+    Loading messages…
+  </div>
+
+  
+<form id="chat-form" class="chat-form">
+  <input
+    id="chat-input"
+    type="text"
+    maxlength="500"
+    placeholder="Write a message..."
+    autocomplete="off"
+  >
+
+  <button
+    id="chat-attach"
+    class="button"
+    type="button"
+    title="Attach an image or video"
+  >
+    📎
+  </button>
+
+  <input
+    id="chat-media-input"
+    type="file"
+    accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime"
+    hidden
+  >
+
+  <button
+    id="chat-send"
+    class="button button-primary"
+    type="submit"
+  >
+    Send ↗
+  </button>
+</form>
+
+<div id="chat-attachment-preview" class="chat-attachment-preview" hidden></div>
+
+
+  <p id="chat-feedback" role="status">
+    Sign in to participate in the conversation.
+  </p>
+</section>
 <section id="inbox" class="panel gv-inbox-panel">
   <div class="panel-heading">
     <div>
