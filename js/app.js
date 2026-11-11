@@ -736,9 +736,9 @@ function renderAccount() {
     dialog.showModal();
   }
 
-  addItem('My Profile', () => {
+    addItem('My Profile', () => {
     closeMenu();
-    openProfile();
+    window.location.href = 'profile.html';
   }, '◉');
 
   addItem('Friends Chat', () => {
