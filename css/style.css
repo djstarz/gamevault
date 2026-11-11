@@ -2075,10 +2075,11 @@ select,
 .gv-media-viewer-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 340px;
+  height: 92vh;
   min-height: 420px;
   max-height: 92vh;
+  overflow: hidden;
 }
-
 #gv-media-display {
   display: flex;
   align-items: center;
