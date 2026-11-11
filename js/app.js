@@ -2110,6 +2110,7 @@ function clearChatAttachment() {
 }
 
 function showChatAttachment(file) {
+    if (!$('chat-attachment-preview')) return;
   clearChatAttachment();
 
   selectedChatFile = file;
