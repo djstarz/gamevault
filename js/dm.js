@@ -69,8 +69,8 @@ function renderAccount() {
 
   signIn.hidden = true;
 
-  const username = usernameOf(user);
-
+const username = usernameOf(user);
+const displayName = accountDisplayName || username;
   const menu = document.createElement('div');
   menu.className = 'profile-menu';
 
