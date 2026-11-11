@@ -2471,7 +2471,7 @@ async function addChatMessage(message) {
   }
   const { data: messageProfile } = await sb
     .from('profiles')
-    .select('username, display_name, avatar_path'))
+    .select('username, display_name, avatar_path')
     .eq('id', message.user_id)
     .maybeSingle();
 
