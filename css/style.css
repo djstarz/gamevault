@@ -1478,44 +1478,7 @@ button[type="submit"]:hover:not(:disabled),
   box-shadow: 0 0 0 3px var(--gv-focus);
 }
 
-.auth-dialog::backdrop,
-.profile-dialog::backdrop,
-.gv-delete-dialog::backdrop,
-.gv-edit-dialog::backdrop,
-.gv-settings-dialog::backdrop,
-.gv-crop-dialog::backdrop,
-#post-viewer::backdrop {
-  background: rgba(3, 3, 10, .78);
-  backdrop-filter: blur(5px);
-}
 
-/* Consistent popup form fields */
-.auth-dialog input,
-.profile-dialog input,
-.gv-edit-dialog input,
-.gv-edit-dialog textarea,
-.gv-edit-dialog select,
-.gv-settings-dialog input,
-.gv-crop-dialog input,
-#post-viewer input,
-#post-viewer textarea {
-  color: var(--gv-text);
-  background: #0d0d19;
-  border: 1px solid var(--gv-border);
-  border-radius: 9px;
-}
-
-.auth-dialog input:focus,
-.gv-edit-dialog input:focus,
-.gv-edit-dialog textarea:focus,
-.gv-edit-dialog select:focus,
-.gv-settings-dialog input:focus,
-#post-viewer input:focus,
-#post-viewer textarea:focus {
-  outline: 1px solid var(--gv-blue);
-  border-color: var(--gv-blue);
-  box-shadow: 0 0 0 3px rgba(0, 217, 255, .10);
-}
 /* ================= POST REACTIONS ================= */
 
 .post-reactions {
