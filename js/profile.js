@@ -487,6 +487,7 @@ await loadProfile();
 
   sb.auth.onAuthStateChange((_event, session) => {
   currentUser = session?.user || null;
+    updateUpload();
 
   setTimeout(async () => {
     await loadAccountProfile();
