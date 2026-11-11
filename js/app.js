@@ -1600,9 +1600,22 @@ function makePostCard(post, admin = false) {
     el.alt = post.title || 'Gaming media';
   }
 
-  el.src = post.media_url;
-  m.append(el);
+ el.src = post.media_url;
+m.append(el);
 
+m.style.cursor = 'pointer';
+m.setAttribute('role', 'button');
+m.setAttribute('tabindex', '0');
+m.setAttribute('aria-label', 'Open post media');
+
+m.addEventListener('click', () => openMediaViewer(post));
+
+m.addEventListener('keydown', event => {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    openMediaViewer(post);
+  }
+});
   const b = document.createElement('div');
   b.className = 'cardbody';
 
