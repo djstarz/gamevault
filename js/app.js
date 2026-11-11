@@ -1877,9 +1877,29 @@ async function loadPosts() {
     return;
   }
 
-  postsCache = r.data || [];
+    postsCache = r.data || [];
   reactionsCache = {};
 
+  if (postsCache.length) {
+    const userIds = [...new Set(postsCache.map(post => post.user_id))];
+
+    const { data: profiles, error: profilesError } = await sb
+      .from('profiles')
+      .select('id, username')
+      .in('id', userIds);
+
+    if (profilesError) {
+      console.error('Could not load post authors:', profilesError.message);
+    } else {
+      const usernames = Object.fromEntries(
+        (profiles || []).map(profile => [profile.id, profile.username])
+      );
+
+      postsCache.forEach(post => {
+        post.username = usernames[post.user_id] || 'Player';
+      });
+    }
+  }
   if (postsCache.length) {
     const { data, error } = await sb
       .from('post_reactions')
