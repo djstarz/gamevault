@@ -486,17 +486,32 @@
    GAMEVAULT — CYBERPUNK NEON THEME
    Append at the bottom of style.css
 ========================================= */
-
 :root {
   color-scheme: dark;
+
+  /* Core surfaces */
   --gv-bg: #090a12;
   --gv-panel: #151426;
   --gv-panel-light: #1d1b32;
+  --gv-border: rgba(155, 107, 255, .22);
+
+  /* Brand colors */
   --gv-purple: #9b6bff;
   --gv-blue: #00d9ff;
+
+  /* Text */
   --gv-text: #f3f1ff;
   --gv-muted: #a5a1bd;
-  --gv-border: rgba(155, 107, 255, .22);
+
+  /* Unified controls */
+  --gv-primary: linear-gradient(110deg, #9b6bff, #6551dc);
+  --gv-primary-hover: linear-gradient(110deg, #00bfe5, #258bdc);
+  --gv-secondary-bg: #211e35;
+  --gv-secondary-hover: #30294a;
+  --gv-danger: #ff6278;
+  --gv-danger-bg: #713444;
+  --gv-focus: rgba(0, 217, 255, .25);
+  --gv-control-radius: 9px;
 }
 
 html {
