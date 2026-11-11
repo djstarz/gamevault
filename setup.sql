@@ -45,3 +45,41 @@ using (bucket_id = 'gamevault-media' and exists (select 1 from public.profiles p
 
 -- After creating your own account, promote it using the one-time SQL below, replacing YOUR_USERNAME:
 -- update public.profiles set is_admin = true where lower(username) = lower('YOUR_USERNAME');
+
+-- GameVault friend online presence
+create table if not exists public.gamevault_presence (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  last_seen timestamptz not null default now()
+);
+
+alter table public.gamevault_presence enable row level security;
+
+drop policy if exists "Presence visible to authenticated users"
+  on public.gamevault_presence;
+
+create policy "Presence visible to authenticated users"
+  on public.gamevault_presence
+  for select to authenticated
+  using (true);
+
+drop policy if exists "Users can insert own presence"
+  on public.gamevault_presence;
+
+create policy "Users can insert own presence"
+  on public.gamevault_presence
+  for insert to authenticated
+  with check (auth.uid() = user_id);
+
+drop policy if exists "Users can update own presence"
+  on public.gamevault_presence;
+
+create policy "Users can update own presence"
+  on public.gamevault_presence
+  for update to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+grant select, insert, update
+  on public.gamevault_presence to authenticated;
+
+revoke all on public.gamevault_presence from anon;
