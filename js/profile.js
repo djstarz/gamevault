@@ -458,7 +458,10 @@ function clearUploadPreview() {
   $('upload-progress-bar').style.width = '0%';
   $('upload-progress-size').textContent = '0 MB uploaded';
 }
-
+$('upload-remove-file')?.addEventListener('click', () => {
+  $('media').value = '';
+  clearUploadPreview();
+});
 $('media')?.addEventListener('change', () => {
   const file = $('media').files?.[0];
   const preview = $('upload-preview');
