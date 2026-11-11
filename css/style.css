@@ -1165,7 +1165,9 @@ select,
   right: 10px;
   z-index: 5;
 }
-
+.chat-message-actions:has(.chat-message-menu:not([hidden])) {
+  z-index: 30;
+}
 .chat-menu-button {
   display: grid;
   place-items: center;
