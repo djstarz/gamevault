@@ -54,7 +54,7 @@ async function start() {
   renderAccount();
   updateChatAccess();
   await loadPosts();
-await initializeChat();
+if ($('community-chat')) await initializeChat();
 await loadDmRequests();
 await loadDmConversations();
   
