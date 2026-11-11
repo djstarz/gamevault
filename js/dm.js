@@ -7,6 +7,7 @@ const $ = id => document.getElementById(id);
 const sb = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
 let user = null;
+let authReady = false;
 let avatarUrl = null;
 let dmConversationsCache = [];
 let activeDmConversation = null;
@@ -61,7 +62,7 @@ function renderAccount() {
   account.replaceChildren();
 
   if (!user) {
-    signIn.hidden = false;
+    signIn.hidden = !authReady;
     avatarUrl = null;
     return;
   }
@@ -702,6 +703,7 @@ async function sendDmMessage(event) {
 
 async function initializePage() {
   const { data, error } = await sb.auth.getSession();
+  authReady = true;
 
   if (error) {
     setStatus('Could not check your sign-in status.');
