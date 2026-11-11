@@ -2746,3 +2746,11 @@ body.chat-page #chat-messages::-webkit-scrollbar {
 #upload-progress-size {
   margin: 0;
 }
+.gv-inline-avatar {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
