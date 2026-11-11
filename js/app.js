@@ -1147,10 +1147,20 @@ const commentProfileMap = Object.fromEntries(
       `margin:12px 0 12px ${depth ? '22px' : '0'};` +
       'padding:10px;border-left:2px solid #394150;';
 
-        const heading = document.createElement('a');
-    heading.textContent = '@' + (comment.username || 'Player');
-    heading.href = `profile.html?u=${encodeURIComponent(comment.username || '')}`;
-    heading.className = 'gv-profile-link';
+        const profile = commentProfileMap[comment.user_id];
+const commentUsername = profile?.username || comment.username || 'Player';
+
+const heading = document.createElement('a');
+heading.textContent = '@' + commentUsername;
+heading.href = `profile.html?u=${encodeURIComponent(commentUsername)}`;
+heading.className = 'gv-profile-link';
+
+const authorRow = document.createElement('div');
+authorRow.style.cssText = 'display:flex;align-items:center;gap:8px;';
+authorRow.append(
+  createGameVaultAvatar(commentUsername, profile?.avatarUrl),
+  heading
+);
 
     const time = document.createElement('small');
     time.textContent = ' · ' +
@@ -1160,7 +1170,7 @@ const commentProfileMap = Object.fromEntries(
     content.textContent = comment.content;
     content.style.cssText = 'margin:6px 0;white-space:pre-wrap;';
 
-    item.append(heading, time, content);
+    item.append(authorRow, time, content);
     if (user && user.id === comment.user_id) {
   const actions = document.createElement('div');
   actions.style.cssText = 'display:flex;gap:8px;margin-top:6px;';
