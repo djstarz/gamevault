@@ -3033,6 +3033,37 @@ $('settings-form').onsubmit = async event => {
     button.disabled = false;
   }
 };
+$('display-name-save').onclick = async () => {
+  if (!user) return openAuth();
+
+  const input = $('display-name');
+  const button = $('display-name-save');
+  const status = $('settings-status');
+  const displayName = input.value.trim();
+
+  if (!displayName || displayName.length > 32) {
+    status.textContent = 'Enter a display name (1–32 characters).';
+    return;
+  }
+
+  button.disabled = true;
+  status.textContent = 'Saving display name…';
+
+  try {
+    const { error } = await sb
+      .from('profiles')
+      .update({ display_name: displayName })
+      .eq('id', user.id);
+
+    if (error) throw error;
+
+    status.textContent = 'Display name saved successfully.';
+  } catch (error) {
+    status.textContent = 'Could not save display name: ' + error.message;
+  } finally {
+    button.disabled = false;
+  }
+};
 // ================= AVATAR CROPPING =================
 
 let cropImage = null;
