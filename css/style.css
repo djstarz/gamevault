@@ -1560,6 +1560,56 @@ select option {
   outline: 2px solid var(--blue);
   outline-offset: 2px;
 }
+/* ================= POST REACTIONS ================= */
+
+.post-reactions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.post-reaction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 32px;
+  padding: 5px 10px;
+  border: 1px solid var(--gv-border);
+  border-radius: 20px;
+  background: var(--gv-secondary-bg);
+  color: var(--gv-muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease,
+    color .18s ease, transform .18s ease;
+}
+
+.post-reaction:hover {
+  background: var(--gv-secondary-hover);
+  border-color: var(--gv-blue);
+  color: var(--gv-text);
+}
+
+.post-reaction.selected {
+  background: rgba(155, 107, 255, .18);
+  border-color: var(--gv-purple);
+  color: var(--gv-text);
+  box-shadow: 0 0 10px rgba(155, 107, 255, .12);
+}
+
+.post-reaction:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+.post-reaction:focus-visible {
+  outline: 2px solid var(--gv-blue);
+  outline-offset: 2px;
+}
+
 /* ================================
    GAMEVAULT PRIVATE INBOX
 ================================ */
