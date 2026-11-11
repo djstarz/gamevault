@@ -2168,8 +2168,10 @@ function addChatMessage(message) {
   const heading = document.createElement('div');
   heading.className = 'chat-message-heading';
 
-  const name = document.createElement('strong');
-  name.textContent = message.username || 'Player';
+    const name = document.createElement('a');
+  name.textContent = '@' + (message.username || 'Player');
+  name.href = `profile.html?u=${encodeURIComponent(message.username || '')}`;
+  name.className = 'gv-profile-link';
 
   const time = document.createElement('time');
   const date = new Date(message.created_at);
