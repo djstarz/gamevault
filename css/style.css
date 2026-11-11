@@ -1,27 +1,4 @@
-
-:root {
-  color-scheme: dark;
-
-  --bg: var(--gv-bg);
-  --surface: var(--gv-panel);
-  --surface-2: var(--gv-secondary-bg);
-  --surface-3: var(--gv-secondary-hover);
-
-  --line: var(--gv-border);
-  --line-soft: var(--gv-border);
-
-  --text: var(--gv-text);
-  --muted: var(--gv-muted);
-  --muted-2: var(--gv-muted);
-
-  --blue: var(--gv-blue);
-  --blue-strong: var(--gv-blue);
-  --green: #9ee6cb;
-  --danger: var(--gv-danger);
-
-  --radius: 16px;
-  --shadow: 0 18px 48px rgba(0, 0, 0, .35);
-}
+:root{color-scheme:dark;--bg:#101318;--surface:#171b23;--surface-2:#1c222d;--surface-3:#222a37;--line:#2b3341;--line-soft:#242b37;--text:#f2f5fb;--muted:#9aa5b6;--muted-2:#737f92;--blue:#75b7ff;--blue-strong:#4b9df0;--green:#9ee6cb;--danger:#ff8f9b;--radius:16px;--shadow:0 18px 48px #0002}
 @media(min-width:1400px){.welcome-banner{min-height:350px}.welcome-art{right:75px;transform:scale(1.08)}}
 @media(max-width:980px){.site-header{gap:18px;padding:0 22px}.brand{min-width:auto}.top-nav{gap:0}.top-nav a{padding:0 11px}.header-actions{min-width:auto}.welcome-banner{padding:40px}.welcome-art{right:0;transform:scale(.8);opacity:.75}.content-layout{grid-template-columns:minmax(0,1fr) 240px;gap:15px}.page-shell{padding-left:20px;padding-right:20px}}
 @media(max-width:720px){.site-header{height:66px;padding:0 14px;gap:10px}.brand{gap:8px}.brand-mark{width:34px;height:34px;border-radius:10px;font-size:19px}.brand-word{font-size:14px}.brand-word small{font-size:7px}.top-nav{margin-left:auto}.top-nav a{padding:0 8px;font-size:11px}.header-actions{margin-left:0;gap:5px}.icon-action{display:none}.sign-in-button,.header-actions #account button{padding:8px 9px;font-size:11px}.header-actions #account{gap:5px}.header-actions #account img{width:34px!important;height:34px!important}.page-shell{padding:20px 14px 48px}.welcome-banner{min-height:300px;padding:30px 25px}.welcome-copy{max-width:100%}.welcome-banner h1{font-size:clamp(37px,8vw,52px)}.welcome-banner p{max-width:400px;font-size:12px}.welcome-art{right:-125px;top:30px;opacity:.27;transform:scale(.85)}.community-heading{padding:30px 0 17px}.section-heading h2,.panel-heading h2{font-size:24px}.content-layout{grid-template-columns:1fr}.sidebar{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.sidebar-note{grid-column:1/-1}.grid{gap:11px;padding:11px}.cardbody{padding:11px}.card h3{font-size:13px}.panel{padding:17px}.site-footer{padding:20px 15px 28px;gap:12px;flex-wrap:wrap}.site-footer>span{margin-right:0}}
