@@ -70,7 +70,7 @@ function renderPost(post, author) {
 
     const authorName = document.createElement('a');
   authorName.className = 'gv-profile-link';
-  authorName.textContent = '@' + (author?.username || 'Player');
+authorName.textContent = `${author?.display_name?.trim() || author?.username || 'Player'} · @${author?.username || 'Player'}`;
   authorName.href = `profile.html?u=${encodeURIComponent(author?.username || '')}`;
 
   const date = document.createElement('small');
