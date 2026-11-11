@@ -22,25 +22,28 @@ function setStatus(message) {
   if (status) status.textContent = message;
 }
 
+
 function renderAccount() {
   const account = $('account');
-  const signIn = document.querySelector('.header-actions > a');
+  const signIn = $('auth-open');
 
   account.replaceChildren();
 
   if (!user) {
-    if (signIn) signIn.hidden = false;
+    signIn.hidden = false;
     return;
   }
 
-  if (signIn) signIn.hidden = true;
+  signIn.hidden = true;
 
   const username = document.createElement('strong');
   username.textContent = '@' + usernameOf(user);
 
   const signOut = document.createElement('button');
   signOut.type = 'button';
+  signOut.className = 'sign-in-button';
   signOut.textContent = 'Sign out';
+
   signOut.onclick = async () => {
     signOut.disabled = true;
     const { error } = await sb.auth.signOut();
@@ -53,6 +56,101 @@ function renderAccount() {
 
   account.append(username, signOut);
 }
+
+const accountEmail = name =>
+  `${name.toLowerCase()}@username.gamevault.invalid`;
+
+let signup = false;
+
+$('auth-open').addEventListener('click', () => {
+  $('auth-status').textContent = '';
+  $('auth-dialog').showModal();
+});
+
+$('auth-toggle').addEventListener('click', () => {
+  signup = !signup;
+
+  $('auth-heading').textContent =
+    signup ? 'Create your account' : 'Enter the vault';
+
+  $('auth-submit').textContent =
+    signup ? 'Create account' : 'Sign in';
+
+  $('auth-toggle').textContent =
+    signup
+      ? 'Already have an account? Sign in'
+      : 'Need an account? Sign up';
+
+  $('password').autocomplete =
+    signup ? 'new-password' : 'current-password';
+
+  $('auth-status').textContent = signup
+    ? 'Choose a unique username and a password of at least 8 characters.'
+    : '';
+});
+
+$('auth-form').addEventListener('submit', async event => {
+  event.preventDefault();
+
+  const name = $('username').value.trim();
+  const password = $('password').value;
+
+  if (!/^[A-Za-z0-9_]{3,24}$/.test(name)) {
+    $('auth-status').textContent =
+      'Username must be 3–24 letters, numbers, or underscores.';
+    return;
+  }
+
+  $('auth-submit').disabled = true;
+  $('auth-status').textContent =
+    signup ? 'Creating account…' : 'Signing in…';
+
+  try {
+    let result;
+
+    if (signup) {
+      result = await sb.auth.signUp({
+        email: accountEmail(name),
+        password,
+        options: {
+          data: { username: name }
+        }
+      });
+
+      if (result.error) throw result.error;
+
+      if (!result.data.session) {
+        $('auth-status').textContent =
+          'Account created, but email confirmation is enabled. Turn OFF Confirm email in Supabase Authentication settings for username-only accounts.';
+        return;
+      }
+
+      $('auth-status').textContent = 'Account created!';
+    } else {
+      result = await sb.auth.signInWithPassword({
+        email: accountEmail(name),
+        password
+      });
+
+      if (result.error) throw result.error;
+
+      $('auth-status').textContent = 'Signed in!';
+    }
+
+    const { data } = await sb.auth.getSession();
+    user = data.session?.user || null;
+    renderAccount();
+
+    $('auth-dialog').close();
+    $('auth-form').reset();
+
+  } catch (error) {
+    $('auth-status').textContent =
+      error.message || 'Authentication failed.';
+  } finally {
+    $('auth-submit').disabled = false;
+  }
+});
 
 async function searchGameVaultUsers() {
   const input = $('dm-user-search');
