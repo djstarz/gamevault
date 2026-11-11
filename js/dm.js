@@ -581,8 +581,8 @@ renderAccount();
   sb.auth.onAuthStateChange((_event, session) => {
     setTimeout(async () => {
       user = session?.user || null;
-      renderAccount();
-
+await loadAvatar();
+renderAccount();
       if (!user) {
         if (dmChannel) sb.removeChannel(dmChannel);
         dmChannel = null;
