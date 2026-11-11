@@ -3,6 +3,7 @@ import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from './config.js';
 const $=id=>document.getElementById(id);
 let sb=null,user=null,signup=false,isAdmin=false,postsCache=[],avatarUrl=null;
 let reactionsCache = {};
+let authReady = false;
 let chatChannel = null;
 let chatStarted = false;
 let dmConversationsCache = [];
@@ -45,6 +46,7 @@ if(configured){sb=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);start()}el
 async function start() {
   $('dm-search-button')?.addEventListener('click', searchGameVaultUsers);
   const { data } = await sb.auth.getSession();
+  authReady = true;
   user = data.session?.user || null;
   startGameVaultPresence();
   await refreshAdmin();
