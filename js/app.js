@@ -1677,7 +1677,7 @@ if (user && (user.id === post.user_id || admin)) {
   c.append(m, b);
   return c;
 }
-function openSharePost(post) {
+function openSharePost(post, container = document.body) {
   const existing = document.getElementById('gv-share-overlay');
   if (existing) existing.remove();
 
@@ -1811,8 +1811,14 @@ function openSharePost(post) {
     if (event.target === overlay) overlay.remove();
   });
 
-  document.body.append(overlay);
-  console.log('Share overlay appended:', document.getElementById('gv-share-overlay'));
+  if (container !== document.body) {
+  overlay.style.position = 'absolute';
+  overlay.style.inset = '0';
+  overlay.style.zIndex = '20';
+  overlay.style.borderRadius = 'inherit';
+}
+
+container.append(overlay);
 }
 async function loadPosts() {
   if (!sb) return;
