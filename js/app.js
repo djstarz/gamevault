@@ -1085,6 +1085,147 @@ function getPostShareUrl(post) {
   url.searchParams.set('post', post.id);
   return url.toString();
 }
+function openMediaViewer(post) {
+  document.getElementById('gv-media-viewer')?.remove();
+
+  const dialog = document.createElement('dialog');
+  dialog.id = 'gv-media-viewer';
+
+  dialog.style.cssText = `
+    width:min(1200px,96vw);
+    max-width:1200px;
+    max-height:92vh;
+    padding:0;
+    overflow:hidden;
+    background:#111722;
+    color:#dce8f7;
+    border:1px solid #39465a;
+    border-radius:14px;
+  `;
+
+  dialog.innerHTML = `
+    <button type="button" id="gv-media-close"
+      aria-label="Close viewer"
+      style="position:absolute;top:12px;left:12px;z-index:5">
+      ✕
+    </button>
+
+    <div class="gv-media-viewer-layout">
+      <div id="gv-media-display"></div>
+
+      <aside class="gv-media-side">
+        <div id="gv-media-reactions"></div>
+
+        <button type="button" id="gv-media-comment-toggle">
+          💬 Comment
+        </button>
+
+        <button type="button" id="gv-media-share">
+          ↗ Share
+        </button>
+
+        <h2 id="gv-media-title"></h2>
+        <p id="gv-media-description"></p>
+
+        <section id="gv-media-comments" hidden>
+          <h3>Comments</h3>
+          <div id="post-comments-list">Loading comments...</div>
+
+          <form id="post-comment-form">
+            <textarea id="post-comment-input"
+              maxlength="1000"
+              placeholder="Write a comment..."
+              required></textarea>
+            <button type="submit">Post comment</button>
+          </form>
+        </section>
+      </aside>
+    </div>
+  `;
+
+  const media = dialog.querySelector('#gv-media-display');
+
+  const element = document.createElement(
+    post.media_type === 'video' ? 'video' : 'img'
+  );
+
+  element.src = post.media_url;
+
+  if (post.media_type === 'video') {
+    element.controls = true;
+    element.preload = 'metadata';
+  } else {
+    element.alt = post.title || 'Gaming media';
+  }
+
+  media.append(element);
+
+  dialog.querySelector('#gv-media-title').textContent =
+    post.title || 'Untitled post';
+
+  dialog.querySelector('#gv-media-description').textContent =
+    post.description || '';
+
+  dialog.querySelector('#gv-media-reactions')
+    .append(createPostReactions(post));
+
+  dialog.querySelector('#gv-media-comment-toggle').onclick = () => {
+    const comments = dialog.querySelector('#gv-media-comments');
+    comments.hidden = !comments.hidden;
+
+    if (!comments.hidden) {
+      loadPostComments(post.id, dialog);
+    }
+  };
+
+  dialog.querySelector('#gv-media-share').onclick = () => {
+    openSharePost(post);
+  };
+
+  dialog.querySelector('#gv-media-close').onclick = () => dialog.close();
+
+  dialog.addEventListener('click', event => {
+    if (event.target === dialog) dialog.close();
+  });
+
+  dialog.addEventListener('close', () => dialog.remove(), { once: true });
+
+  const form = dialog.querySelector('#post-comment-form');
+  const input = dialog.querySelector('#post-comment-input');
+
+  form.hidden = !user;
+
+  form.onsubmit = async event => {
+    event.preventDefault();
+
+    if (!user) return openAuth();
+
+    const content = input.value.trim();
+    if (!content) return;
+
+    const button = form.querySelector('button[type="submit"]');
+    button.disabled = true;
+
+    const { error } = await sb.from('post_comments').insert({
+      post_id: post.id,
+      user_id: user.id,
+      username: usernameOf(user),
+      content
+    });
+
+    if (error) {
+      alert('Could not post comment: ' + error.message);
+    } else {
+      input.value = '';
+      await loadPostComments(post.id, dialog);
+    }
+
+    button.disabled = false;
+  };
+
+  document.body.append(dialog);
+  dialog.showModal();
+}
 function openPost(post) {
   let dialog = document.getElementById('post-viewer');
 
