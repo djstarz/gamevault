@@ -1195,12 +1195,7 @@ select,
   outline-offset: 2px;
 }
 
-.chat-menu-button:hover,
-.chat-menu-button[aria-expanded="true"] {
-  background: rgba(155, 107, 255, .2);
-  border-color: var(--gv-blue);
-  box-shadow: 0 0 12px rgba(0, 217, 255, .15);
-}
+
 
 .chat-message-menu {
   position: absolute;
