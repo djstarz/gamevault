@@ -56,9 +56,10 @@ await loadDmRequests();
 await loadDmConversations();
   
   sb.auth.onAuthStateChange((_e, s) => {
-    user = s?.user || null;
+  user = s?.user || null;
+  startGameVaultPresence();
 
-    setTimeout(async () => {
+  setTimeout(async () => {
       await refreshAdmin();
       await loadAvatar();
       renderAccount();
