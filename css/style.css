@@ -2232,3 +2232,13 @@ select,
   background: rgba(3, 3, 10, .82) !important;
   color: #dce8f7;
 }
+.gv-share-native-dialog,
+.gv-share-native-dialog:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.gv-share-native-dialog .gv-modal {
+  border: 1px solid #39465a !important;
+  outline: none !important;
+}
