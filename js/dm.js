@@ -347,6 +347,7 @@ async function loadDmRequests() {
   });
 }
 
+
 async function loadDmConversations() {
   const container = $('dm-conversations');
 
@@ -372,14 +373,67 @@ async function loadDmConversations() {
     return;
   }
 
+  const usernames = dmConversationsCache
+    .map(conversation => conversation.username)
+    .filter(Boolean);
+
+  const { data: profiles, error: profileError } = await sb
+    .from('profiles')
+    .select('username, avatar_path')
+    .in('username', usernames);
+
+  if (profileError) {
+    console.error('Could not load friend avatars:', profileError);
+  }
+
+  const avatarMap = new Map();
+
+  (profiles || []).forEach(profile => {
+    if (!profile.avatar_path) return;
+
+    const { data: imageData } = sb.storage
+      .from('gamevault-avatars')
+      .getPublicUrl(profile.avatar_path);
+
+    avatarMap.set(profile.username, imageData.publicUrl);
+  });
+
   dmConversationsCache.forEach(conversation => {
+    const username = conversation.username || 'Player';
+
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'gv-dm-conversation';
     button.dataset.conversationId = conversation.conversation_id;
-    button.dataset.username = conversation.username || 'Player';
-    button.textContent = conversation.username || 'Player';
+    button.dataset.username = username;
 
+    const avatar = document.createElement('img');
+    avatar.className = 'gv-dm-friend-avatar';
+    avatar.alt = '';
+    avatar.width = 44;
+    avatar.height = 44;
+
+    avatar.src = avatarMap.get(username) ||
+      'data:image/svg+xml;charset=utf-8,' +
+      encodeURIComponent(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44">' +
+        '<rect width="44" height="44" rx="22" fill="#263447"/>' +
+        '<text x="22" y="29" text-anchor="middle" fill="white" font-size="20">' +
+        username.charAt(0).toUpperCase() +
+        '</text></svg>'
+      );
+
+    const details = document.createElement('span');
+    details.className = 'gv-dm-friend-details';
+
+    const name = document.createElement('strong');
+    name.textContent = username;
+
+    const subtitle = document.createElement('small');
+    subtitle.textContent = 'Private conversation';
+
+    details.append(name, subtitle);
+    button.append(avatar, details);
     container.appendChild(button);
   });
 
@@ -391,6 +445,7 @@ async function loadDmConversations() {
     if (updated) activeDmConversation = updated;
   }
 }
+
 
 $('dm-conversations').addEventListener('click', event => {
   const button = event.target.closest('.gv-dm-conversation');
