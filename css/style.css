@@ -2601,7 +2601,9 @@ body.chat-page #chat-messages::-webkit-scrollbar {
   color: var(--text);
   box-shadow: 0 25px 90px #0009;
 }
-
+.upload-dialog::-webkit-scrollbar {
+  display: none;
+}
 .upload-dialog::backdrop {
   background: #05080dcc;
   backdrop-filter: blur(5px);
