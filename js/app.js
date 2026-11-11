@@ -3071,6 +3071,8 @@ $('display-name-save').onclick = async () => {
     if (error) throw error;
 
     status.textContent = 'Display name saved successfully.';
+    accountDisplayName = displayName;
+renderAccount();
   } catch (error) {
     status.textContent = 'Could not save display name: ' + error.message;
   } finally {
