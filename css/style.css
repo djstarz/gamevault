@@ -1218,14 +1218,22 @@ select,
   display: block;
   width: 100%;
   padding: 10px 12px;
-  border: 0;
-  border-radius: 7px;
+  border: 1px solid transparent;
+  border-radius: var(--gv-control-radius);
   background: transparent;
   color: var(--gv-text);
   text-align: left;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
+  transition: background .18s ease, border-color .18s ease,
+    color .18s ease;
+}
+
+.chat-message-menu button:hover {
+  background: var(--gv-secondary-hover);
+  border-color: var(--gv-border);
+  color: var(--gv-blue);
 }
 
 .chat-message-menu button:hover {
