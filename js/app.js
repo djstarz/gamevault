@@ -2312,7 +2312,7 @@ menuButton.onclick = () => {
   container.scrollTop = container.scrollHeight;
 }
 
-async function deleteChatMessage(message) {
+async function editChatMessage(message) {
   if (!$('chat-messages') || !$('chat-feedback')) return;
   if (!user || message.user_id !== user.id) return;
 
@@ -2488,7 +2488,7 @@ function confirmDeleteChatMessage(message) {
 }
 
 
-function editChatMessage(message) {
+async function deleteChatMessage(message) {
   if (!$('chat-messages') || !$('chat-feedback')) return;
   if (!user || message.user_id !== user.id) return;
 
