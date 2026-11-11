@@ -69,8 +69,7 @@ async function loadProfile() {
 
   let profileQuery = sb
     .from('profiles')
-    .select('id, username, avatar_path, is_admin, created_at');
-
+  .select('id, username, display_name, avatar_path, is_admin, created_at')
   if (requestedUsername) {
     profileQuery = profileQuery.eq('username', requestedUsername);
   } else {
