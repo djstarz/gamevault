@@ -408,7 +408,7 @@ async function loadDmConversations() {
 
   const { data: profiles, error: profileError } = await sb
     .from('profiles')
-    .select('username, avatar_path')
+    .select('id, username, avatar_path')
     .in('username', usernames);
 
   if (profileError) {
