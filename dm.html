@@ -143,6 +143,52 @@
     <a href="index.html#home">Back to GameVault ↑</a>
   </footer>
 
+  
+<dialog id="auth-dialog" class="auth-dialog">
+  <form method="dialog" class="close">
+    <button aria-label="Close" type="submit">×</button>
+  </form>
+
+  <div class="auth-brand">
+    <span class="brand-mark">G</span>
+    <span>
+      <strong>Welcome to GameVault</strong>
+      <small>Your community starts here.</small>
+    </span>
+  </div>
+
+  <h2 id="auth-heading">Enter the vault</h2>
+
+  <form id="auth-form" class="auth-form">
+    <label>
+      Username
+      <input id="username" required minlength="3" maxlength="24"
+        autocomplete="username" pattern="[A-Za-z0-9_]+"
+        title="Use 3–24 letters, numbers, or underscores">
+    </label>
+
+    <label>
+      Password
+      <input id="password" type="password" minlength="8"
+        required autocomplete="current-password">
+    </label>
+
+    <button class="button button-primary button-wide"
+      id="auth-submit" type="submit">Sign in</button>
+  </form>
+
+  <button id="auth-toggle" class="link-button" type="button">
+    Need an account? Sign up
+  </button>
+
+  <p id="auth-status" role="status"></p>
+
+  <p class="auth-note">
+    Keep your password safe. Username-based accounts use GameVault's username login.
+  </p>
+</dialog>
+
+
   <script type="module" src="js/dm.js"></script>
   <script type="module" src="js/pwa.js"></script>
 </body>
