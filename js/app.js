@@ -359,6 +359,7 @@ async function loadDmMessages() {
       profile.id,
       {
         username: profile.username || 'Player',
+        displayName: profile.display_name?.trim() || profile.username || 'Player',
         avatarUrl: profile.avatar_path
           ? sb.storage.from('gamevault-avatars').getPublicUrl(profile.avatar_path).data.publicUrl
           : null
