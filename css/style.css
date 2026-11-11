@@ -2591,6 +2591,8 @@ body.chat-page #chat-messages::-webkit-scrollbar {
   max-width: none;
   max-height: calc(100% - 28px);
   overflow-y: auto;
+  scrollbar-width: none;
+-ms-overflow-style: none;
   margin: auto;
   padding: 26px;
   border: 1px solid #354154;
