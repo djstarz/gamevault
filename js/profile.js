@@ -302,6 +302,28 @@ headingName.textContent = displayName;
 
   addLink('My Profile', 'profile.html', '◉');
   addLink('Friends Chat', 'dm.html', '✉');
+    const settingsButton = document.createElement('button');
+  settingsButton.type = 'button';
+  settingsButton.className = 'profile-menu-item';
+
+  const settingsIcon = document.createElement('span');
+  settingsIcon.className = 'profile-menu-icon';
+  settingsIcon.textContent = '⚙';
+
+  const settingsText = document.createElement('span');
+  settingsText.textContent = 'Account Settings';
+
+  settingsButton.append(settingsIcon, settingsText);
+
+  settingsButton.addEventListener('click', () => {
+    closeMenu();
+    $('settings-status').textContent = '';
+    $('settings-form').reset();
+    $('display-name').value = accountProfile?.display_name || '';
+    $('settings-dialog').showModal();
+  });
+
+  dropdown.append(settingsButton);
 
   const separator = document.createElement('div');
   separator.className = 'profile-menu-divider';
