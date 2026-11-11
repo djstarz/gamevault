@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "gamevault-v1";
+const CACHE_NAME = "gamevault-v1.0.6";
 
 const APP_FILES = [
   "./",
