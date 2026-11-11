@@ -1815,3 +1815,63 @@ button[type="submit"]:hover:not(:disabled),
     padding-inline: 12px;
   }
 }
+/* GameVault v1.0.6 — Share Post Modal */
+
+.gv-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(3, 3, 10, 0.82);
+  backdrop-filter: blur(6px);
+}
+
+.gv-modal {
+  width: min(420px, 100%);
+  max-height: 85vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 25px;
+  background: var(--gv-panel);
+  border: 1px solid var(--gv-border);
+  border-radius: 18px;
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.7);
+  color: var(--gv-text);
+}
+
+.gv-modal h3 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.gv-modal p {
+  margin: 0;
+  color: var(--gv-muted);
+}
+
+.gv-modal button,
+.gv-modal select {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--gv-border);
+  border-radius: 9px;
+  background: var(--gv-panel-light);
+  color: var(--gv-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.gv-modal button:hover:not(:disabled) {
+  border-color: var(--gv-blue);
+  background: rgba(155, 107, 255, 0.16);
+}
+
+.gv-modal button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
