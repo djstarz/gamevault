@@ -175,7 +175,7 @@
   height: 34px;
   border: 1px solid var(--gv-border);
   border-radius: var(--gv-control-radius);
-  background: var(--gv-secondary);
+  background: var(--gv-secondary-bg);
   color: var(--gv-text);
   font-size: 23px;
   cursor: pointer;
@@ -212,7 +212,7 @@
   padding: 12px;
   border: 1px solid var(--gv-border);
   border-radius: var(--gv-control-radius);
-  background: var(--gv-secondary);
+  background: var(--gv-secondary-bg);
   color: var(--gv-text);
 }
 
