@@ -217,10 +217,7 @@ function renderProfileAccount() {
   avatar.width = 40;
   avatar.height = 40;
 
-  const ownProfile = profileUser?.id === currentUser.id
-    ? profileUser
-    : null;
-
+  const ownProfile = accountProfile;
   avatar.src = avatarUrl(ownProfile?.avatar_path) ||
     'data:image/svg+xml;charset=utf-8,' +
     encodeURIComponent(
