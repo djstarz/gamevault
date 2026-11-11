@@ -7,6 +7,7 @@ const $ = id => document.getElementById(id);
 const sb = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
 let user = null;
+let avatarUrl = null;
 let dmConversationsCache = [];
 let activeDmConversation = null;
 let dmChannel = null;
@@ -23,6 +24,7 @@ function setStatus(message) {
 }
 
 
+
 function renderAccount() {
   const account = $('account');
   const signIn = $('auth-open');
@@ -31,126 +33,137 @@ function renderAccount() {
 
   if (!user) {
     signIn.hidden = false;
+    avatarUrl = null;
     return;
   }
 
   signIn.hidden = true;
 
-  const username = document.createElement('strong');
-  username.textContent = '@' + usernameOf(user);
+  const username = usernameOf(user);
+
+  const menu = document.createElement('div');
+  menu.className = 'profile-menu';
+
+  const trigger = document.createElement('button');
+  trigger.type = 'button';
+  trigger.className = 'profile-trigger';
+  trigger.setAttribute('aria-label', 'Open account menu');
+  trigger.setAttribute('aria-expanded', 'false');
+
+  const avatar = document.createElement('img');
+  avatar.className = 'profile-avatar';
+  avatar.alt = '';
+  avatar.width = 40;
+  avatar.height = 40;
+  avatar.src = avatarUrl ||
+    'data:image/svg+xml;charset=utf-8,' +
+    encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40">' +
+      '<rect width="40" height="40" rx="20" fill="#263447"/>' +
+      '<text x="20" y="27" text-anchor="middle" fill="white" font-size="22">?</text>' +
+      '</svg>'
+    );
+
+  const name = document.createElement('span');
+  name.className = 'profile-trigger-name';
+  name.textContent = username;
+
+  const arrow = document.createElement('span');
+  arrow.className = 'profile-chevron';
+  arrow.textContent = '⌄';
+
+  trigger.append(avatar, name, arrow);
+
+  const dropdown = document.createElement('div');
+  dropdown.className = 'profile-dropdown';
+  dropdown.hidden = true;
+
+  const heading = document.createElement('div');
+  heading.className = 'profile-dropdown-heading';
+
+  const headingName = document.createElement('strong');
+  headingName.textContent = username;
+
+  const headingLabel = document.createElement('span');
+  headingLabel.textContent = 'GameVault member';
+
+  heading.append(headingName, headingLabel);
+  dropdown.append(heading);
+
+  function addLink(label, href, icon) {
+    const link = document.createElement('a');
+    link.className = 'profile-menu-item';
+    link.href = href;
+
+    const symbol = document.createElement('span');
+    symbol.className = 'profile-menu-icon';
+    symbol.textContent = icon;
+
+    const text = document.createElement('span');
+    text.textContent = label;
+
+    link.append(symbol, text);
+    dropdown.append(link);
+  }
+
+  addLink('My Profile', 'index.html#home', '◉');
+  addLink('My Posts', 'index.html#gallery', '▤');
+
+  const separator = document.createElement('div');
+  separator.className = 'profile-menu-divider';
+  dropdown.append(separator);
 
   const signOut = document.createElement('button');
   signOut.type = 'button';
-  signOut.className = 'sign-in-button';
-  signOut.textContent = 'Sign out';
+  signOut.className = 'profile-menu-item';
+
+  const signOutIcon = document.createElement('span');
+  signOutIcon.className = 'profile-menu-icon';
+  signOutIcon.textContent = '↪';
+
+  const signOutText = document.createElement('span');
+  signOutText.textContent = 'Sign Out';
+
+  signOut.append(signOutIcon, signOutText);
 
   signOut.onclick = async () => {
-    signOut.disabled = true;
     const { error } = await sb.auth.signOut();
 
     if (error) {
-      console.error('Sign out error:', error);
-      signOut.disabled = false;
+      alert('Could not sign out: ' + error.message);
     }
   };
 
-  account.append(username, signOut);
-}
+  dropdown.append(signOut);
 
-const accountEmail = name =>
-  `${name.toLowerCase()}@username.gamevault.invalid`;
+  trigger.onclick = () => {
+    const opening = dropdown.hidden;
+    dropdown.hidden = !opening;
+    trigger.setAttribute('aria-expanded', String(opening));
+  };
 
-let signup = false;
+  menu.append(trigger, dropdown);
+  account.append(menu);
 
-$('auth-open').addEventListener('click', () => {
-  $('auth-status').textContent = '';
-  $('auth-dialog').showModal();
-});
+  if (!window.__gameVaultProfileMenuHandler) {
+    document.addEventListener('click', event => {
+      document.querySelectorAll('.profile-menu').forEach(item => {
+        if (!item.contains(event.target)) {
+          const panel = item.querySelector('.profile-dropdown');
+          const button = item.querySelector('.profile-trigger');
 
-$('auth-toggle').addEventListener('click', () => {
-  signup = !signup;
-
-  $('auth-heading').textContent =
-    signup ? 'Create your account' : 'Enter the vault';
-
-  $('auth-submit').textContent =
-    signup ? 'Create account' : 'Sign in';
-
-  $('auth-toggle').textContent =
-    signup
-      ? 'Already have an account? Sign in'
-      : 'Need an account? Sign up';
-
-  $('password').autocomplete =
-    signup ? 'new-password' : 'current-password';
-
-  $('auth-status').textContent = signup
-    ? 'Choose a unique username and a password of at least 8 characters.'
-    : '';
-});
-
-$('auth-form').addEventListener('submit', async event => {
-  event.preventDefault();
-
-  const name = $('username').value.trim();
-  const password = $('password').value;
-
-  if (!/^[A-Za-z0-9_]{3,24}$/.test(name)) {
-    $('auth-status').textContent =
-      'Username must be 3–24 letters, numbers, or underscores.';
-    return;
-  }
-
-  $('auth-submit').disabled = true;
-  $('auth-status').textContent =
-    signup ? 'Creating account…' : 'Signing in…';
-
-  try {
-    let result;
-
-    if (signup) {
-      result = await sb.auth.signUp({
-        email: accountEmail(name),
-        password,
-        options: {
-          data: { username: name }
+          if (panel && button) {
+            panel.hidden = true;
+            button.setAttribute('aria-expanded', 'false');
+          }
         }
       });
+    });
 
-      if (result.error) throw result.error;
-
-      if (!result.data.session) {
-        $('auth-status').textContent =
-          'Account created, but email confirmation is enabled. Turn OFF Confirm email in Supabase Authentication settings for username-only accounts.';
-        return;
-      }
-
-      $('auth-status').textContent = 'Account created!';
-    } else {
-      result = await sb.auth.signInWithPassword({
-        email: accountEmail(name),
-        password
-      });
-
-      if (result.error) throw result.error;
-
-      $('auth-status').textContent = 'Signed in!';
-    }
-
-    const { data } = await sb.auth.getSession();
-    user = data.session?.user || null;
-    renderAccount();
-
-    $('auth-dialog').close();
-    $('auth-form').reset();
-
-  } catch (error) {
-    $('auth-status').textContent =
-      error.message || 'Authentication failed.';
-  } finally {
-    $('auth-submit').disabled = false;
+    window.__gameVaultProfileMenuHandler = true;
   }
-});
+}
+
 
 async function searchGameVaultUsers() {
   const input = $('dm-user-search');
