@@ -347,7 +347,24 @@ async function loadDmMessages() {
     container.textContent = 'No messages yet. Say hello!';
     return;
   }
+  const dmUserIds = [...new Set(data.map(message => message.sender_id))];
 
+  const { data: dmProfiles } = await sb
+    .from('profiles')
+    .select('id, username, avatar_path')
+    .in('id', dmUserIds);
+
+  const dmProfileMap = Object.fromEntries(
+    (dmProfiles || []).map(profile => [
+      profile.id,
+      {
+        username: profile.username || 'Player',
+        avatarUrl: profile.avatar_path
+          ? sb.storage.from('gamevault-avatars').getPublicUrl(profile.avatar_path).data.publicUrl
+          : null
+      }
+    ])
+  );
   for (const message of data) {
     const bubble = document.createElement('div');
     bubble.className = 'gv-dm-bubble';
