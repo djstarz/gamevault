@@ -373,10 +373,24 @@ async function loadDmMessages() {
 
     if (own) bubble.classList.add('own');
 
-    const sender = document.createElement('strong');
-    sender.textContent = own
+        const senderProfile = dmProfileMap[message.sender_id];
+    const senderName = own
       ? 'You'
-      : activeDmConversation.username || 'Player';
+      : senderProfile?.username || activeDmConversation.username || 'Player';
+
+    const sender = document.createElement('strong');
+    sender.textContent = senderName;
+
+    const senderRow = document.createElement('div');
+    senderRow.style.cssText = 'display:flex;align-items:center;gap:8px;';
+
+    senderRow.append(
+      createGameVaultAvatar(
+        senderProfile?.username || senderName,
+        senderProfile?.avatarUrl
+      ),
+      sender
+    );
 
     const time = document.createElement('time');
     const date = new Date(message.created_at);
@@ -386,7 +400,7 @@ async function loadDmMessages() {
     const body = document.createElement('p');
     body.textContent = message.body || '';
 
-    bubble.append(sender, time);
+        bubble.append(senderRow, time);
 
     if (message.body) {
       bubble.append(body);
