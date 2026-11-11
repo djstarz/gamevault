@@ -355,8 +355,8 @@ async function loadComments(postId) {
         reply.textContent = 'Reply';
 
         reply.onclick = async () => {
-          const text = prompt('Write your reply:');
-          if (!text?.trim()) return;
+  const text = await openReplyModal(comment);
+  if (!text) return;
 
           const { error } = await sb
             .from('post_comments')
