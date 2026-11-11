@@ -334,8 +334,8 @@ async function loadDmRequests() {
 
    const username = document.createElement('a');
 username.className = 'gv-profile-link';
-username.textContent = '@' + (request.username || 'Player');
-username.href = `profile.html?u=${encodeURIComponent(request.username || '')}`;
+username.textContent = `${request.display_name || request.username || 'Player'} · @${request.username || 'Player'}`;
+    username.href = `profile.html?u=${encodeURIComponent(request.username || '')}`;
 
     const message = document.createElement('p');
     message.textContent = 'Wants to start a conversation.';
