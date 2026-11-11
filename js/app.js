@@ -6,6 +6,34 @@ let reactionsCache = {};
 let chatChannel = null;
 let chatStarted = false;
 let dmConversationsCache = [];
+let presenceTimer = null;
+
+async function updateGameVaultPresence() {
+  if (!user) return;
+
+  const { error } = await sb
+    .from('gamevault_presence')
+    .upsert({
+      user_id: user.id,
+      last_seen: new Date().toISOString()
+    });
+
+  if (error) {
+    console.error('Presence update error:', error);
+  }
+}
+
+function startGameVaultPresence() {
+  if (presenceTimer) clearInterval(presenceTimer);
+
+  if (!user) {
+    presenceTimer = null;
+    return;
+  }
+
+  updateGameVaultPresence();
+  presenceTimer = setInterval(updateGameVaultPresence, 30000);
+}
 let dmRequestsCache = [];
 let activeDmConversation = null;
 let dmChannel = null;
