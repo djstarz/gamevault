@@ -934,6 +934,53 @@ $('auth-form').onsubmit = async e => {
     $('auth-submit').disabled = false;
   }
 };
+
+let uploadPreviewUrl = '';
+
+$('media')?.addEventListener('change', () => {
+  const file = $('media').files?.[0];
+  const preview = $('upload-preview');
+  if (!preview) return;
+
+  if (uploadPreviewUrl) {
+    URL.revokeObjectURL(uploadPreviewUrl);
+    uploadPreviewUrl = '';
+  }
+
+  const mediaBox = $('upload-preview-media');
+  mediaBox.replaceChildren();
+
+  if (!file) {
+    preview.hidden = true;
+    return;
+  }
+
+  preview.hidden = false;
+  $('upload-file-name').textContent = file.name;
+  $('upload-file-size').textContent =
+    `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+
+  const media = document.createElement(
+    file.type.startsWith('video/') ? 'video' : 'img'
+  );
+
+  uploadPreviewUrl = URL.createObjectURL(file);
+  media.src = uploadPreviewUrl;
+
+  if (file.type.startsWith('video/')) {
+    media.controls = true;
+    media.preload = 'metadata';
+  } else {
+    media.alt = file.name;
+  }
+
+  mediaBox.appendChild(media);
+  $('upload-progress-label').textContent = 'Ready to upload';
+  $('upload-progress-percent').textContent = '0%';
+  $('upload-progress-bar').style.width = '0%';
+  $('upload-progress-size').textContent = '0 MB uploaded';
+});
+
 $('upload-form').onsubmit=async e=>{e.preventDefault();if(!user)return openAuth();const f=$('media').files[0];if(!f)return;if(f.size>20*1024*1024){$('upload-status').textContent='File exceeds 20 MB. Choose a smaller file.';return}if(!f.type.startsWith('image/')&&!['video/mp4','video/webm','video/quicktime'].includes(f.type)){$('upload-status').textContent='Choose an image, MP4, WebM, or QuickTime video.';return}$('upload-button').disabled=true;$('upload-status').textContent='Uploading…';let path='';try{const safe=f.name.toLowerCase().replace(/[^a-z0-9._-]+/g,'-').slice(-90);path=`${user.id}/${crypto.randomUUID()}-${safe}`;const up=await sb.storage.from('gamevault-media').upload(path,f,{contentType:f.type,upsert:false});if(up.error)throw up.error;const url=sb.storage.from('gamevault-media').getPublicUrl(path).data.publicUrl;const ins=await sb.from('posts').insert({user_id:user.id,title:$('title').value.trim(),description:$('description').value.trim(),category:$('category').value,media_url:url,media_type:f.type.startsWith('video/')?'video':'image',storage_path:path});if(ins.error){await sb.storage.from('gamevault-media').remove([path]);throw ins.error}$('upload-form').reset();$('upload-status').textContent='Uploaded successfully!';await loadPosts()}catch(err){$('upload-status').textContent=err.message||'Upload failed. Check Storage and RLS policies.'}finally{updateUpload()}};
 
 async function loadPostComments(postId, dialog) {
