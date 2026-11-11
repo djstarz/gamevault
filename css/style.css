@@ -2241,4 +2241,7 @@ select,
 .gv-share-native-dialog .gv-modal {
   border: 1px solid #39465a !important;
   outline: none !important;
+  outline: none !important;
+box-shadow: none !important;
+appearance: none;
 }
