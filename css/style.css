@@ -1242,8 +1242,14 @@ select,
   color: #ff8f9b;
 }
 
+.chat-message-menu .chat-menu-delete {
+  color: var(--gv-danger);
+}
+
 .chat-message-menu .chat-menu-delete:hover {
-  background: rgba(255, 80, 100, .12);
+  background: var(--gv-danger-bg);
+  border-color: var(--gv-danger);
+  color: #fff;
 }
 /* Mobile chat message menu */
 @media (max-width: 600px) {
