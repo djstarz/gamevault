@@ -945,8 +945,10 @@ async function loadPostComments(postId, dialog) {
       `margin:12px 0 12px ${depth ? '22px' : '0'};` +
       'padding:10px;border-left:2px solid #394150;';
 
-    const heading = document.createElement('strong');
-    heading.textContent = comment.username || 'Player';
+        const heading = document.createElement('a');
+    heading.textContent = '@' + (comment.username || 'Player');
+    heading.href = `profile.html?u=${encodeURIComponent(comment.username || '')}`;
+    heading.className = 'gv-profile-link';
 
     const time = document.createElement('small');
     time.textContent = ' · ' +
