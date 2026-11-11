@@ -77,6 +77,33 @@ await loadDmConversations();
   updateUpload();
 }
 function usernameOf(u){return u?.user_metadata?.username||u?.email?.split('@')[0]||'Player'}
+function createGameVaultAvatar(username, avatarUrl, className = 'gv-inline-avatar') {
+  const name = username || 'Player';
+  const initial = name.charAt(0).toUpperCase();
+
+  const fallback =
+    'data:image/svg+xml;charset=utf-8,' +
+    encodeURIComponent(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40">
+        <circle cx="20" cy="20" r="20" fill="#263447"/>
+        <text x="20" y="27" text-anchor="middle" fill="#ffffff" font-size="20">${initial}</text>
+      </svg>`
+    );
+
+  const avatar = document.createElement('img');
+  avatar.className = className;
+  avatar.alt = '';
+  avatar.width = 32;
+  avatar.height = 32;
+  avatar.src = avatarUrl || fallback;
+
+  avatar.onerror = () => {
+    avatar.onerror = null;
+    avatar.src = fallback;
+  };
+
+  return avatar;
+}
 
 async function searchGameVaultUsers() {
   const input = $('dm-user-search');
