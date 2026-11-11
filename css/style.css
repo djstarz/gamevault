@@ -1385,13 +1385,24 @@ select,
   font-weight: 700;
   text-decoration: none;
 }
-/* Fix chat dropdown layering */
-.chat-message {
+/* Fix chat message dropdown layering */
+#chat-messages {
+  isolation: isolate;
+}
+
+#chat-messages .chat-message {
+  position: relative;
   z-index: 1;
 }
 
-.chat-message.menu-open {
-  z-index: 10;
+#chat-messages .chat-message.menu-open {
+  z-index: 100;
+}
+
+#chat-messages:has(.chat-message.menu-open)
+.chat-message:not(.menu-open) .chat-menu-button {
+  visibility: hidden;
+  pointer-events: none;
 }
 /* GameVault v1.0.6 — compact chat messages with dividers */
 #chat-messages .chat-message {
