@@ -2312,7 +2312,8 @@ menuButton.onclick = () => {
   container.scrollTop = container.scrollHeight;
 }
 
-async function editChatMessage(message) {
+async function deleteChatMessage(message) {
+  if (!$('chat-messages') || !$('chat-feedback')) return;
   if (!user || message.user_id !== user.id) return;
 
   const dialog = document.createElement('dialog');
