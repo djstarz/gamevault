@@ -185,7 +185,26 @@ async function loadProfile() {
 
   content.append(header, stats, postsHeading, postsContainer);
 }
+function renderProfileAccount() {
+  const signIn = $('auth-open');
+  const account = $('account');
 
+  account.replaceChildren();
+
+  if (!currentUser) {
+    signIn.hidden = false;
+    return;
+  }
+
+  signIn.hidden = true;
+
+  const link = document.createElement('a');
+  link.className = 'profile-trigger';
+  link.href = 'profile.html';
+  link.textContent = '@' + usernameOf(currentUser);
+
+  account.append(link);
+}
 async function initializeProfilePage() {
   if (
     !SUPABASE_URL.startsWith('https://') ||
