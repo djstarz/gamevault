@@ -2227,21 +2227,21 @@ select,
   margin: 0 !important;
   padding: 20px !important;
   box-sizing: border-box;
-  border: 0 !important;
+  border: none !important;
+  outline: none !important;
   border-radius: 0 !important;
+  box-shadow: none !important;
   background: rgba(3, 3, 10, .82) !important;
   color: #dce8f7;
 }
-.gv-share-native-dialog,
-.gv-share-native-dialog:focus {
-  outline: none !important;
-  box-shadow: none !important;
+
+.gv-share-native-dialog::backdrop {
+  background: rgba(3, 3, 10, .82);
 }
 
 .gv-share-native-dialog .gv-modal {
-  border: 1px solid #39465a !important;
+  border: none !important;
   outline: none !important;
-  outline: none !important;
-box-shadow: none !important;
-appearance: none;
+  box-shadow: none !important;
+  appearance: none;
 }
