@@ -97,7 +97,42 @@
       </div>
     </form>
   </dialog>
+<dialog id="settings-dialog" class="gv-settings-dialog">
+  <form id="settings-form" class="gv-settings-form">
+    <button type="button" class="gv-dialog-close"
+      id="settings-close" aria-label="Close">×</button>
 
+    <span class="eyebrow">ACCOUNT SECURITY</span>
+    <h2>Account Settings</h2>
+    <p>Change your GameVault account password.</p>
+
+    <label>
+      Display Name
+      <input id="display-name" type="text"
+        maxlength="32" placeholder="How others see you">
+    </label>
+
+    <button class="button button-primary" type="button"
+      id="display-name-save">Save Display Name</button>
+
+    <label>
+      New password
+      <input id="new-password" type="password"
+        minlength="8" autocomplete="new-password" required>
+    </label>
+
+    <label>
+      Confirm new password
+      <input id="confirm-password" type="password"
+        minlength="8" autocomplete="new-password" required>
+    </label>
+
+    <button class="button button-primary" type="submit"
+      id="password-save">Update password</button>
+
+    <p id="settings-status" role="status"></p>
+  </form>
+</dialog>
   <script type="module" src="js/profile.js?v=1.0.6"></script>
   <script src="js/pwa.js"></script>
 </body>
