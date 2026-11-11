@@ -543,7 +543,7 @@ async function loadAvatar() {
     console.error('Could not load avatar:', error.message);
     return;
   }
-
+accountDisplayName = data?.display_name?.trim() || usernameOf(user);
   if (data?.avatar_path) {
     const { data: imageData } = sb.storage
       .from('gamevault-avatars')
