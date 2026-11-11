@@ -135,7 +135,7 @@ function renderAccount() {
     dropdown.append(link);
   }
 
-  addLink('My Profile', 'index.html#home', '◉');
+    addLink('My Profile', 'profile.html', '◉');;
 addLink('My Posts', 'index.html#gallery', '▤');
 
   const separator = document.createElement('div');
