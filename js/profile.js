@@ -123,7 +123,7 @@ const isOwnProfile = profile.id === currentUser.id;
   info.className = 'gv-public-profile-info';
 
   const username = document.createElement('h2');
-  username.textContent = '@' + profile.username;
+username.textContent = profile.display_name?.trim() || profile.username;
 
   const role = document.createElement('span');
   role.className = 'gv-public-profile-role';
