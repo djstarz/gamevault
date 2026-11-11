@@ -352,7 +352,28 @@ async function loadComments(postId) {
   }
 
   const comments = data || [];
-  list.replaceChildren();
+
+const commentUserIds = [...new Set(comments.map(comment => comment.user_id))];
+
+const { data: commentProfiles, error: commentProfilesError } = await sb
+  .from('profiles')
+  .select('id, username, display_name')
+  .in('id', commentUserIds);
+
+if (commentProfilesError) {
+  console.error('Could not load comment display names:', commentProfilesError);
+}
+
+const commentProfileMap = new Map(
+  (commentProfiles || []).map(profile => [profile.id, profile])
+);
+
+comments.forEach(comment => {
+  const profile = commentProfileMap.get(comment.user_id);
+  comment.display_name = profile?.display_name?.trim() || comment.username || 'Player';
+});
+
+list.replaceChildren();
 
   if (!comments.length) {
     list.textContent = 'No comments yet. Be the first!';
