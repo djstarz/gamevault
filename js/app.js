@@ -1114,6 +1114,24 @@ async function loadPostComments(postId, dialog) {
   }
 
   const comments = data || [];
+  const commentUserIds = [...new Set(comments.map(comment => comment.user_id))];
+
+const { data: commentProfiles } = await sb
+  .from('profiles')
+  .select('id, username, avatar_path')
+  .in('id', commentUserIds);
+
+const commentProfileMap = Object.fromEntries(
+  (commentProfiles || []).map(profile => [
+    profile.id,
+    {
+      username: profile.username || 'Player',
+      avatarUrl: profile.avatar_path
+        ? sb.storage.from('gamevault-avatars').getPublicUrl(profile.avatar_path).data.publicUrl
+        : null
+    }
+  ])
+);
   const roots = comments.filter(comment => !comment.parent_id);
 
   list.replaceChildren();
