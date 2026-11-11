@@ -1012,12 +1012,13 @@ function clearUploadPreview() {
   $('upload-progress-label').textContent = 'Ready to upload';
   $('upload-progress-percent').textContent = '0%';
   $('upload-progress-bar').style.width = '0%';
-  $('upload-progress-size').textContent = '0 MB uploaded';
-  $('upload-remove-file')?.addEventListener('click', () => {
+    $('upload-progress-size').textContent = '0 MB uploaded';
+}
+
+$('upload-remove-file')?.addEventListener('click', () => {
   $('media').value = '';
   clearUploadPreview();
 });
-}
 
 $('media')?.addEventListener('change', () => {
   const file = $('media').files?.[0];
