@@ -269,6 +269,71 @@ function createCommentModal(comment, editing) {
     input.focus();
   });
 }
+function openDeleteModal(comment) {
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+      position:fixed;inset:0;z-index:9999;
+      display:flex;align-items:center;justify-content:center;
+      padding:20px;background:rgba(0,0,0,.75);
+    `;
+
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+      width:100%;max-width:400px;padding:24px;
+      background:#171b23;border:1px solid #2b3341;
+      border-radius:16px;color:#f2f5fb;
+      box-shadow:0 15px 50px rgba(0,0,0,.5);
+    `;
+
+    const title = document.createElement('h3');
+    title.textContent = 'Delete comment?';
+
+    const message = document.createElement('p');
+    message.textContent =
+      'Are you sure you want to delete this comment and its replies? This action cannot be undone.';
+
+    const actions = document.createElement('div');
+    actions.style.cssText =
+      'display:flex;justify-content:flex-end;gap:10px;margin-top:16px;';
+
+    const cancel = document.createElement('button');
+    cancel.textContent = 'Cancel';
+
+    const remove = document.createElement('button');
+    remove.textContent = 'Delete';
+
+    [cancel, remove].forEach(button => {
+      button.type = 'button';
+      button.style.cssText = `
+        padding:10px 16px;border:0;border-radius:8px;
+        cursor:pointer;font-weight:600;
+      `;
+    });
+
+    cancel.style.background = '#2b3341';
+    cancel.style.color = '#f2f5fb';
+    remove.style.background = '#dc4c4c';
+    remove.style.color = '#fff';
+
+    function close(value) {
+      overlay.remove();
+      resolve(value);
+    }
+
+    cancel.onclick = () => close(false);
+    remove.onclick = () => close(true);
+
+    overlay.onclick = event => {
+      if (event.target === overlay) close(false);
+    };
+
+    actions.append(cancel, remove);
+    modal.append(title, message, actions);
+    overlay.append(modal);
+    document.body.append(overlay);
+  });
+}
 async function loadComments(postId) {
   const list = $('post-comments-list');
   list.textContent = 'Loading comments...';
