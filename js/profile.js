@@ -379,6 +379,69 @@ $('upload-close')?.addEventListener('click', () => {
   $('upload-dialog')?.close();
 });
 
+async function uploadFileWithProgress(path, file) {
+  const { data: sessionData, error: sessionError } =
+    await sb.auth.getSession();
+
+  if (sessionError) throw sessionError;
+
+  const accessToken = sessionData.session?.access_token;
+  if (!accessToken) throw new Error('Your session has expired. Please sign in again.');
+
+  const encodedPath = path.split('/').map(encodeURIComponent).join('/');
+  const url = `${SUPABASE_URL}/storage/v1/object/gamevault-media/${encodedPath}`;
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+
+    xhr.open('POST', url);
+    xhr.setRequestHeader('apikey', SUPABASE_PUBLISHABLE_KEY);
+    xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
+    xhr.setRequestHeader('Content-Type', file.type);
+    xhr.setRequestHeader('x-upsert', 'false');
+
+    xhr.upload.addEventListener('progress', event => {
+      if (!event.lengthComputable) return;
+
+      const percent = Math.round((event.loaded / event.total) * 100);
+      const uploadedMB = (event.loaded / (1024 * 1024)).toFixed(2);
+      const totalMB = (event.total / (1024 * 1024)).toFixed(2);
+
+      $('upload-progress-bar').style.width = `${percent}%`;
+      $('upload-progress-percent').textContent = `${percent}%`;
+      $('upload-progress-label').textContent = 'Uploading media…';
+      $('upload-progress-size').textContent =
+        `${uploadedMB} MB of ${totalMB} MB uploaded`;
+    });
+
+    xhr.onload = () => {
+      let response = {};
+
+      try {
+        response = JSON.parse(xhr.responseText);
+      } catch {}
+
+      if (xhr.status >= 200 && xhr.status < 300) {
+        $('upload-progress-bar').style.width = '100%';
+        $('upload-progress-percent').textContent = '100%';
+        $('upload-progress-label').textContent = 'Upload complete';
+        $('upload-progress-size').textContent =
+          `${(file.size / (1024 * 1024)).toFixed(2)} MB uploaded`;
+        resolve(response);
+      } else {
+        reject(new Error(
+          response.message || response.error || `Upload failed (${xhr.status}).`
+        ));
+      }
+    };
+
+    xhr.onerror = () => reject(new Error('Network error during upload.'));
+    xhr.onabort = () => reject(new Error('Upload cancelled.'));
+
+    xhr.send(file);
+  });
+}
+
 let uploadPreviewUrl = '';
 
 $('media')?.addEventListener('change', () => {
