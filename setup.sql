@@ -8,10 +8,13 @@ alter table public.posts enable row level security;
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   username text unique not null,
+  display_name text,
   is_admin boolean not null default false,
   created_at timestamptz not null default now(),
   constraint profiles_username_format check (username ~ '^[A-Za-z0-9_]{3,24}$')
 );
+ALTER TABLE public.profiles
+ADD COLUMN IF NOT EXISTS display_name text;
 alter table public.profiles enable row level security;
 
 -- Create a profile automatically for every newly created username account.
@@ -31,8 +34,21 @@ for each row execute procedure public.handle_new_gamevault_user();
 -- Profiles can be read by signed-in users; users may not update their own admin flag.
 drop policy if exists "Profiles visible to authenticated users" on public.profiles;
 create policy "Profiles visible to authenticated users" on public.profiles for select to authenticated using (true);
--- Do not create a user UPDATE policy for profiles: is_admin must be changed by project owner in SQL.
+-- Users can update only their own display name.
+DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
 
+CREATE POLICY "Users can update own profile"
+ON public.profiles
+FOR UPDATE
+TO authenticated
+USING (auth.uid() = id)
+WITH CHECK (auth.uid() = id);
+
+REVOKE UPDATE ON TABLE public.profiles FROM authenticated;
+
+GRANT UPDATE (display_name)
+ON TABLE public.profiles
+TO authenticated;
 -- Allow admins to remove any post. Existing owner-delete policies remain valid.
 drop policy if exists "Admins can delete any post" on public.posts;
 create policy "Admins can delete any post" on public.posts for delete to authenticated
