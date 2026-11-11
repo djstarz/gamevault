@@ -1669,6 +1669,12 @@ titleLink.textContent = post.title || 'Untitled post';
 h.append(titleLink);
 b.append(tag, h);
 
+const author = document.createElement('a');
+author.className = 'gv-profile-link';
+author.textContent = '@' + (post.username || 'Player');
+author.href = `profile.html?u=${encodeURIComponent(post.username || '')}`;
+b.append(author);
+
   if (post.description) {
     const p = document.createElement('p');
     p.textContent = post.description;
