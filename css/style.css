@@ -1478,6 +1478,39 @@ button[type="submit"]:hover:not(:disabled),
   box-shadow: 0 0 0 3px var(--gv-focus);
 }
 
+/* GameVault — global input and dropdown theme */
+
+input:not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+textarea,
+select {
+  color: var(--gv-text);
+  background-color: var(--gv-bg);
+  border: 1px solid var(--gv-border);
+  border-radius: var(--gv-control-radius);
+  accent-color: var(--gv-purple);
+  color-scheme: dark;
+}
+
+input:not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus,
+textarea:focus,
+select:focus {
+  outline: 1px solid var(--gv-blue);
+  outline-offset: 1px;
+  border-color: var(--gv-blue);
+  box-shadow: 0 0 0 3px var(--gv-focus);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--gv-muted);
+  opacity: .75;
+}
+
+select option {
+  color: var(--gv-text);
+  background: var(--gv-panel);
+}
+
 
 /* ================= POST REACTIONS ================= */
 
