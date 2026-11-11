@@ -1414,62 +1414,6 @@ select,
 }
 
 
-/* GameVault — unified popup theme */
-
-.auth-dialog,
-.profile-dialog,
-.gv-delete-dialog,
-.gv-edit-dialog,
-.gv-settings-dialog,
-.gv-crop-dialog,
-#post-viewer {
-  color: var(--gv-text);
-  background: var(--gv-panel);
-  border: 1px solid var(--gv-border);
-  border-radius: 18px;
-  box-shadow: 0 20px 65px rgba(0, 0, 0, .65);
-}
-
-.auth-dialog::backdrop,
-.profile-dialog::backdrop,
-.gv-delete-dialog::backdrop,
-.gv-edit-dialog::backdrop,
-.gv-settings-dialog::backdrop,
-.gv-crop-dialog::backdrop,
-#post-viewer::backdrop {
-  background: rgba(3, 3, 10, .78);
-  backdrop-filter: blur(5px);
-}
-
-/* Consistent popup form fields */
-.auth-dialog input,
-.profile-dialog input,
-.gv-edit-dialog input,
-.gv-edit-dialog textarea,
-.gv-edit-dialog select,
-.gv-settings-dialog input,
-.gv-crop-dialog input,
-#post-viewer input,
-#post-viewer textarea {
-  color: var(--gv-text);
-  background: var(--gv-bg);
-  border: 1px solid var(--gv-border);
-  border-radius: var(--gv-control-radius);
-}
-
-.auth-dialog input:focus,
-.profile-dialog input:focus,
-.gv-edit-dialog input:focus,
-.gv-edit-dialog textarea:focus,
-.gv-edit-dialog select:focus,
-.gv-settings-dialog input:focus,
-.gv-crop-dialog input:focus,
-#post-viewer input:focus,
-#post-viewer textarea:focus {
-  outline: 1px solid var(--gv-blue);
-  border-color: var(--gv-blue);
-  box-shadow: 0 0 0 3px var(--gv-focus);
-}
 
 /* GameVault — global input and dropdown theme */
 
