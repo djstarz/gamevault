@@ -68,8 +68,10 @@ function renderPost(post, author) {
   const authorBox = $('post-author');
   authorBox.replaceChildren();
 
-  const authorName = document.createElement('strong');
-  authorName.textContent = author?.username || 'Player';
+    const authorName = document.createElement('a');
+  authorName.className = 'gv-profile-link';
+  authorName.textContent = '@' + (author?.username || 'Player');
+  authorName.href = `profile.html?u=${encodeURIComponent(author?.username || '')}`;
 
   const date = document.createElement('small');
   date.textContent = ' · ' + new Date(post.created_at).toLocaleString();
