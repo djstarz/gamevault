@@ -526,14 +526,7 @@ $('upload-form').onsubmit = async event => {
 
     path = `${currentUser.id}/${crypto.randomUUID()}-${safe}`;
 
-    const upload = await sb.storage
-      .from('gamevault-media')
-      .upload(path, file, {
-        contentType: file.type,
-        upsert: false
-      });
-
-    if (upload.error) throw upload.error;
+  await uploadFileWithProgress(path, file);
 
     const url = sb.storage
       .from('gamevault-media')
