@@ -273,15 +273,16 @@
 }
 
 
+
 /* GameVault custom delete confirmation */
 .gv-delete-dialog {
   width: min(420px, calc(100vw - 32px));
   padding: 0;
-  color: #f4f6fb;
-  background: #151923;
-  border: 1px solid #343b4b;
+  color: var(--gv-text);
+  background: var(--gv-panel);
+  border: 1px solid var(--gv-border);
   border-radius: 18px;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.65);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .65);
   overflow: hidden;
 }
 
@@ -290,7 +291,7 @@
 }
 
 .gv-delete-dialog::backdrop {
-  background: rgba(5, 7, 12, 0.76);
+  background: rgba(3, 3, 10, .78);
   backdrop-filter: blur(5px);
 }
 
@@ -304,31 +305,31 @@
   width: 54px;
   height: 54px;
   margin-bottom: 20px;
-  border: 1px solid rgba(255, 82, 103, 0.25);
+  border: 1px solid rgba(255, 98, 120, .25);
   border-radius: 16px;
-  background: rgba(255, 65, 89, 0.12);
-  color: #ff6278;
+  background: rgba(255, 98, 120, .12);
+  color: var(--gv-danger);
   font-size: 26px;
 }
 
 .gv-delete-dialog h2 {
   margin: 0 0 10px;
-  color: #f7f8fc;
+  color: var(--gv-text);
   font-size: 22px;
   font-weight: 750;
-  letter-spacing: -0.5px;
+  letter-spacing: -.5px;
 }
 
 .gv-delete-dialog p {
   margin: 0;
-  color: #aab2c3;
+  color: var(--gv-muted);
   font-size: 14px;
   line-height: 1.7;
   overflow-wrap: anywhere;
 }
 
 .gv-delete-post-title {
-  color: #e8ecf5;
+  color: var(--gv-text);
   font-weight: 650;
 }
 
@@ -343,7 +344,7 @@
   min-height: 42px;
   padding: 0 17px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: var(--gv-control-radius);
   font: inherit;
   font-size: 13px;
   font-weight: 700;
@@ -356,28 +357,30 @@
 }
 
 .gv-delete-cancel {
-  color: #e2e7f1;
-  background: #252b38;
-  border-color: #394153 !important;
+  color: var(--gv-text);
+  background: var(--gv-secondary-bg);
+  border-color: var(--gv-border) !important;
 }
 
 .gv-delete-cancel:hover {
-  background: #303849;
+  background: var(--gv-secondary-hover);
 }
 
 .gv-delete-confirm {
   color: #fff;
-  background: #e5485d;
+  background: var(--gv-danger-bg);
+  border-color: var(--gv-danger);
 }
 
 .gv-delete-confirm:hover {
-  background: #f15a6d;
+  background: var(--gv-danger);
 }
 
 .gv-delete-actions button:focus-visible {
-  outline: 2px solid #9caeff;
+  outline: 2px solid var(--gv-blue);
   outline-offset: 3px;
 }
+
 
 @keyframes gv-delete-enter {
   from {
