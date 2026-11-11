@@ -365,9 +365,6 @@ async function loadDmRequests() {
 
       await loadDmRequests();
       await loadDmConversations();
-      setInterval(() => {
-  if (user) loadDmConversations();
-}, 30000);
     }
 
     accept.addEventListener('click', () => respond('accepted'));
@@ -714,6 +711,9 @@ renderAccount();
 
   await loadDmRequests();
   await loadDmConversations();
+  setInterval(() => {
+  if (user) loadDmConversations();
+}, 30000);
 
   sb.auth.onAuthStateChange((_event, session) => {
     setTimeout(async () => {
