@@ -2096,6 +2096,7 @@ function updateChatAccess() {
 }
 
 function clearChatAttachment() {
+    if (!$('chat-media-input')) return;
   selectedChatFile = null;
 
   if (chatPreviewUrl) {
