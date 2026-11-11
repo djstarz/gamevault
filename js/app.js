@@ -574,7 +574,7 @@ function renderAccount() {
   const a = $('account');
   a.replaceChildren();
 
-  $('auth-open').hidden = !!user;
+  $('auth-open').hidden = !authReady || !!user;
 
     if (!user) {
     isAdmin = false;
