@@ -37,6 +37,34 @@ function startGameVaultPresence() {
 let dmRequestsCache = [];
 let activeDmConversation = null;
 let dmChannel = null;
+let presenceTimer = null;
+
+async function updateGameVaultPresence() {
+  if (!user) return;
+
+  const { error } = await sb
+    .from('gamevault_presence')
+    .upsert({
+      user_id: user.id,
+      last_seen: new Date().toISOString()
+    });
+
+  if (error) {
+    console.error('Presence update error:', error);
+  }
+}
+
+function startGameVaultPresence() {
+  if (presenceTimer) clearInterval(presenceTimer);
+
+  if (!user) {
+    presenceTimer = null;
+    return;
+  }
+
+  updateGameVaultPresence();
+  presenceTimer = setInterval(updateGameVaultPresence, 30000);
+}
 // Username accounts are mapped to a synthetic, non-deliverable address. Disable email confirmation in Supabase Auth.
 const accountEmail = name => `${name.toLowerCase()}@username.gamevault.invalid`;
 const configured=SUPABASE_URL.startsWith('https://')&&!SUPABASE_URL.includes('PASTE_YOUR')&&SUPABASE_PUBLISHABLE_KEY&&!SUPABASE_PUBLISHABLE_KEY.includes('PASTE_YOUR');
