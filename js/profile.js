@@ -389,13 +389,14 @@ renderProfileAccount();
 await loadProfile();
 
   sb.auth.onAuthStateChange((_event, session) => {
-    currentUser = session?.user || null;
-renderProfileAccount();
+  currentUser = session?.user || null;
 
-setTimeout(() => {
-      loadProfile();
-    }, 0);
-  });
+  setTimeout(async () => {
+    await loadAccountProfile();
+    renderProfileAccount();
+    await loadProfile();
+  }, 0);
+});
 }
 
 initializeProfilePage().catch(error => {
