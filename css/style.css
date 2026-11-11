@@ -1329,18 +1329,19 @@ select,
   gap: 7px;
   padding: 10px 12px;
 }
-/* GameVault v1.0.6 — unified cyberpunk button theme */
+
+/* GameVault — unified cyberpunk button theme */
 
 /* Standard buttons */
 button:not(.profile-menu-item):not(.chat-menu-button):not(.chat-attachment-remove) {
-  border-radius: 9px;
+  border-radius: var(--gv-control-radius);
   transition: background .18s ease, border-color .18s ease,
     box-shadow .18s ease, transform .18s ease;
 }
 
 button:not(:disabled):not(.profile-menu-item):not(.chat-menu-button):not(.chat-attachment-remove):hover {
   border-color: var(--gv-blue);
-  box-shadow: 0 0 12px rgba(0, 217, 255, .16);
+  box-shadow: 0 0 12px var(--gv-focus);
 }
 
 button:focus-visible {
@@ -1363,9 +1364,9 @@ button[type="submit"],
 .gv-edit-save,
 .gv-edit-button,
 .profile-dialog-action {
-  background: linear-gradient(110deg, #9b6bff, #6551dc);
+  background: var(--gv-primary);
   color: #fff;
-  border: 1px solid #a98aff;
+  border: 1px solid var(--gv-purple);
   box-shadow: 0 2px 12px rgba(155, 107, 255, .2);
 }
 
@@ -1377,9 +1378,9 @@ button[type="submit"]:hover:not(:disabled),
 .gv-edit-save:hover:not(:disabled),
 .gv-edit-button:hover:not(:disabled),
 .profile-dialog-action:hover:not(:disabled) {
-  background: linear-gradient(110deg, #00bfe5, #258bdc);
-  border-color: #00d9ff;
-  box-shadow: 0 0 16px rgba(0, 217, 255, .25);
+  background: var(--gv-primary-hover);
+  border-color: var(--gv-blue);
+  box-shadow: 0 0 16px var(--gv-focus);
 }
 
 /* Secondary actions */
@@ -1388,9 +1389,9 @@ button[type="submit"]:hover:not(:disabled),
 .gv-edit-cancel,
 .gv-delete-cancel,
 #crop-cancel {
-  background: #211e35;
-  color: #e4ddff;
-  border: 1px solid #51416f;
+  background: var(--gv-secondary-bg);
+  color: var(--gv-text);
+  border: 1px solid var(--gv-border);
 }
 
 .button-secondary:hover:not(:disabled),
@@ -1398,7 +1399,7 @@ button[type="submit"]:hover:not(:disabled),
 .gv-edit-cancel:hover:not(:disabled),
 .gv-delete-cancel:hover:not(:disabled),
 #crop-cancel:hover:not(:disabled) {
-  background: #30294a;
+  background: var(--gv-secondary-hover);
   border-color: var(--gv-purple);
 }
 
@@ -1406,18 +1407,19 @@ button[type="submit"]:hover:not(:disabled),
 .delete,
 .chat-menu-delete,
 .gv-delete-confirm {
-  background: linear-gradient(110deg, #713444, #512432);
+  background: var(--gv-danger-bg);
   color: #ffdce3;
-  border: 1px solid #a64d67;
+  border: 1px solid var(--gv-danger);
 }
 
 .delete:hover:not(:disabled),
 .chat-menu-delete:hover:not(:disabled),
 .gv-delete-confirm:hover:not(:disabled) {
-  background: #913d55;
-  border-color: #ff718e;
+  background: var(--gv-danger);
+  border-color: #ff8da0;
   box-shadow: 0 0 12px rgba(255, 80, 120, .2);
 }
+
 /* GameVault v1.0.6 — unified popup theme */
 
 .auth-dialog,
