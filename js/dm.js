@@ -676,6 +676,7 @@ renderAccount();
   sb.auth.onAuthStateChange((_event, session) => {
     setTimeout(async () => {
       user = session?.user || null;
+startGameVaultPresence();
 await loadAvatar();
 renderAccount();
       if (!user) {
