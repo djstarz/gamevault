@@ -1934,7 +1934,7 @@ b.append(tag, h);
 
 const author = document.createElement('a');
 author.className = 'gv-profile-link';
-author.textContent = '@' + (post.username || 'Player');
+author.textContent = post.display_name || post.username || 'Player';
 author.href = `profile.html?u=${encodeURIComponent(post.username || '')}`;
 
 const authorRow = document.createElement('div');
@@ -2162,7 +2162,7 @@ async function loadPosts() {
 
     const { data: profiles, error: profilesError } = await sb
       .from('profiles')
-      .select('id, username, avatar_path')
+      .select('id, username, display_name, avatar_path')
       .in('id', userIds);
 
     if (profilesError) {
@@ -2175,6 +2175,7 @@ async function loadPosts() {
 postsCache.forEach(post => {
   const profile = authorProfiles[post.user_id];
   post.username = profile?.username || 'Player';
+post.display_name = profile?.display_name?.trim() || post.username;
 
   post.avatar_url = profile?.avatar_path
     ? sb.storage.from('gamevault-avatars').getPublicUrl(profile.avatar_path).data.publicUrl
