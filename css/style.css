@@ -1529,10 +1529,10 @@ select option {
   gap: 5px;
   min-height: 32px;
   padding: 5px 10px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--gv-border);
   border-radius: 20px;
-  background: var(--surface-2);
-  color: var(--muted);
+  background: var(--gv-secondary-bg);
+  color: var(--gv-muted);
   font-size: 13px;
   cursor: pointer;
   transition: background .18s ease, border-color .18s ease,
@@ -1540,15 +1540,16 @@ select option {
 }
 
 .post-reaction:hover {
-  background: var(--surface-3);
-  border-color: var(--blue);
-  color: var(--text);
+  background: var(--gv-secondary-hover);
+  border-color: var(--gv-blue);
+  color: var(--gv-text);
 }
 
 .post-reaction.selected {
-  background: rgba(117, 183, 255, .13);
-  border-color: var(--blue);
-  color: var(--blue);
+  background: rgba(155, 107, 255, .18);
+  border-color: var(--gv-purple);
+  color: var(--gv-text);
+  box-shadow: 0 0 10px rgba(155, 107, 255, .12);
 }
 
 .post-reaction:disabled {
@@ -1557,7 +1558,7 @@ select option {
 }
 
 .post-reaction:focus-visible {
-  outline: 2px solid var(--blue);
+  outline: 2px solid var(--gv-blue);
   outline-offset: 2px;
 }
 /* ================= POST REACTIONS ================= */
