@@ -1081,7 +1081,7 @@ async function loadPostComments(postId, dialog) {
   roots.forEach(comment => list.append(renderComment(comment)));
 }
 function getPostShareUrl(post) {
-  const url = new URL(window.location.href);
+  const url = new URL('post.html', window.location.href);
   url.searchParams.set('post', post.id);
   return url.toString();
 }
