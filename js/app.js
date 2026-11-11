@@ -2532,7 +2532,7 @@ async function deleteChatMessage(message) {
 
 
 async function initializeChat() {
-  if (!sb || chatStarted) return;
+  if (!sb || chatStarted || !$('chat-status') || !$('chat-messages')) return;
 
   chatStarted = true;
   $('chat-status').textContent = 'Loading…';
