@@ -863,9 +863,10 @@ document.querySelectorAll('.upload-trigger').forEach(button => {
   });
 });
 $('upload-close')?.addEventListener('click', () => {
+  $('upload-form').reset();
+  clearUploadPreview();
   $('upload-dialog')?.close();
 });
-
 function openAuth(){$('auth-status').textContent='';$('auth-dialog').showModal()}$('auth-open').onclick=openAuth;
 $('auth-toggle').onclick=()=>{signup=!signup;$('auth-heading').textContent=signup?'Create your account':'Enter the vault';$('auth-submit').textContent=signup?'Create account':'Sign in';$('auth-toggle').textContent=signup?'Already have an account? Sign in':'Need an account? Sign up';$('password').autocomplete=signup?'new-password':'current-password';$('auth-status').textContent=signup?'Choose a unique username and a password of at least 8 characters.':''};
 
