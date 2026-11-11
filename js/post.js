@@ -401,7 +401,8 @@ if (!updated) return;
         remove.textContent = 'Delete';
 
         remove.onclick = async () => {
-          if (!confirm('Delete this comment and its replies?')) return;
+          const confirmed = await openDeleteModal(comment);
+if (!confirmed) return;
 
           const { error } = await sb
             .from('post_comments')
