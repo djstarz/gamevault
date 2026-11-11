@@ -477,8 +477,7 @@ const onlineUsers = new Set(
     details.className = 'gv-dm-friend-details';
 
     const name = document.createElement('strong');
-    name.textContent = username;
-
+name.textContent = `${conversation.display_name || username} · @${username}`;
     const profile = (profiles || []).find(
   item => item.username === username
 );
