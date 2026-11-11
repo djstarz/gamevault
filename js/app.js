@@ -1857,7 +1857,15 @@ const author = document.createElement('a');
 author.className = 'gv-profile-link';
 author.textContent = '@' + (post.username || 'Player');
 author.href = `profile.html?u=${encodeURIComponent(post.username || '')}`;
-b.append(author);
+
+const authorRow = document.createElement('div');
+authorRow.style.cssText = 'display:flex;align-items:center;gap:8px;margin:8px 0;';
+authorRow.append(
+  createGameVaultAvatar(post.username, post.avatar_url),
+  author
+);
+
+b.append(authorRow);
 
   if (post.description) {
     const p = document.createElement('p');
