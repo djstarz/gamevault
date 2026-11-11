@@ -147,8 +147,7 @@ async function searchGameVaultUsers() {
     item.className = 'gv-dm-search-result';
 
     const name = document.createElement('span');
-    name.textContent = '@' + result.username;
-
+name.textContent = `${result.display_name || result.username} · @${result.username}`;
     const requestButton = document.createElement('button');
     requestButton.type = 'button';
     requestButton.textContent = 'Send request';
