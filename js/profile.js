@@ -645,7 +645,83 @@ await loadProfile();
   }, 0);
 });
 }
+$('settings-close').onclick = () => {
+  $('settings-dialog').close();
+};
 
+$('settings-form').onsubmit = async event => {
+  event.preventDefault();
+
+  if (!currentUser) return;
+
+  const password = $('new-password').value;
+  const confirm = $('confirm-password').value;
+  const button = $('password-save');
+  const status = $('settings-status');
+
+  if (password.length < 8) {
+    status.textContent = 'Password must be at least 8 characters.';
+    return;
+  }
+
+  if (password !== confirm) {
+    status.textContent = 'The passwords do not match.';
+    return;
+  }
+
+  button.disabled = true;
+  status.textContent = 'Updating password…';
+
+  try {
+    const { error } = await sb.auth.updateUser({ password });
+    if (error) throw error;
+
+    status.textContent = 'Password updated successfully.';
+    $('settings-form').reset();
+  } catch (error) {
+    status.textContent = 'Could not update password: ' + error.message;
+  } finally {
+    button.disabled = false;
+  }
+};
+
+$('display-name-save').onclick = async () => {
+  if (!currentUser) return;
+
+  const displayName = $('display-name').value.trim();
+  const button = $('display-name-save');
+  const status = $('settings-status');
+
+  if (!displayName || displayName.length > 32) {
+    status.textContent = 'Enter a display name (1–32 characters).';
+    return;
+  }
+
+  button.disabled = true;
+  status.textContent = 'Saving display name…';
+
+  try {
+    const { error } = await sb
+      .from('profiles')
+      .update({ display_name: displayName })
+      .eq('id', currentUser.id);
+
+    if (error) throw error;
+
+    accountProfile = {
+      ...accountProfile,
+      display_name: displayName
+    };
+
+    status.textContent = 'Display name saved successfully.';
+    renderProfileAccount();
+    await loadProfile();
+  } catch (error) {
+    status.textContent = 'Could not save display name: ' + error.message;
+  } finally {
+    button.disabled = false;
+  }
+};
 initializeProfilePage().catch(error => {
   console.error('GameVault profile page error:', error);
   setStatus('Something went wrong.');
