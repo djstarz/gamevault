@@ -857,7 +857,11 @@ function updateUpload() {
 $('upload-open')?.addEventListener('click', () => {
   $('upload-dialog')?.showModal();
 });
-
+document.querySelectorAll('.upload-trigger').forEach(button => {
+  button.addEventListener('click', () => {
+    $('upload-dialog')?.showModal();
+  });
+});
 $('upload-close')?.addEventListener('click', () => {
   $('upload-dialog')?.close();
 });
