@@ -1639,12 +1639,6 @@ b.append(tag, h);
   }
     b.append(createPostReactions(post));
 
-  const view = document.createElement('button');
-  view.type = 'button';
-  view.className = 'view-post';
-  view.textContent = 'Open post';
-  view.onclick = () => openPost(post);
-  b.append(view);
 
   const share = document.createElement('button');
   share.type = 'button';
