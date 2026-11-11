@@ -42,7 +42,7 @@ async function loadAccountProfile() {
 
   const { data, error } = await sb
     .from('profiles')
-    .select('id, username, avatar_path, is_admin')
+    .select('id, username, display_name, avatar_path, is_admin')
     .eq('id', currentUser.id)
     .maybeSingle();
 
