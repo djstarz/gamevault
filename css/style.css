@@ -130,6 +130,96 @@
 .profile-menu-danger .profile-menu-icon {
   color: #ff9ca5;
 }
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 100;
+  width: 255px;
+  padding: 8px;
+  background: var(--gv-panel);
+  border: 1px solid var(--gv-border);
+  border-radius: 15px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .5);
+}
+
+.profile-dropdown[hidden] {
+  display: none !important;
+}
+
+.profile-dropdown-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  overflow-wrap: anywhere;
+}
+
+.profile-dropdown-heading strong {
+  color: var(--gv-text);
+  font-size: 14px;
+}
+
+.profile-dropdown-heading span {
+  color: var(--gv-muted);
+  font-size: 11px;
+}
+
+.profile-menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px !important;
+  border: 1px solid transparent !important;
+  border-radius: var(--gv-control-radius);
+  background: transparent !important;
+  color: var(--gv-text) !important;
+  text-align: left;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease,
+    color .18s ease;
+}
+
+.profile-menu-item:hover {
+  background: var(--gv-secondary-hover) !important;
+  border-color: var(--gv-border) !important;
+  color: var(--gv-blue) !important;
+}
+
+.profile-menu-icon {
+  width: 20px;
+  color: var(--gv-blue);
+  text-align: center;
+  font-size: 17px;
+}
+
+.profile-menu-divider {
+  height: 1px;
+  margin: 7px 4px;
+  background: var(--gv-border);
+}
+
+.profile-menu-item.profile-menu-danger {
+  color: var(--gv-danger) !important;
+}
+
+.profile-menu-danger .profile-menu-icon {
+  color: var(--gv-danger);
+}
+
+.profile-menu-item.profile-menu-danger:hover {
+  background: var(--gv-danger-bg) !important;
+  border-color: var(--gv-danger) !important;
+  color: #fff !important;
+}
+
+.profile-menu-item.profile-menu-danger:hover .profile-menu-icon {
+  color: #fff;
+}
+
 
 .profile-dialog {
   position: fixed;
