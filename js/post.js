@@ -314,8 +314,8 @@ async function loadComments(postId) {
         edit.textContent = 'Edit';
 
         edit.onclick = async () => {
-          const updated = prompt('Edit your comment:', comment.content);
-          if (updated === null || !updated.trim()) return;
+          const updated = await openEditModal(comment);
+if (!updated) return;
 
           const { error } = await sb
             .from('post_comments')
