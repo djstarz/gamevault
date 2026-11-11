@@ -2476,6 +2476,7 @@ async function addChatMessage(message) {
     .maybeSingle();
 
   const messageUsername = messageProfile?.username || message.username || 'Player';
+const messageDisplayName = messageProfile?.display_name?.trim() || messageUsername;
   const messageAvatarUrl = messageProfile?.avatar_path
     ? sb.storage.from('gamevault-avatars').getPublicUrl(messageProfile.avatar_path).data.publicUrl
     : null;
