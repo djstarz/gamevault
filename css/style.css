@@ -1239,10 +1239,6 @@ select,
 
 
 .chat-message-menu .chat-menu-delete {
-  color: #ff8f9b;
-}
-
-.chat-message-menu .chat-menu-delete {
   color: var(--gv-danger);
 }
 
