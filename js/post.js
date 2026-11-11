@@ -211,8 +211,8 @@ function createCommentModal(comment, editing) {
     const original = document.createElement('p');
     original.textContent = editing
       ? 'Update your comment below.'
-      : `${comment.username || 'Player'}: ${comment.content}`;
-
+: `${comment.display_name || comment.username || 'Player'} (@${comment.username || 'Player'}): ${comment.content}`;
+    
     const input = document.createElement('textarea');
     input.placeholder = editing ? 'Edit your comment...' : 'Write your reply...';
     input.value = editing ? comment.content : '';
