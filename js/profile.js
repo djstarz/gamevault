@@ -241,6 +241,7 @@ function renderProfileAccount() {
   avatar.height = 40;
 
   const ownProfile = accountProfile;
+  const displayName = ownProfile?.display_name?.trim() || username;
   avatar.src = avatarUrl(ownProfile?.avatar_path) ||
     'data:image/svg+xml;charset=utf-8,' +
     encodeURIComponent(
