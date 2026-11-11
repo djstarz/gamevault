@@ -1495,9 +1495,7 @@ function makePostCard(post, admin = false) {
   console.log('Share button clicked:', post.id);
   openSharePost(post);
 };
-  share.style.position = 'relative';
-share.style.zIndex = '9999';
-share.style.pointerEvents = 'auto';
+
   b.append(share);
   
 if (user && (user.id === post.user_id || admin)) {
