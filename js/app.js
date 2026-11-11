@@ -375,9 +375,9 @@ async function loadDmMessages() {
     if (own) bubble.classList.add('own');
 
         const senderProfile = dmProfileMap[message.sender_id];
-    const senderName = own
-      ? 'You'
-      : senderProfile?.username || activeDmConversation.username || 'Player';
+ const senderName = own
+  ? 'You'
+  : senderProfile?.displayName || senderProfile?.username || activeDmConversation.username || 'Player';
 
     const sender = document.createElement('strong');
     sender.textContent = senderName;
