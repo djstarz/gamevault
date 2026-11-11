@@ -1613,6 +1613,7 @@ select option {
   outline-offset: 2px;
 }
 
+
 /* ================================
    GAMEVAULT PRIVATE INBOX
 ================================ */
@@ -1633,16 +1634,23 @@ select option {
   flex: 1;
   min-width: 0;
   padding: 13px 15px;
-  color: var(--text);
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 10px;
+  color: var(--gv-text);
+  background: var(--gv-secondary-bg);
+  border: 1px solid var(--gv-border);
+  border-radius: var(--gv-control-radius);
   outline: none;
+  transition: border-color .18s ease, box-shadow .18s ease;
 }
 
 .gv-inbox-search input:focus,
 .gv-dm-message-form input:focus {
-  border-color: var(--blue);
+  border-color: var(--gv-blue);
+  box-shadow: 0 0 0 3px var(--gv-focus);
+}
+
+.gv-inbox-search input::placeholder,
+.gv-dm-message-form input::placeholder {
+  color: var(--gv-muted);
 }
 
 .gv-dm-search-results {
@@ -1652,7 +1660,7 @@ select option {
 .gv-dm-search-results p,
 .gv-dm-requests p,
 .gv-dm-conversations p {
-  color: var(--muted);
+  color: var(--gv-muted);
   font-size: 13px;
 }
 
@@ -1666,8 +1674,8 @@ select option {
 .gv-inbox-sidebar,
 .gv-inbox-chat {
   min-width: 0;
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: var(--gv-panel);
+  border: 1px solid var(--gv-border);
   border-radius: 13px;
 }
 
@@ -1689,7 +1697,7 @@ select option {
 
 .gv-inbox-heading h3 {
   margin: 0;
-  color: var(--text);
+  color: var(--gv-text);
   font-size: 14px;
 }
 
@@ -1699,8 +1707,9 @@ select option {
   min-width: 23px;
   height: 23px;
   padding: 0 6px;
-  color: var(--blue);
-  background: var(--surface-3);
+  color: var(--gv-blue);
+  background: var(--gv-secondary-bg);
+  border: 1px solid var(--gv-border);
   border-radius: 20px;
   font-size: 11px;
 }
@@ -1733,38 +1742,40 @@ select option {
   width: 54px;
   height: 54px;
   margin-bottom: 15px;
-  color: var(--blue);
-  background: var(--surface-3);
+  color: var(--gv-blue);
+  background: var(--gv-secondary-bg);
+  border: 1px solid var(--gv-border);
   border-radius: 16px;
   font-size: 25px;
 }
 
 .gv-dm-empty h3 {
   margin: 0 0 7px;
-  color: var(--text);
+  color: var(--gv-text);
 }
 
 .gv-dm-empty p {
   max-width: 280px;
   margin: 0;
-  color: var(--muted);
+  color: var(--gv-muted);
   font-size: 13px;
   line-height: 1.6;
 }
 
 .gv-dm-chat-header {
   padding: 16px 18px;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--gv-border);
+  background: var(--gv-panel-light);
 }
 
 .gv-dm-chat-header h3 {
   margin: 0 0 4px;
-  color: var(--text);
+  color: var(--gv-text);
   font-size: 15px;
 }
 
 .gv-dm-chat-header span {
-  color: var(--muted);
+  color: var(--gv-muted);
   font-size: 11px;
 }
 
@@ -1783,7 +1794,8 @@ select option {
   display: flex;
   gap: 9px;
   padding: 13px;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--gv-border);
+  background: var(--gv-panel);
 }
 
 .gv-dm-message-form button {
@@ -1793,7 +1805,7 @@ select option {
 #dm-message-feedback {
   margin: 0;
   padding: 0 13px 10px;
-  color: var(--muted);
+  color: var(--gv-muted);
   font-size: 12px;
 }
 
@@ -1801,9 +1813,10 @@ select option {
 .gv-dm-request,
 .gv-dm-conversation {
   padding: 12px;
-  background: var(--surface-2);
-  border: 1px solid var(--line-soft);
-  border-radius: 10px;
+  background: var(--gv-secondary-bg);
+  border: 1px solid var(--gv-border);
+  border-radius: var(--gv-control-radius);
+  transition: background .18s ease, border-color .18s ease;
 }
 
 .gv-dm-search-result,
@@ -1821,7 +1834,7 @@ select option {
 .gv-dm-user-info strong {
   display: block;
   overflow: hidden;
-  color: var(--text);
+  color: var(--gv-text);
   font-size: 13px;
   text-overflow: ellipsis;
 }
@@ -1829,7 +1842,7 @@ select option {
 .gv-dm-user-info small {
   display: block;
   margin-top: 3px;
-  color: var(--muted);
+  color: var(--gv-muted);
   font-size: 11px;
 }
 
@@ -1841,33 +1854,39 @@ select option {
 
 .gv-dm-request-actions button {
   padding: 7px 10px;
-  border: 1px solid var(--line);
-  border-radius: 7px;
-  color: var(--text);
-  background: var(--surface-3);
+  border: 1px solid var(--gv-border);
+  border-radius: var(--gv-control-radius);
+  color: var(--gv-text);
+  background: var(--gv-panel-light);
   cursor: pointer;
   font-size: 11px;
+  transition: background .18s ease, border-color .18s ease;
+}
+
+.gv-dm-request-actions button:hover {
+  background: var(--gv-secondary-hover);
+  border-color: var(--gv-blue);
 }
 
 .gv-dm-conversation {
   width: 100%;
   text-align: left;
-  color: var(--text);
+  color: var(--gv-text);
   cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
 }
 
 .gv-dm-conversation:hover,
 .gv-dm-conversation.active {
-  background: var(--surface-3);
-  border-color: var(--blue);
+  background: var(--gv-secondary-hover);
+  border-color: var(--gv-blue);
 }
 
 .gv-dm-bubble {
   max-width: 78%;
   padding: 10px 13px;
-  color: var(--text);
-  background: var(--surface-3);
+  color: var(--gv-text);
+  background: var(--gv-secondary-bg);
+  border: 1px solid var(--gv-border);
   border-radius: 12px 12px 12px 3px;
   overflow-wrap: anywhere;
   font-size: 13px;
@@ -1876,14 +1895,15 @@ select option {
 
 .gv-dm-bubble.own {
   align-self: flex-end;
-  background: #24466a;
+  background: rgba(0, 217, 255, .12);
+  border-color: rgba(0, 217, 255, .3);
   border-radius: 12px 12px 3px 12px;
 }
 
 .gv-dm-bubble small {
   display: block;
   margin-top: 5px;
-  color: #b7c8dc;
+  color: var(--gv-muted);
   font-size: 10px;
 }
 
@@ -1923,6 +1943,7 @@ select option {
     padding-inline: 12px;
   }
 }
+
 /* GameVault v1.0.6 — Share Post Modal */
 
 .gv-modal-overlay {
