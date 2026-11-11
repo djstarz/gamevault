@@ -424,7 +424,7 @@ async function loadDmMessages() {
       } else {
         const { data: author } = await sb
           .from('profiles')
-          .select('username')
+          .select('username, display_name')
           .eq('id', sharedPost.user_id)
           .maybeSingle();
 
