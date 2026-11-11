@@ -1470,8 +1470,13 @@ function makePostCard(post, admin = false) {
   tag.textContent = post.category || 'Gaming';
 
   const h = document.createElement('h3');
-  h.textContent = post.title || 'Untitled post';
-  b.append(tag, h);
+
+const titleLink = document.createElement('a');
+titleLink.href = `post.html?id=${encodeURIComponent(post.id)}`;
+titleLink.textContent = post.title || 'Untitled post';
+
+h.append(titleLink);
+b.append(tag, h);
 
   if (post.description) {
     const p = document.createElement('p');
