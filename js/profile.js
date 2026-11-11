@@ -380,6 +380,10 @@ $('upload-close')?.addEventListener('click', () => {
   clearUploadPreview();
   $('upload-dialog')?.close();
 });
+$('upload-dialog')?.addEventListener('close', () => {
+  $('upload-form').reset();
+  clearUploadPreview();
+});
 async function uploadFileWithProgress(path, file) {
   const { data: sessionData, error: sessionError } =
     await sb.auth.getSession();
