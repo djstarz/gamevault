@@ -783,7 +783,7 @@ headingName.textContent = accountDisplayName || username;
     }
 
     $('my-profile-avatar').src = avatarUrl || avatar.src;
-    $('my-profile-name').textContent = username;
+$('my-profile-name').textContent = accountDisplayName || username;
     $('my-profile-role').textContent =
       isAdmin ? 'Administrator' : 'GameVault member';
 
