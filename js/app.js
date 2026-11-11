@@ -45,7 +45,7 @@ async function start() {
   $('dm-search-button')?.addEventListener('click', searchGameVaultUsers);
   const { data } = await sb.auth.getSession();
   user = data.session?.user || null;
-
+  startGameVaultPresence();
   await refreshAdmin();
   await loadAvatar();
   renderAccount();
