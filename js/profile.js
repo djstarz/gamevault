@@ -137,7 +137,7 @@ usernameTag.textContent = '@' + profile.username;
       month: 'long'
     });
 
-  info.append(username, role, joined);
+  info.append(username, usernameTag, role, joined);
   header.append(avatar, info);
 
   const stats = document.createElement('div');
