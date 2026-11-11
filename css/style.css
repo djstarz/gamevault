@@ -2028,8 +2028,8 @@ select,
 
 /* GameVault v1.0.6 — Open Post Popup Comment Theme */
 
-#post-viewer-dialog #post-comments-list button,
-#post-viewer-dialog #post-comment-form button {
+#post-viewer #post-comments-list button,
+#post-viewer #post-comment-form button {
   background: #243b55 !important;
   border: 1px solid #4b78a5 !important;
   border-radius: 8px !important;
@@ -2038,19 +2038,19 @@ select,
   box-shadow: none !important;
 }
 
-#post-viewer-dialog #post-comments-list button:hover,
-#post-viewer-dialog #post-comment-form button:hover {
+#post-viewer #post-comments-list button:hover,
+#post-viewer #post-comment-form button:hover {
   background: #304f70 !important;
   border-color: #75b7ff !important;
   color: #ffffff !important;
 }
 
-#post-viewer-dialog #post-comment-input {
+#post-viewer #post-comment-input {
   background: #171f2b !important;
   border: 1px solid #4b78a5 !important;
   color: #dce8f7 !important;
 }
 
-#post-viewer-dialog #post-comment-input::placeholder {
+#post-viewer #post-comment-input::placeholder {
   color: #8493a8 !important;
 }
