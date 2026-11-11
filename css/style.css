@@ -2754,3 +2754,8 @@ body.chat-page #chat-messages::-webkit-scrollbar {
   object-fit: cover;
   display: block;
 }
+.gv-chat-avatar {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+}
