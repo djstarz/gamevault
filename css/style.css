@@ -1971,3 +1971,32 @@ select,
   outline: 2px solid var(--blue) !important;
   outline-offset: 2px;
 }
+
+/* GameVault v1.0.6 — Post comment box theme */
+
+#post-comment-input {
+  display: block;
+  width: 100%;
+  min-height: 100px;
+  padding: 12px 14px;
+  margin: 12px 0;
+  background: #171f2b !important;
+  border: 1px solid #39465a !important;
+  border-radius: 10px !important;
+  color: #dce8f7 !important;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  box-shadow: none !important;
+}
+
+#post-comment-input::placeholder {
+  color: #8493a8 !important;
+}
+
+#post-comment-input:focus {
+  border-color: #6489b5 !important;
+  box-shadow: 0 0 0 3px rgba(100, 137, 181, .15) !important;
+}
