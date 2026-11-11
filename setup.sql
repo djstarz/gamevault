@@ -7,8 +7,9 @@ alter table public.posts enable row level security;
 
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
-  username text unique not null,
+   username text unique not null,
   display_name text,
+  avatar_path text,
   is_admin boolean not null default false,
   created_at timestamptz not null default now(),
   constraint profiles_username_format check (username ~ '^[A-Za-z0-9_]{3,24}$')
