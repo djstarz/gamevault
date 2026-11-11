@@ -187,6 +187,161 @@ async function loadProfile() {
 }
 
 
+function renderProfileAccount() {
+  const signIn = $('auth-open');
+  const account = $('account');
+
+  account.replaceChildren();
+
+  if (!currentUser) {
+    signIn.hidden = false;
+    return;
+  }
+
+  signIn.hidden = true;
+
+  const username = usernameOf(currentUser);
+  const menu = document.createElement('div');
+  menu.className = 'profile-menu';
+
+  const trigger = document.createElement('button');
+  trigger.type = 'button';
+  trigger.className = 'profile-trigger';
+  trigger.setAttribute('aria-label', 'Open account menu');
+  trigger.setAttribute('aria-expanded', 'false');
+
+  const avatar = document.createElement('img');
+  avatar.className = 'profile-avatar';
+  avatar.alt = '';
+  avatar.width = 40;
+  avatar.height = 40;
+
+  const ownProfile = profileUser?.id === currentUser.id
+    ? profileUser
+    : null;
+
+  avatar.src = avatarUrl(ownProfile?.avatar_path) ||
+    'data:image/svg+xml;charset=utf-8,' +
+    encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40">' +
+      '<rect width="40" height="40" rx="20" fill="#263447"/>' +
+      '<text x="20" y="27" text-anchor="middle" fill="white" font-size="22">' +
+      username.charAt(0).toUpperCase() +
+      '</text></svg>'
+    );
+
+  const name = document.createElement('span');
+  name.className = 'profile-trigger-name';
+  name.textContent = username;
+
+  const arrow = document.createElement('span');
+  arrow.className = 'profile-chevron';
+  arrow.textContent = '⌄';
+
+  trigger.append(avatar, name, arrow);
+
+  const dropdown = document.createElement('div');
+  dropdown.className = 'profile-dropdown';
+  dropdown.hidden = true;
+
+  const heading = document.createElement('div');
+  heading.className = 'profile-dropdown-heading';
+
+  const headingName = document.createElement('strong');
+  headingName.textContent = username;
+
+  const headingLabel = document.createElement('span');
+  headingLabel.textContent = ownProfile?.is_admin
+    ? 'Administrator'
+    : 'GameVault member';
+
+  heading.append(headingName, headingLabel);
+  dropdown.append(heading);
+
+  function closeMenu() {
+    dropdown.hidden = true;
+    trigger.setAttribute('aria-expanded', 'false');
+  }
+
+  function addLink(label, href, icon) {
+    const link = document.createElement('a');
+    link.className = 'profile-menu-item';
+    link.href = href;
+
+    const symbol = document.createElement('span');
+    symbol.className = 'profile-menu-icon';
+    symbol.textContent = icon;
+
+    const text = document.createElement('span');
+    text.textContent = label;
+
+    link.append(symbol, text);
+    link.addEventListener('click', closeMenu);
+    dropdown.append(link);
+  }
+
+  addLink('My Profile', 'profile.html', '◉');
+  addLink('Friends Chat', 'dm.html', '✉');
+
+  const separator = document.createElement('div');
+  separator.className = 'profile-menu-divider';
+  dropdown.append(separator);
+
+  const signOut = document.createElement('button');
+  signOut.type = 'button';
+  signOut.className = 'profile-menu-item';
+
+  const signOutIcon = document.createElement('span');
+  signOutIcon.className = 'profile-menu-icon';
+  signOutIcon.textContent = '↪';
+
+  const signOutText = document.createElement('span');
+  signOutText.textContent = 'Sign Out';
+
+  signOut.append(signOutIcon, signOutText);
+
+  signOut.addEventListener('click', async () => {
+    closeMenu();
+    signOut.disabled = true;
+
+    const { error } = await sb.auth.signOut();
+
+    if (error) {
+      alert('Could not sign out: ' + error.message);
+      signOut.disabled = false;
+    }
+  });
+
+  dropdown.append(signOut);
+  menu.append(trigger, dropdown);
+  account.append(menu);
+
+  trigger.addEventListener('click', () => {
+    const opening = dropdown.hidden;
+    dropdown.hidden = !opening;
+    trigger.setAttribute('aria-expanded', String(opening));
+  });
+
+  if (!window.__gameVaultProfileMenuHandler) {
+    document.addEventListener('click', event => {
+      document.querySelectorAll('.profile-menu').forEach(profileMenu => {
+        if (!profileMenu.contains(event.target)) {
+          const panel = profileMenu.querySelector('.profile-dropdown');
+          const button = profileMenu.querySelector('.profile-trigger');
+
+          if (panel && button) {
+            panel.hidden = true;
+            button.setAttribute('aria-expanded', 'false');
+          }
+        }
+      });
+    });
+
+    window.__gameVaultProfileMenuHandler = true;
+  }
+}
+
+
 async function initializeProfilePage() {
   if (
     !SUPABASE_URL.startsWith('https://') ||
