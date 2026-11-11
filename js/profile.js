@@ -443,6 +443,21 @@ async function uploadFileWithProgress(path, file) {
 }
 
 let uploadPreviewUrl = '';
+function clearUploadPreview() {
+  if (uploadPreviewUrl) {
+    URL.revokeObjectURL(uploadPreviewUrl);
+    uploadPreviewUrl = '';
+  }
+
+  $('upload-preview').hidden = true;
+  $('upload-preview-media').replaceChildren();
+  $('upload-file-name').textContent = '';
+  $('upload-file-size').textContent = '';
+  $('upload-progress-label').textContent = 'Ready to upload';
+  $('upload-progress-percent').textContent = '0%';
+  $('upload-progress-bar').style.width = '0%';
+  $('upload-progress-size').textContent = '0 MB uploaded';
+}
 
 $('media')?.addEventListener('change', () => {
   const file = $('media').files?.[0];
