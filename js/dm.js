@@ -9,6 +9,7 @@ const sb = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 let user = null;
 let authReady = false;
 let avatarUrl = null;
+let accountDisplayName = null;
 let dmConversationsCache = [];
 let activeDmConversation = null;
 let dmChannel = null;
@@ -197,7 +198,7 @@ async function loadAvatar() {
 
   const { data, error } = await sb
     .from('profiles')
-    .select('avatar_path')
+.select('avatar_path, display_name')
     .eq('id', user.id)
     .maybeSingle();
 
@@ -213,6 +214,7 @@ async function loadAvatar() {
 
     avatarUrl = imageData.publicUrl;
   }
+  accountDisplayName = data?.display_name?.trim() || usernameOf(user);
 }
 
 async function searchGameVaultUsers() {
