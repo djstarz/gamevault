@@ -1592,8 +1592,8 @@ function makePostCard(post, admin = false) {
 
   if (post.media_type === 'video') {
     el = document.createElement('video');
-    el.controls = true;
-    el.preload = 'metadata';
+el.controls = false;
+el.preload = 'metadata';
   } else {
     el = document.createElement('img');
     el.loading = 'lazy';
