@@ -57,6 +57,32 @@
     </section>
   </main>
 
+  <dialog id="upload-dialog" class="panel upload-dialog" aria-labelledby="share-title">
+    <div class="panel-heading">
+      <div>
+        <span class="eyebrow">ADD TO THE COMMUNITY</span>
+        <h2 id="share-title">Share your moment</h2>
+        <p>Got a screenshot, clip or build to show off? Drop it here.</p>
+      </div>
+      <button id="upload-close" class="icon-action" type="button" aria-label="Close upload window">×</button>
+    </div>
+
+    <form id="upload-form" class="upload-form">
+      <label>Post title<input id="title" required maxlength="100" placeholder="e.g. Fellfrost Peak at sunset"></label>
+      <label>Category<select id="category"><option>Screenshots</option><option>Wallpapers</option><option>Edits</option><option>Clips</option><option>Builds</option><option>Guides</option></select></label>
+      <label class="full-field">Description<textarea id="description" maxlength="1000" placeholder="Tell the community about this moment…"></textarea></label>
+      <label class="file full-field">
+        <span class="file-symbol" aria-hidden="true">↑</span>
+        <span><strong>Choose image or short video</strong><small>Images, MP4, WebM or QuickTime · max 20 MB</small></span>
+        <input id="media" type="file" accept="image/*,video/mp4,video/webm,video/quicktime" required>
+      </label>
+      <div class="upload-submit full-field">
+        <button class="button button-primary" id="upload-button" type="submit" disabled>Upload to GameVault <span aria-hidden="true">↗</span></button>
+        <p id="upload-status" role="status">Sign in to start sharing.</p>
+      </div>
+    </form>
+  </dialog>
+
   <script type="module" src="js/profile.js?v=1.0.6"></script>
   <script src="js/pwa.js"></script>
 </body>
