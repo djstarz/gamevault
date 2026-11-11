@@ -1814,13 +1814,12 @@ function openSharePost(post, container = document.body) {
   });
 
   if (container !== document.body) {
-  overlay.style.position = 'absolute';
-  overlay.style.inset = '0';
-  overlay.style.zIndex = '20';
-  overlay.style.borderRadius = 'inherit';
+  overlay.classList.add('gv-share-native-dialog');
+  document.body.append(overlay);
+  overlay.showModal();
+} else {
+  container.append(overlay);
 }
-
-container.append(overlay);
 }
 async function loadPosts() {
   if (!sb) return;
