@@ -533,7 +533,9 @@ $('dm-conversations').addEventListener('click', event => {
 
   $('dm-chat-empty').hidden = true;
   $('dm-chat-active').hidden = false;
-  $('dm-chat-username').textContent = conversation.username || 'Player';
+    $('dm-chat-username').textContent = conversation.username || 'Player';
+  $('dm-chat-username').href =
+    `profile.html?u=${encodeURIComponent(conversation.username || '')}`;
 
   $('dm-messages').replaceChildren();
   $('dm-message-feedback').textContent = '';
