@@ -2073,6 +2073,8 @@ const CHAT_FILE_TYPES = {
 };
 
 function updateChatAccess() {
+  if (!$('chat-input')) return;
+
   const input = $('chat-input');
   const send = $('chat-send');
   const attach = $('chat-attach');
