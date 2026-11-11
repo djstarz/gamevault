@@ -1013,6 +1013,10 @@ function clearUploadPreview() {
   $('upload-progress-percent').textContent = '0%';
   $('upload-progress-bar').style.width = '0%';
   $('upload-progress-size').textContent = '0 MB uploaded';
+  $('upload-remove-file')?.addEventListener('click', () => {
+  $('media').value = '';
+  clearUploadPreview();
+});
 }
 
 $('media')?.addEventListener('change', () => {
