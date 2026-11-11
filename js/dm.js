@@ -563,7 +563,8 @@ async function initializePage() {
   }
 
   user = data.session?.user || null;
-  renderAccount();
+await loadAvatar();
+renderAccount();
 
   if (!user) {
     setStatus('Please sign in to use private messages.');
