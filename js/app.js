@@ -2488,7 +2488,7 @@ const messageDisplayName = messageProfile?.display_name?.trim() || messageUserna
   heading.className = 'chat-message-heading';
 
     const name = document.createElement('a');
-  name.textContent = '@' + messageUsername;
+  name.textContent = messageDisplayName;
   name.href = `profile.html?u=${encodeURIComponent(messageUsername)}`;;
   name.className = 'gv-profile-link';
 
