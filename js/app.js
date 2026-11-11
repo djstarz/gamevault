@@ -284,8 +284,7 @@ async function loadDmConversations() {
     button.className = 'gv-dm-conversation';
     button.dataset.conversationId = conversation.conversation_id;
     button.dataset.username = conversation.username;
-    button.textContent = conversation.username || 'Player';
-
+button.textContent = `${conversation.display_name || conversation.username || 'Player'} · @${conversation.username || 'Player'}`;
     container.appendChild(button);
   });
 }
