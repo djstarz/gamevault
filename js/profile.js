@@ -563,6 +563,7 @@ $('upload-form').onsubmit = async event => {
     }
 
     $('upload-form').reset();
+clearUploadPreview();
 $('upload-status').textContent = 'Uploaded successfully!';
 await loadProfile();
 $('upload-dialog').close();
