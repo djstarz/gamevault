@@ -362,6 +362,100 @@ function renderProfileAccount() {
   }
 }
 
+function updateUpload() {
+  $('upload-button').disabled = !currentUser;
+  $('upload-status').textContent = currentUser
+    ? 'Signed in. Files are limited to 20 MB.'
+    : 'Sign in before uploading.';
+
+  $('upload-open').hidden = !authReady || !currentUser;
+}
+
+$('upload-open')?.addEventListener('click', () => {
+  $('upload-dialog')?.showModal();
+});
+
+$('upload-close')?.addEventListener('click', () => {
+  $('upload-dialog')?.close();
+});
+
+$('upload-form').onsubmit = async event => {
+  event.preventDefault();
+
+  if (!currentUser) {
+    $('upload-status').textContent = 'Please sign in before uploading.';
+    return;
+  }
+
+  const file = $('media').files[0];
+  if (!file) return;
+
+  if (file.size > 20 * 1024 * 1024) {
+    $('upload-status').textContent = 'File exceeds 20 MB. Choose a smaller file.';
+    return;
+  }
+
+  if (
+    !file.type.startsWith('image/') &&
+    !['video/mp4', 'video/webm', 'video/quicktime'].includes(file.type)
+  ) {
+    $('upload-status').textContent =
+      'Choose an image, MP4, WebM, or QuickTime video.';
+    return;
+  }
+
+  $('upload-button').disabled = true;
+  $('upload-status').textContent = 'Uploading…';
+
+  let path = '';
+
+  try {
+    const safe = file.name.toLowerCase()
+      .replace(/[^a-z0-9._-]+/g, '-')
+      .slice(-90);
+
+    path = `${currentUser.id}/${crypto.randomUUID()}-${safe}`;
+
+    const upload = await sb.storage
+      .from('gamevault-media')
+      .upload(path, file, {
+        contentType: file.type,
+        upsert: false
+      });
+
+    if (upload.error) throw upload.error;
+
+    const url = sb.storage
+      .from('gamevault-media')
+      .getPublicUrl(path).data.publicUrl;
+
+    const result = await sb.from('posts').insert({
+      user_id: currentUser.id,
+      title: $('title').value.trim(),
+      description: $('description').value.trim(),
+      category: $('category').value,
+      media_url: url,
+      media_type: file.type.startsWith('video/') ? 'video' : 'image',
+      storage_path: path
+    });
+
+    if (result.error) {
+      await sb.storage.from('gamevault-media').remove([path]);
+      throw result.error;
+    }
+
+    $('upload-form').reset();
+    $('upload-status').textContent = 'Uploaded successfully!';
+    await loadProfile();
+
+  } catch (error) {
+    $('upload-status').textContent =
+      error.message || 'Upload failed. Check Storage and RLS policies.';
+  } finally {
+    updateUpload();
+  }
+};
+
 
 async function initializeProfilePage() {
   if (
