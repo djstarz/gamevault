@@ -376,9 +376,10 @@ $('upload-open')?.addEventListener('click', () => {
 });
 
 $('upload-close')?.addEventListener('click', () => {
+  $('upload-form').reset();
+  clearUploadPreview();
   $('upload-dialog')?.close();
 });
-
 async function uploadFileWithProgress(path, file) {
   const { data: sessionData, error: sessionError } =
     await sb.auth.getSession();
