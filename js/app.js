@@ -1203,7 +1203,7 @@ displayName: profile.display_name?.trim() || profile.username || 'Player',
 const commentUsername = profile?.username || comment.username || 'Player';
 
 const heading = document.createElement('a');
-heading.textContent = '@' + commentUsername;
+heading.textContent = profile?.displayName || commentUsername;
 heading.href = `profile.html?u=${encodeURIComponent(commentUsername)}`;
 heading.className = 'gv-profile-link';
 
