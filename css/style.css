@@ -148,21 +148,22 @@
 }
 
 
+
 .profile-dialog {
   position: fixed;
   width: min(380px, calc(100% - 28px));
   max-width: none;
   padding: 30px 24px;
-  border: 1px solid #354154;
+  border: 1px solid var(--gv-border);
   border-radius: 20px;
-  background: #191f2a;
-  color: #f2f5fb;
+  background: var(--gv-panel);
+  color: var(--gv-text);
   text-align: center;
-  box-shadow: 0 25px 90px #0009;
+  box-shadow: 0 25px 90px rgba(0, 0, 0, .6);
 }
 
 .profile-dialog::backdrop {
-  background: #05080dcc;
+  background: rgba(5, 8, 13, .8);
   backdrop-filter: blur(5px);
 }
 
@@ -172,11 +173,18 @@
   right: 12px;
   width: 34px;
   height: 34px;
-  border: 1px solid #354154;
-  border-radius: 10px;
-  background: #222a37;
-  color: #dce4ef;
+  border: 1px solid var(--gv-border);
+  border-radius: var(--gv-control-radius);
+  background: var(--gv-secondary);
+  color: var(--gv-text);
   font-size: 23px;
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease;
+}
+
+.profile-dialog-close:hover {
+  background: var(--gv-secondary-hover);
+  border-color: var(--gv-blue);
 }
 
 .profile-dialog-avatar {
@@ -184,37 +192,46 @@
   width: 90px;
   height: 90px;
   margin: 8px auto 15px;
-  border: 3px solid #638bb6;
+  border: 3px solid var(--gv-blue);
   border-radius: 50%;
   object-fit: cover;
 }
 
 .profile-dialog h2 {
   margin: 0 0 6px;
+  color: var(--gv-text);
   font-size: 23px;
 }
 
 .profile-dialog p {
-  color: #9aa5b6;
+  color: var(--gv-muted);
   font-size: 12px;
 }
 
 .profile-dialog .profile-dialog-detail {
   padding: 12px;
-  border: 1px solid #303746;
-  border-radius: 10px;
-  background: #141923;
+  border: 1px solid var(--gv-border);
+  border-radius: var(--gv-control-radius);
+  background: var(--gv-secondary);
+  color: var(--gv-text);
 }
 
 .profile-dialog-action {
   width: 100%;
   padding: 11px 14px;
-  border: 0;
-  border-radius: 10px;
-  background: #75b7ff;
-  color: #102036;
+  border: 1px solid transparent;
+  border-radius: var(--gv-control-radius);
+  background: var(--gv-primary);
+  color: #fff;
   font-weight: 800;
+  cursor: pointer;
+  transition: background .18s ease, transform .18s ease;
 }
+
+.profile-dialog-action:hover {
+  background: var(--gv-primary-hover);
+}
+
 
 @media (max-width: 480px) {
   .profile-trigger-name,
