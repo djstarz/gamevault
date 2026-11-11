@@ -2245,3 +2245,12 @@ select,
   box-shadow: none !important;
   appearance: none;
 }
+/* GameVault v1.0.6 — Hide chat scrollbar, keep scrolling */
+body.chat-page #chat-messages {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body.chat-page #chat-messages::-webkit-scrollbar {
+  display: none;
+}
