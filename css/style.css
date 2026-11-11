@@ -1173,13 +1173,26 @@ select,
   height: 32px;
   padding: 0;
   border: 1px solid var(--gv-border);
-  border-radius: 9px;
+  border-radius: var(--gv-control-radius);
   background: var(--gv-panel-light);
   color: var(--gv-blue);
   font-size: 23px;
   line-height: 1;
   cursor: pointer;
-  transition: .2s;
+  transition: background .18s ease, border-color .18s ease,
+    box-shadow .18s ease, color .18s ease;
+}
+
+.chat-menu-button:hover {
+  background: var(--gv-secondary-hover);
+  border-color: var(--gv-blue);
+  color: var(--gv-text);
+  box-shadow: 0 0 12px var(--gv-focus);
+}
+
+.chat-menu-button:focus-visible {
+  outline: 2px solid var(--gv-blue);
+  outline-offset: 2px;
 }
 
 .chat-menu-button:hover,
