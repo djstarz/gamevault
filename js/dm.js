@@ -365,6 +365,9 @@ async function loadDmRequests() {
 
       await loadDmRequests();
       await loadDmConversations();
+      setInterval(() => {
+  if (user) loadDmConversations();
+}, 30000);
     }
 
     accept.addEventListener('click', () => respond('accepted'));
