@@ -1976,21 +1976,6 @@ select,
 
 
 #post-page #post-comments-list button:hover {
-  background: #304f70 !important;
-  border-color: #75b7ff !important;
-  color: #ffffff !important;
-}
-
-#post-page #post-comment-form button {
-  background: var(--blue) !important;
-  border: 1px solid var(--blue) !important;
-  color: #102036 !important;
-}
-
-#post-page #post-comment-form button:hover {
-  background: #9bceff !important;
-  border-color: #9bceff !important;
-}#post-page #post-comments-list button:hover {
   background: #2b394b !important;
   border-color: #6489b5 !important;
   color: #ffffff !important;
@@ -2011,12 +1996,6 @@ select,
   outline: 2px solid var(--blue) !important;
   outline-offset: 2px;
 }
-
-#post-page button:focus-visible {
-  outline: 2px solid var(--blue) !important;
-  outline-offset: 2px;
-}
-
 /* GameVault v1.0.6 — Post comment box theme */
 
 #post-comment-input {
