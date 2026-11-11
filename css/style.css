@@ -1133,13 +1133,10 @@ body.chat-page #chat-feedback {
   body.chat-page main.page-shell {
     padding: 0 12px;
   }
-}
+
   body.chat-page .site-header {
     flex-basis: 66px;
   }
-}
-.chat-message-actions:has(.chat-message-menu:not([hidden])) {
-  z-index: 30;
 }
 /* GAMEVAULT MOBILE TAP EFFECT */
 * {
