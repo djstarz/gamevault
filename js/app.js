@@ -2059,7 +2059,7 @@ function openSharePost(post, container = document.body) {
   dmConversationsCache.forEach(conversation => {
     const option = document.createElement('option');
     option.value = conversation.conversation_id;
-    option.textContent = conversation.username || 'Player';
+option.textContent = `${conversation.display_name || conversation.username || 'Player'} · @${conversation.username || 'Player'}`;
     dmSelect.append(option);
   });
 
