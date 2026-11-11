@@ -711,6 +711,11 @@ function renderAccount() {
     openProfile();
   }, '◉');
 
+  addItem('Friends Chat', () => {
+  closeMenu();
+  window.location.href = 'dm.html';
+}, '✉');
+  
   addItem('My Posts', async () => {
     closeMenu();
 
