@@ -687,8 +687,7 @@ function renderAccount() {
 
   const name = document.createElement('span');
   name.className = 'profile-trigger-name';
-  name.textContent = username;
-
+name.textContent = accountDisplayName || username;
   const arrow = document.createElement('span');
   arrow.className = 'profile-chevron';
   arrow.textContent = '⌄';
@@ -705,8 +704,7 @@ function renderAccount() {
   heading.className = 'profile-dropdown-heading';
 
   const headingName = document.createElement('strong');
-  headingName.textContent = username;
-
+headingName.textContent = accountDisplayName || username;
   const headingLabel = document.createElement('span');
   headingLabel.textContent = isAdmin ? 'Administrator' : 'GameVault member';
 
