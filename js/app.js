@@ -215,8 +215,7 @@ async function loadDmRequests() {
     item.className = 'gv-dm-request';
 
     const username = document.createElement('strong');
-    username.textContent = request.username;
-
+username.textContent = `${request.display_name || request.username} · @${request.username}`;
     const message = document.createElement('p');
     message.textContent = 'Wants to start a conversation.';
 
