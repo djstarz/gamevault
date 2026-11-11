@@ -1236,10 +1236,7 @@ select,
   color: var(--gv-blue);
 }
 
-.chat-message-menu button:hover {
-  background: rgba(155, 107, 255, .16);
-  color: var(--gv-blue);
-}
+
 
 .chat-message-menu .chat-menu-delete {
   color: #ff8f9b;
