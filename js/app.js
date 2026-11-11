@@ -1145,6 +1145,10 @@ async function loadPostComments(postId, dialog) {
   }
 
   const comments = data || [];
+  if (!comments.length) {
+  list.textContent = 'No comments yet. Be the first!';
+  return;
+}
   const commentUserIds = [...new Set(comments.map(comment => comment.user_id))];
 
 const { data: commentProfiles } = await sb
