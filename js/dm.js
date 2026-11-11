@@ -260,7 +260,7 @@ async function searchGameVaultUsers() {
 
         const name = document.createElement('a');
     name.className = 'gv-profile-link';
-    name.textContent = '@' + result.username;
+name.textContent = `${result.display_name || result.username} · @${result.username}`;
     name.href = `profile.html?u=${encodeURIComponent(result.username)}`;
 
     const requestButton = document.createElement('button');
