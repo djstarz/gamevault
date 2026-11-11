@@ -2001,7 +2001,7 @@ select option {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: rgba(3, 3, 10, 0.82);
+  background: rgba(3, 3, 10, .82);
   backdrop-filter: blur(6px);
 }
 
@@ -2016,7 +2016,7 @@ select option {
   background: var(--gv-panel);
   border: 1px solid var(--gv-border);
   border-radius: 18px;
-  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 20px 70px rgba(0, 0, 0, .7);
   color: var(--gv-text);
 }
 
@@ -2035,19 +2035,29 @@ select option {
   width: 100%;
   padding: 11px 13px;
   border: 1px solid var(--gv-border);
-  border-radius: 9px;
-  background: var(--gv-panel-light);
+  border-radius: var(--gv-control-radius);
+  background: var(--gv-secondary-bg);
   color: var(--gv-text);
   font: inherit;
   cursor: pointer;
+  transition: background .18s ease, border-color .18s ease,
+    box-shadow .18s ease;
 }
 
 .gv-modal button:hover:not(:disabled) {
   border-color: var(--gv-blue);
-  background: rgba(155, 107, 255, 0.16);
+  background: var(--gv-secondary-hover);
+  box-shadow: 0 0 12px var(--gv-focus);
+}
+
+.gv-modal button:focus-visible,
+.gv-modal select:focus-visible {
+  outline: 2px solid var(--gv-blue);
+  outline-offset: 2px;
 }
 
 .gv-modal button:disabled {
-  opacity: 0.45;
+  opacity: .45;
   cursor: not-allowed;
+  box-shadow: none;
 }
