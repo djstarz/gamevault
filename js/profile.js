@@ -70,9 +70,10 @@ async function loadProfile() {
     return;
   }
 
-  profileUser = profile;
+ profileUser = profile;
+renderProfileAccount();
 
-  const isOwnProfile = profile.id === currentUser.id;
+const isOwnProfile = profile.id === currentUser.id;
 
   $('profile-page-title').textContent = '@' + profile.username;
   setStatus(isOwnProfile ? 'Your GameVault profile' : 'GameVault player profile');
