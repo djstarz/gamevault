@@ -179,6 +179,14 @@ function renderReactions(reactions) {
 }
 
 function openReplyModal(comment) {
+  return createCommentModal(comment, false);
+}
+
+function openEditModal(comment) {
+  return createCommentModal(comment, true);
+}
+
+function createCommentModal(comment, editing) {
   return new Promise(resolve => {
     const overlay = document.createElement('div');
     overlay.style.cssText = `
@@ -196,17 +204,16 @@ function openReplyModal(comment) {
     `;
 
     const title = document.createElement('h3');
-    title.textContent = 'Reply to comment';
+    title.textContent = editing ? 'Edit comment' : 'Reply to comment';
 
     const original = document.createElement('p');
-    original.textContent = `${comment.username || 'Player'}: ${comment.content}`;
-    original.style.cssText = `
-      padding:12px;background:#222a37;border-radius:9px;
-      color:#9aa5b6;font-size:14px;overflow-wrap:anywhere;
-    `;
+    original.textContent = editing
+      ? 'Update your comment below.'
+      : `${comment.username || 'Player'}: ${comment.content}`;
 
     const input = document.createElement('textarea');
-    input.placeholder = 'Write your reply...';
+    input.placeholder = editing ? 'Edit your comment...' : 'Write your reply...';
+    input.value = editing ? comment.content : '';
     input.rows = 4;
     input.style.cssText = `
       box-sizing:border-box;width:100%;resize:vertical;
@@ -224,7 +231,7 @@ function openReplyModal(comment) {
     cancel.textContent = 'Cancel';
 
     const send = document.createElement('button');
-    send.textContent = 'Send Reply';
+    send.textContent = editing ? 'Save Changes' : 'Send Reply';
 
     [cancel, send].forEach(button => {
       button.type = 'button';
@@ -262,7 +269,6 @@ function openReplyModal(comment) {
     input.focus();
   });
 }
-
 async function loadComments(postId) {
   const list = $('post-comments-list');
   list.textContent = 'Loading comments...';
