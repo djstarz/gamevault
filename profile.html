@@ -1,0 +1,61 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101318">
+  <meta name="description" content="View GameVault player profiles, posts and gaming activity.">
+  <title>Player Profile — GameVault</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="manifest" href="./manifest.webmanifest">
+</head>
+
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html#home" aria-label="GameVault home">
+      <span class="brand-mark">G</span>
+      <span class="brand-word">GAME<span>VAULT</span><small>YOUR GAMING COMMUNITY</small></span>
+    </a>
+
+    <nav class="top-nav" aria-label="Main navigation">
+      <a href="index.html#home">Home</a>
+      <a href="index.html#gallery">Discover</a>
+      <a href="chat.html">Chat</a>
+      <a href="dm.html">DMs</a>
+      <a href="index.html#share">Share</a>
+    </nav>
+
+    <div class="header-actions">
+      <a class="icon-action" href="index.html#gallery" aria-label="Explore posts" title="Explore posts">⌕</a>
+      <button id="auth-open" class="sign-in-button" type="button" onclick="location.href='index.html'">Sign in</button>
+      <span id="account"></span>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="panel" id="profile-page">
+      <div class="panel-heading">
+        <div>
+          <span class="eyebrow">PLAYER PROFILE</span>
+          <h2 id="profile-page-title">Loading profile...</h2>
+          <p id="profile-page-status">Connecting to GameVault...</p>
+        </div>
+        <span class="panel-icon">◉</span>
+      </div>
+
+      <div id="profile-page-content">
+        <p>Loading player information...</p>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="js/profile.js"></script>
+  <script src="js/pwa.js"></script>
+</body>
+</html>
