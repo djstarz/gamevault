@@ -2409,14 +2409,23 @@ if ($('chat-media-input')) $('chat-media-input').onchange = () => {
 };
 
 
-function addChatMessage(message) {
+async function addChatMessage(message) {
   const container = $('chat-messages');
   if (!container) return;
 
   if (container.querySelector(`[data-message-id="${message.id}"]`)) {
     return;
   }
+  const { data: messageProfile } = await sb
+    .from('profiles')
+    .select('username, avatar_path')
+    .eq('id', message.user_id)
+    .maybeSingle();
 
+  const messageUsername = messageProfile?.username || message.username || 'Player';
+  const messageAvatarUrl = messageProfile?.avatar_path
+    ? sb.storage.from('gamevault-avatars').getPublicUrl(messageProfile.avatar_path).data.publicUrl
+    : null;
   const item = document.createElement('article');
   item.className = 'chat-message';
   item.dataset.messageId = message.id;
@@ -2425,8 +2434,8 @@ function addChatMessage(message) {
   heading.className = 'chat-message-heading';
 
     const name = document.createElement('a');
-  name.textContent = '@' + (message.username || 'Player');
-  name.href = `profile.html?u=${encodeURIComponent(message.username || '')}`;
+  name.textContent = '@' + messageUsername;
+  name.href = `profile.html?u=${encodeURIComponent(messageUsername)}`;;
   name.className = 'gv-profile-link';
 
   const time = document.createElement('time');
@@ -2437,7 +2446,11 @@ function addChatMessage(message) {
     minute: '2-digit'
   });
 
-  heading.append(name, time);
+  heading.append(
+  createGameVaultAvatar(messageUsername, messageAvatarUrl),
+  name,
+  time
+);
   item.append(heading);
 
   if (message.message?.trim()) {
