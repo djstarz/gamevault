@@ -479,6 +479,7 @@ async function initializeProfilePage() {
   }
 
   currentUser = data.session?.user || null;
+  updateUpload();
 
 await loadAccountProfile();
 renderProfileAccount();
