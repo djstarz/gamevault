@@ -415,6 +415,23 @@ async function loadDmConversations() {
     console.error('Could not load friend avatars:', profileError);
   }
 
+  const { data: presenceRows, error: presenceError } = await sb
+  .from('gamevault_presence')
+  .select('user_id, last_seen')
+  .in('user_id', (profiles || []).map(profile => profile.id));
+
+if (presenceError) {
+  console.error('Could not load friend presence:', presenceError);
+}
+
+const onlineUsers = new Set(
+  (presenceRows || [])
+    .filter(row =>
+      Date.now() - new Date(row.last_seen).getTime() < 120000
+    )
+    .map(row => row.user_id)
+);
+
   const avatarMap = new Map();
 
   (profiles || []).forEach(profile => {
