@@ -2053,3 +2053,158 @@ select,
 #post-viewer #post-comment-input::placeholder {
   color: #8493a8 !important;
 }
+/* GameVault v1.0.6 — Post Media Viewer */
+
+#gv-media-viewer {
+  width: min(1200px, 96vw) !important;
+  max-width: 1200px !important;
+  max-height: 92vh !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: var(--surface, #111722) !important;
+  color: var(--text, #dce8f7) !important;
+  border: 1px solid var(--line, #39465a) !important;
+  border-radius: 14px !important;
+}
+
+#gv-media-viewer::backdrop {
+  background: rgba(0, 0, 0, .85);
+  backdrop-filter: blur(5px);
+}
+
+.gv-media-viewer-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  min-height: 420px;
+  max-height: 92vh;
+}
+
+#gv-media-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 350px;
+  padding: 20px;
+  background: #080c12;
+}
+
+#gv-media-display img,
+#gv-media-display video {
+  display: block;
+  max-width: 100%;
+  max-height: 82vh;
+  object-fit: contain;
+}
+
+.gv-media-side {
+  min-width: 0;
+  padding: 20px;
+  overflow-y: auto;
+  border-left: 1px solid var(--line, #39465a);
+}
+
+#gv-media-title {
+  margin: 18px 0 8px;
+  color: var(--text, #dce8f7);
+  font-size: 19px;
+  overflow-wrap: anywhere;
+}
+
+#gv-media-description {
+  color: var(--muted, #9aa5b6);
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+#gv-media-viewer button {
+  padding: 9px 12px;
+  border: 1px solid #39465a;
+  border-radius: 8px;
+  background: #232c3a;
+  color: #dce8f7;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#gv-media-viewer button:hover {
+  background: #2b394b;
+  border-color: #6489b5;
+}
+
+#gv-media-close {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 5;
+  width: 38px;
+  height: 38px;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  font-size: 18px !important;
+}
+
+#gv-media-comment-toggle,
+#gv-media-share {
+  margin: 8px 5px 8px 0;
+}
+
+#gv-media-comments {
+  margin-top: 18px;
+  padding-top: 15px;
+  border-top: 1px solid var(--line, #39465a);
+}
+
+#gv-media-comments h3 {
+  margin: 0 0 12px;
+  color: var(--text, #dce8f7);
+}
+
+#gv-media-comments #post-comment-input {
+  box-sizing: border-box;
+}
+
+#gv-media-comments #post-comments-list {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+#gv-media-comments #post-comments-list button,
+#gv-media-comments #post-comment-form button {
+  margin: 4px 4px 4px 0;
+}
+
+@media (max-width: 750px) {
+  #gv-media-viewer {
+    width: 96vw !important;
+    max-height: 94vh !important;
+  }
+
+  .gv-media-viewer-layout {
+    grid-template-columns: 1fr;
+    max-height: 94vh;
+    overflow-y: auto;
+  }
+
+  #gv-media-display {
+    min-height: 220px;
+    max-height: 48vh;
+    padding: 12px;
+  }
+
+  #gv-media-display img,
+  #gv-media-display video {
+    max-height: 45vh;
+  }
+
+  .gv-media-side {
+    max-height: 42vh;
+    padding: 16px;
+    border-left: none;
+    border-top: 1px solid var(--line, #39465a);
+  }
+}
