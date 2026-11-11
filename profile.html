@@ -75,6 +75,21 @@
         <span><strong>Choose image or short video</strong><small>Images, MP4, WebM or QuickTime · max 20 MB</small></span>
         <input id="media" type="file" accept="image/*,video/mp4,video/webm,video/quicktime" required>
       </label>
+          <div id="upload-preview" class="upload-preview full-field" hidden>
+      <div class="upload-preview-media" id="upload-preview-media"></div>
+      <div class="upload-preview-details">
+        <strong id="upload-file-name"></strong>
+        <span id="upload-file-size"></span>
+      </div>
+      <div class="upload-progress-info">
+        <span id="upload-progress-label">Ready to upload</span>
+        <strong id="upload-progress-percent">0%</strong>
+      </div>
+      <div class="upload-progress-track">
+        <div id="upload-progress-bar" class="upload-progress-bar"></div>
+      </div>
+      <p id="upload-progress-size">0 MB uploaded</p>
+    </div>
       <div class="upload-submit full-field">
         <button class="button button-primary" id="upload-button" type="submit" disabled>Upload to GameVault <span aria-hidden="true">↗</span></button>
         <p id="upload-status" role="status">Sign in to start sharing.</p>
