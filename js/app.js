@@ -2187,6 +2187,7 @@ if ($('chat-media-input')) $('chat-media-input').onchange = () => {
 
 function addChatMessage(message) {
   const container = $('chat-messages');
+  if (!container) return;
 
   if (container.querySelector(`[data-message-id="${message.id}"]`)) {
     return;
