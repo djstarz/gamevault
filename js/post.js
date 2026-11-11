@@ -387,8 +387,8 @@ list.replaceChildren();
 
       const heading = document.createElement('a');
 heading.className = 'gv-profile-link';
-heading.textContent = '@' + (comment.username || 'Player');
-heading.href = `profile.html?u=${encodeURIComponent(comment.username || '')}`;
+heading.textContent = `${comment.display_name || comment.username || 'Player'} · @${comment.username || 'Player'}`;
+      heading.href = `profile.html?u=${encodeURIComponent(comment.username || '')}`;
 
       const time = document.createElement('small');
       time.textContent = ' · ' + new Date(comment.created_at).toLocaleString();
