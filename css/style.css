@@ -1477,21 +1477,6 @@ button[type="submit"]:hover:not(:disabled),
   border-color: var(--gv-blue);
   box-shadow: 0 0 0 3px var(--gv-focus);
 }
-/* GameVault v1.0.6 — unified popup theme */
-
-.auth-dialog,
-.profile-dialog,
-.gv-delete-dialog,
-.gv-edit-dialog,
-.gv-settings-dialog,
-.gv-crop-dialog,
-#post-viewer {
-  color: var(--gv-text);
-  background: var(--gv-panel);
-  border: 1px solid var(--gv-border);
-  border-radius: 18px;
-  box-shadow: 0 20px 65px rgba(0, 0, 0, .65);
-}
 
 .auth-dialog::backdrop,
 .profile-dialog::backdrop,
