@@ -1638,7 +1638,15 @@ b.append(tag, h);
     b.append(p);
   }
     b.append(createPostReactions(post));
-
+  const comment = document.createElement('button');
+  comment.type = 'button';
+  comment.className = 'gv-comment-post';
+  comment.textContent = '💬 Comment';
+  comment.onclick = () => {
+    openMediaViewer(post);
+    document.querySelector('#gv-media-comment-toggle')?.click();
+  };
+  b.append(comment);
 
   const share = document.createElement('button');
   share.type = 'button';
