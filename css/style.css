@@ -2271,3 +2271,82 @@ body.chat-page #chat-messages::-webkit-scrollbar {
   background: #2b394b !important;
   border-color: #6489b5 !important;
 }
+/* ========================================
+   GAMEVAULT FRIENDS CHAT
+======================================== */
+
+#dm-friends-view[hidden],
+#dm-chat-view[hidden] {
+  display: none !important;
+}
+
+#dm-friends-view .gv-inbox-layout {
+  grid-template-columns: minmax(0, 1fr);
+  min-height: auto;
+  margin-top: 16px;
+}
+
+#dm-friends-view .gv-inbox-sidebar {
+  padding: 20px;
+  background: var(--gv-panel);
+  border: 1px solid var(--gv-border);
+  border-radius: 15px;
+}
+
+#dm-friends-view .gv-dm-conversations {
+  gap: 10px;
+}
+
+#dm-friends-view .gv-dm-conversation {
+  display: flex;
+  align-items: center;
+  min-height: 58px;
+  padding: 14px 16px;
+  color: var(--gv-text);
+  background: var(--gv-secondary-bg);
+  border: 1px solid var(--gv-border);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease;
+}
+
+#dm-friends-view .gv-dm-conversation:hover,
+#dm-friends-view .gv-dm-conversation.active {
+  background: var(--gv-secondary-hover);
+  border-color: var(--gv-blue);
+}
+
+#dm-chat-view {
+  margin-top: 16px;
+}
+
+#dm-back-to-friends {
+  margin-bottom: 12px;
+}
+
+#dm-chat-view .gv-inbox-chat {
+  min-height: 480px;
+  border-radius: 15px;
+}
+
+#dm-chat-view .gv-dm-messages {
+  min-height: 320px;
+  max-height: 520px;
+}
+
+@media (max-width: 600px) {
+  #dm-friends-view .gv-inbox-sidebar {
+    padding: 13px;
+  }
+
+  #dm-chat-view .gv-inbox-chat {
+    min-height: 420px;
+  }
+
+  #dm-chat-view .gv-dm-messages {
+    min-height: 280px;
+    padding: 12px;
+  }
+}
