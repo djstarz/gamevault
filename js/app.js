@@ -2041,7 +2041,6 @@ async function openSharePostDM(post) {
   close.onclick = () => overlay.remove();
 
     let selectedConversationId = null;
-
  
 
   const { data, error } = await sb.rpc('get_dm_conversations');
