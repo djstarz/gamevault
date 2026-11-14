@@ -420,8 +420,18 @@ heading.textContent = `${comment.display_name || comment.username || 'Player'} Â
       const content = document.createElement('p');
       content.textContent = comment.content;
 
-      item.append(heading, time, content);
+if (commentProfileMap.get(comment.user_id)?.avatar_path) {
+  const avatar = document.createElement('img');
+  avatar.className = 'gv-inline-avatar';
+  avatar.src = sb.storage
+    .from('gamevault-avatars')
+    .getPublicUrl(commentProfileMap.get(comment.user_id).avatar_path).data.publicUrl;
+  avatar.alt = '';
+  avatar.loading = 'lazy';
+  item.append(avatar);
+}
 
+item.append(heading, time, content);
       if (user && user.id === comment.user_id) {
         const edit = document.createElement('button');
         edit.type = 'button';
