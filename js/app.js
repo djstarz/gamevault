@@ -637,7 +637,68 @@ async function refreshAdmin() {
   }
 }
 
+async function handleAccountAction(action) {
+  if (action === 'my-posts') {
+    const heading = document.querySelector('.community-heading h2');
+    if (heading) heading.textContent = 'My Posts';
 
+    const showAll = $('show-all-posts');
+    if (showAll) showAll.hidden = false;
+
+    const myPosts = postsCache.filter(post => post.user_id === user.id);
+    const gallery = $('gallery-grid');
+
+    if (!myPosts.length) {
+      gallery.textContent = 'You have no posts in the latest loaded feed yet.';
+    } else {
+      gallery.replaceChildren(...myPosts.map(post => makePostCard(post, false)));
+    }
+
+    gallery.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  if (action === 'change-picture') {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/jpeg,image/png,image/webp';
+    fileInput.hidden = true;
+
+    fileInput.onchange = async () => {
+      const file = fileInput.files?.[0];
+      if (file) await openAvatarCrop(file);
+      fileInput.remove();
+    };
+
+    document.body.append(fileInput);
+    fileInput.click();
+  }
+
+  if (action === 'account-settings') {
+    $('settings-status').textContent = '';
+    $('settings-form').reset();
+    $('display-name').value = '';
+
+    const { data, error } = await sb
+      .from('profiles')
+      .select('display_name')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (error) {
+      $('settings-status').textContent =
+        'Could not load display name: ' + error.message;
+    } else {
+      $('display-name').value = data?.display_name || '';
+    }
+
+    $('settings-dialog').showModal();
+  }
+
+  if (action === 'admin-portal' && isAdmin) {
+    $('admin-panel').hidden = false;
+    $('admin-panel').scrollIntoView({ behavior: 'smooth' });
+  }
+}
 
 
 function renderAccount() {
