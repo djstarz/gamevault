@@ -667,8 +667,9 @@ body {
     var(--gv-panel);
 }
 
- {
+ .button-primary {
   background: linear-gradient(110deg, var(--gv-purple), #6551dc);
+  color: #ffffff;
   border: 1px solid rgba(190, 160, 255, .5);
   box-shadow: 0 0 18px rgba(155, 107, 255, .22);
 }
