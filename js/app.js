@@ -2011,6 +2011,124 @@ nativeShare.onclick = async () => {
   container.append(overlay);
 }
 }
+async function openSharePostDM(post) {
+  if (!user) {
+    openAuth();
+    return;
+  }
+
+  const existing = document.getElementById('gv-share-dm-overlay');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'gv-share-dm-overlay';
+  overlay.className = 'gv-modal-overlay';
+
+  const modal = document.createElement('div');
+  modal.className = 'gv-modal';
+
+  const heading = document.createElement('h3');
+  heading.textContent = 'Send post in DM';
+
+  const description = document.createElement('p');
+  description.textContent = post.title || 'Untitled post';
+
+  const status = document.createElement('p');
+  status.textContent = 'Loading conversations...';
+
+  const list = document.createElement('div');
+  list.className = 'gv-share-dm-list';
+
+  const send = document.createElement('button');
+  send.type = 'button';
+  send.textContent = 'Send';
+  send.disabled = true;
+
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.textContent = 'Close';
+  close.onclick = () => overlay.remove();
+
+  let selectedConversationId = null;
+
+  const { data, error } = await sb.rpc('get_dm_conversations');
+
+  if (error) {
+    console.error('Share DM conversations error:', error);
+    status.textContent = 'Could not load conversations.';
+  } else if (!data || !data.length) {
+    status.textContent = 'No conversations yet.';
+  } else {
+    status.textContent = 'Choose a conversation:';
+
+    data.forEach(conversation => {
+      const option = document.createElement('button');
+      option.type = 'button';
+      option.className = 'gv-share-dm-conversation';
+      option.textContent =
+        `${conversation.display_name || conversation.username || 'Player'} · @${conversation.username || 'Player'}`;
+
+      option.style.width = '100%';
+      option.style.textAlign = 'left';
+
+      option.onclick = () => {
+        selectedConversationId = conversation.conversation_id;
+        send.disabled = false;
+
+        list.querySelectorAll('button').forEach(button => {
+          button.style.borderColor = '';
+        });
+
+        option.style.borderColor = 'var(--gv-blue)';
+      };
+
+      list.append(option);
+    });
+  }
+
+  send.onclick = async () => {
+    if (!selectedConversationId) return;
+
+    send.disabled = true;
+    send.textContent = 'Sending...';
+
+    const { error } = await sb
+      .from('dm_messages')
+      .insert({
+        conversation_id: selectedConversationId,
+        sender_id: user.id,
+        body: 'Shared a post',
+        shared_post_id: post.id
+      });
+
+    if (error) {
+      console.error('Share post DM error:', error);
+      status.textContent = 'Could not send the post.';
+      send.textContent = 'Try Again';
+      send.disabled = false;
+      return;
+    }
+
+    status.textContent = 'Post shared successfully!';
+    send.textContent = 'Sent!';
+  };
+
+  modal.append(
+    heading,
+    description,
+    status,
+    list,
+    send,
+    close
+  );
+
+  overlay.append(modal);
+  overlay.addEventListener('click', event => {
+    if (event.target === overlay) overlay.remove();
+  });
+
+  document.body.append(overlay);
+}
 async function loadPosts() {
   if (!sb) return;
 
