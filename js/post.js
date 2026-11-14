@@ -100,7 +100,7 @@ authorName.textContent = `${author?.display_name?.trim() || author?.username || 
   const date = document.createElement('small');
   date.textContent = ' · ' + new Date(post.created_at).toLocaleString();
 
-  authorBox.append(authorName, date);
+  if (author?.avatar_path) {   const avatar = document.createElement('img');   avatar.className = 'gv-inline-avatar';   avatar.src = sb.storage     .from('gamevault-avatars')     .getPublicUrl(author.avatar_path).data.publicUrl;   avatar.alt = '';   avatar.loading = 'lazy';   authorBox.append(avatar); }  authorBox.append(authorName, date);
 
   $('post-title').textContent = post.title || 'Untitled post';
   $('post-description').textContent = post.description || '';
