@@ -115,6 +115,158 @@ async function loadPost(postId) {
   document.title = `${post.title || 'Post'} — GameVault`;
 }
 
+function openPostImageViewer(src, alt) {
+  document.getElementById('gv-post-image-viewer')?.remove();
+
+  const dialog = document.createElement('dialog');
+  dialog.id = 'gv-post-image-viewer';
+
+  dialog.style.cssText = `
+    width:96vw;
+    max-width:1200px;
+    height:92vh;
+    max-height:92vh;
+    padding:12px;
+    overflow:hidden;
+    background:#080c12;
+    border:1px solid #39465a;
+    border-radius:14px;
+  `;
+
+  const close = document.createElement('button');
+  close.textContent = '✕';
+  close.setAttribute('aria-label', 'Close image viewer');
+  close.style.cssText = `
+    position:absolute;
+    top:10px;
+    right:10px;
+    z-index:5;
+    width:40px;
+    height:40px;
+    border:1px solid #52647b;
+    border-radius:50%;
+    background:#232c3a;
+    color:white;
+    font-size:20px;
+  `;
+
+  const image = document.createElement('img');
+  image.src = src;
+  image.alt = alt;
+  image.style.cssText = `
+    display:block;
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    touch-action:none;
+    transform-origin:center center;
+    cursor:grab;
+  `;
+
+  let scale = 1;
+  let startScale = 1;
+  let startDistance = 0;
+  let offsetX = 0;
+  let offsetY = 0;
+  let startX = 0;
+  let startY = 0;
+  let lastX = 0;
+  let lastY = 0;
+  const pointers = new Map();
+
+  const distance = (a, b) =>
+    Math.hypot(a.x - b.x, a.y - b.y);
+
+  const update = () => {
+    image.style.transform =
+      `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+  };
+
+  image.addEventListener('pointerdown', event => {
+    event.preventDefault();
+    image.setPointerCapture(event.pointerId);
+
+    pointers.set(event.pointerId, {
+      x: event.clientX,
+      y: event.clientY
+    });
+
+    if (pointers.size === 2) {
+      const points = [...pointers.values()];
+      startDistance = distance(points[0], points[1]);
+      startScale = scale;
+    } else if (pointers.size === 1) {
+      startX = event.clientX;
+      startY = event.clientY;
+      lastX = offsetX;
+      lastY = offsetY;
+    }
+  });
+
+  image.addEventListener('pointermove', event => {
+    if (!pointers.has(event.pointerId)) return;
+
+    pointers.set(event.pointerId, {
+      x: event.clientX,
+      y: event.clientY
+    });
+
+    if (pointers.size === 2 && startDistance > 0) {
+      const points = [...pointers.values()];
+      scale = Math.min(
+        4,
+        Math.max(1, startScale * distance(points[0], points[1]) / startDistance)
+      );
+
+      if (scale === 1) {
+        offsetX = 0;
+        offsetY = 0;
+      }
+
+      update();
+    } else if (pointers.size === 1 && scale > 1) {
+      offsetX = lastX + event.clientX - startX;
+      offsetY = lastY + event.clientY - startY;
+      update();
+    }
+  });
+
+  const stop = event => {
+    pointers.delete(event.pointerId);
+
+    if (pointers.size === 1) {
+      const point = [...pointers.values()][0];
+      startX = point.x;
+      startY = point.y;
+      lastX = offsetX;
+      lastY = offsetY;
+    }
+  };
+
+  image.addEventListener('pointerup', stop);
+  image.addEventListener('pointercancel', stop);
+
+  image.addEventListener('dblclick', event => {
+    event.preventDefault();
+    scale = scale > 1 ? 1 : 2;
+    offsetX = 0;
+    offsetY = 0;
+    update();
+  });
+
+  close.onclick = () => dialog.close();
+
+  dialog.addEventListener('click', event => {
+    if (event.target === dialog) dialog.close();
+  });
+
+  dialog.addEventListener('close', () => dialog.remove(), { once: true });
+
+  dialog.append(close, image);
+  document.body.append(dialog);
+  dialog.showModal();
+}
+
 function renderPost(post, author) {
   const authorBox = $('post-author');
   authorBox.replaceChildren();
