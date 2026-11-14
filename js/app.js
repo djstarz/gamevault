@@ -1988,10 +1988,20 @@ if (user && (user.id === post.user_id || admin)) {
   c.append(m, b);
   return c;
 }
-function openSharePost(post, container = document.body) {
+async function openSharePost(post, container = document.body) {
   const existing = document.getElementById('gv-share-overlay');
   if (existing) existing.remove();
 
+  if (user) {
+    const { data, error } = await sb.rpc('get_dm_conversations');
+
+    if (error) {
+      console.error('Share DM conversations error:', error);
+      dmConversationsCache = [];
+    } else {
+      dmConversationsCache = data || [];
+    }
+  }
   const overlay = document.createElement(
   container !== document.body ? 'dialog' : 'div'
 );
