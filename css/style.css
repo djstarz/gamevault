@@ -3563,3 +3563,121 @@ button {
   }
 }
 
+/* GameVault v1.0.7 — Discover page */
+#discover-page {
+  min-width: 0;
+}
+
+.gv-discover-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 150px;
+  gap: 12px;
+  margin: 20px 0 16px;
+}
+
+.gv-discover-toolbar input,
+.gv-discover-toolbar select {
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 11px 14px;
+  border: 1px solid var(--line, #39465a);
+  border-radius: 12px;
+  background: var(--surface, #171d27);
+  color: var(--text, #fff);
+  font: inherit;
+  box-sizing: border-box;
+}
+
+.gv-discover-filters {
+  display: flex;
+  gap: 9px;
+  padding: 3px 0 14px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.gv-discover-filters button {
+  flex: 0 0 auto;
+  min-height: 38px;
+  padding: 8px 15px;
+  border: 1px solid var(--line, #39465a);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text, #fff);
+  font: inherit;
+  cursor: pointer;
+}
+
+.gv-discover-filters button.active {
+  background: var(--accent, #735cff);
+  border-color: var(--accent, #735cff);
+  color: #fff;
+}
+
+.gv-discover-status {
+  padding: 22px 10px;
+  text-align: center;
+  color: var(--muted, #a5adbb);
+}
+
+#discover-grid .card {
+  min-width: 0;
+  overflow: hidden;
+}
+
+#discover-grid .media {
+  display: block;
+  overflow: hidden;
+  background: #111722;
+}
+
+#discover-grid .media img,
+#discover-grid .media video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#discover-grid .cardbody {
+  min-width: 0;
+}
+
+#discover-grid .cardbody h3 {
+  overflow-wrap: anywhere;
+}
+
+.gv-discover-author,
+.gv-discover-popularity {
+  margin: 7px 0 0;
+  color: var(--muted, #a5adbb);
+  font-size: 13px;
+}
+
+.gv-discover-no-media {
+  display: grid !important;
+  place-items: center;
+  min-height: 150px;
+  color: #a5adbb;
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+
+@media (max-width: 600px) {
+  .gv-discover-toolbar {
+    grid-template-columns: minmax(0, 1fr) 112px;
+    gap: 8px;
+  }
+
+  .gv-discover-toolbar input,
+  .gv-discover-toolbar select {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .gv-discover-filters {
+    margin-right: -4px;
+  }
+}
+
