@@ -165,9 +165,9 @@ function renderReactions(reactions) {
 
     button.onclick = async () => {
       if (!user) {
-        alert('Please sign in to react to posts.');
-        return;
-      }
+  document.getElementById('auth-open')?.click();
+  return;
+}
 
       button.disabled = true;
 
