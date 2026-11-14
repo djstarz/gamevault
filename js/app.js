@@ -52,7 +52,21 @@ async function start() {
   user = data.session?.user || null;
   startGameVaultPresence();
   await refreshAdmin();
-  await loadAvatar();
+    await loadAvatar();
+
+  authUI = initGameVaultAuthUI({
+    sb,
+    getUser: () => user,
+    getProfile: () => ({
+      display_name: accountDisplayName,
+      is_admin: isAdmin
+    }),
+    getAvatarUrl: () => avatarUrl,
+    manageAuth: false,
+    onAction: action => handleAccountAction(action)
+  });
+
+  authUI?.setAuthReady(true);
   renderAccount();
   updateChatAccess();
   await loadPosts();
