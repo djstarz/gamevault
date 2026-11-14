@@ -3144,9 +3144,23 @@ button {
     height: 40px;
   }
 
-  .upload-dialog {
-    padding: 20px;
-  }
+ /* Upload popup mobile layout */
+.upload-dialog {
+  width: calc(100vw - 24px);
+  max-width: 560px;
+  max-height: calc(100dvh - 24px);
+  padding: 20px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.upload-dialog input,
+.upload-dialog select,
+.upload-dialog textarea,
+.upload-dialog button {
+  max-width: 100%;
+  box-sizing: border-box;
+}
   /* Community chat */
   body.chat-page {
     height: 100dvh;
