@@ -610,6 +610,7 @@ async function initializePage() {
   user = data.session?.user || null;
 startGameVaultPresence();
 await loadAvatar();
+  authUI?.setAuthReady(true);
 renderAccount();
 
   if (!user) {
