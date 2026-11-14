@@ -3239,6 +3239,31 @@ button {
   min-height: 44px;
   box-sizing: border-box;
 }
+  /* Share popup mobile layout */
+.gv-modal-overlay {
+  align-items: center;
+  justify-content: center;
+  padding:
+    max(12px, env(safe-area-inset-top))
+    max(12px, env(safe-area-inset-right))
+    max(12px, env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-left));
+}
+
+.gv-modal {
+  width: 100%;
+  max-width: 420px;
+  max-height: calc(100dvh - 24px);
+  padding: 20px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.gv-modal button,
+.gv-modal select {
+  min-height: 44px;
+  box-sizing: border-box;
+}
   /* Community chat */
   body.chat-page {
     height: 100dvh;
