@@ -7,7 +7,8 @@ export function initGameVaultAuthUI({
   getUser,
   getProfile = () => null,
   getAvatarUrl = () => '',
-  onAction = () => {}
+  onAction = () => {},
+  manageAuth = true
 }) {
   const authButton = document.getElementById('auth-open');
   const account = document.getElementById('account');
