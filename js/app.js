@@ -1376,7 +1376,7 @@ authorRow.append(
   roots.forEach(comment => list.append(renderComment(comment)));
 }
 function getPostShareUrl(post) {
-  const url = new URL('post.html', window.location.href);
+  const url = new URL('https://djstarz.github.io/gamevault/post.html');
   url.searchParams.set('post', post.id);
   return url.toString();
 }
