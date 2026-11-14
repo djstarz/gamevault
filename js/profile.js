@@ -472,24 +472,11 @@ async function initializeProfilePage() {
   getUser: () => currentUser,
   getProfile: () => accountProfile,
   getAvatarUrl: path => avatarUrl(path),
-  onAction: action => {
+ onAction: action => {
   if (action === 'admin-portal') {
     window.location.href = 'index.html#admin';
   }
 }
-
-    if (action === 'my-posts') {
-      window.location.href = 'index.html#gallery';
-    }
-
-    if (action === 'change-picture') {
-      alert('Profile picture changing will be connected in a later step.');
-    }
-
-    if (action === 'admin-portal') {
-      window.location.href = 'index.html#admin';
-    }
-  }
 });
 
 const { data, error } = await sb.auth.getSession();
