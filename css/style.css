@@ -28,7 +28,26 @@
   color: var(--gv-text);
   border-color: var(--gv-blue);
 }
-.auth-brand{display:flex;align-items:center;gap:11px;margin:5px 0 24px}.auth-brand strong,.auth-brand small{display:block}.auth-brand strong{font:600 15px 'Space Grotesk',sans-serif}.auth-brand small{font-size:11px;color:var(--muted);margin-top:3px}.auth-dialog h2{font:700 27px 'Space Grotesk',sans-serif;letter-spacing:-.04em;margin:0 0 12px}.auth-form{display:block}.auth-form label{margin:12px 0}.auth-form input{padding:12px}.auth-form .button{margin-top:9px}
+.auth-brand{display:flex;align-items:center;gap:11px;margin:5px 0 24px}.auth-brand strong,.auth-brand small{display:block}.auth-brand strong{font:600 15px 'Space Grotesk',sans-serif}.auth-brand small{font-size:11px;color:var(--muted);margin-top:3px}.auth-dialog h2{font:700 27px 'Space Grotesk',sans-serif;letter-spacing:-.04em;margin:0 0 12px}.auth-form{display:block}.auth-form label{margin:12px 0}
+.auth-form input {
+  padding: 12px;
+  background: var(--gv-secondary-bg);
+  border: 1px solid var(--gv-border);
+  border-radius: var(--gv-control-radius);
+  color: var(--gv-text);
+}
+
+.auth-form input:focus {
+  border-color: var(--gv-blue);
+  box-shadow: 0 0 0 3px var(--gv-focus);
+  outline: none;
+}
+
+.auth-form input::placeholder {
+  color: var(--gv-muted);
+}
+.auth-form 
+.button{margin-top:9px}
 .link-button {
   display: block;
   margin: 14px auto 0;
