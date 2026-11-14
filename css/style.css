@@ -10,7 +10,24 @@
   color: var(--gv-text);
   box-shadow: 0 25px 90px #0008;
 }
-.auth-dialog::backdrop{background:#05080dbb;backdrop-filter:blur(5px)}.auth-dialog .close{display:flex;justify-content:flex-end;padding:0;margin:0;background:none;border:0}.auth-dialog .close button{width:32px;height:32px;padding:0;border:1px solid var(--line);border-radius:9px;background:#202733;color:var(--muted);font-size:21px}.auth-brand{display:flex;align-items:center;gap:11px;margin:5px 0 24px}.auth-brand strong,.auth-brand small{display:block}.auth-brand strong{font:600 15px 'Space Grotesk',sans-serif}.auth-brand small{font-size:11px;color:var(--muted);margin-top:3px}.auth-dialog h2{font:700 27px 'Space Grotesk',sans-serif;letter-spacing:-.04em;margin:0 0 12px}.auth-form{display:block}.auth-form label{margin:12px 0}.auth-form input{padding:12px}.auth-form .button{margin-top:9px}
+.auth-dialog::backdrop{background:#05080dbb;backdrop-filter:blur(5px)}.auth-dialog .close{display:flex;justify-content:flex-end;padding:0;margin:0;background:none;border:0}
+.auth-dialog .close button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--gv-border);
+  border-radius: 9px;
+  background: var(--gv-secondary-bg);
+  color: var(--gv-muted);
+  font-size: 21px;
+}
+
+.auth-dialog .close button:hover {
+  background: var(--gv-secondary-hover);
+  color: var(--gv-text);
+  border-color: var(--gv-blue);
+}
+.auth-brand{display:flex;align-items:center;gap:11px;margin:5px 0 24px}.auth-brand strong,.auth-brand small{display:block}.auth-brand strong{font:600 15px 'Space Grotesk',sans-serif}.auth-brand small{font-size:11px;color:var(--muted);margin-top:3px}.auth-dialog h2{font:700 27px 'Space Grotesk',sans-serif;letter-spacing:-.04em;margin:0 0 12px}.auth-form{display:block}.auth-form label{margin:12px 0}.auth-form input{padding:12px}.auth-form .button{margin-top:9px}
 .link-button {
   display: block;
   margin: 14px auto 0;
