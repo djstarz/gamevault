@@ -1974,23 +1974,14 @@ nativeShare.onclick = async () => {
   }
 };
 
-    const dmLabel = document.createElement('p');
-  dmLabel.textContent = 'Share with a GameVault user';
+      const dmButton = document.createElement('button');
+  dmButton.type = 'button';
+  dmButton.textContent = 'Send in GameVault DM';
 
-  const dmSelect = document.createElement('select');
-  dmSelect.id = 'gv-share-dm-select';
-
-  const placeholder = document.createElement('option');
-  placeholder.value = '';
-  placeholder.textContent = 'Choose a conversation';
-  dmSelect.append(placeholder);
-
-  dmConversationsCache.forEach(conversation => {
-    const option = document.createElement('option');
-    option.value = conversation.conversation_id;
-option.textContent = `${conversation.display_name || conversation.username || 'Player'} · @${conversation.username || 'Player'}`;
-    dmSelect.append(option);
-  });
+  dmButton.onclick = () => {
+    overlay.remove();
+    openSharePostDM(post);
+  };
 
   const sendDm = document.createElement('button');
   sendDm.type = 'button';
@@ -2042,9 +2033,7 @@ option.textContent = `${conversation.display_name || conversation.username || 'P
     description,
     copy,
     nativeShare,
-    dmLabel,
-    dmSelect,
-    sendDm,
+        dmButton,
     close
   );
   overlay.append(modal);
