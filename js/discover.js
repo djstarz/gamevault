@@ -1,6 +1,7 @@
 
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from "./config.js";
+import { initGameVaultAuthUI } from './auth-ui.js';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
@@ -12,7 +13,77 @@ const filters = document.getElementById("discover-filters");
 
 let posts = [];
 let activeCategory = "All";
+let user = null;
+let avatarUrl = null;
+let accountProfile = null;
+let authUI = null;
 
+async function loadAccount() {
+  avatarUrl = null;
+  accountProfile = null;
+
+  if (!user) {
+    authUI?.render();
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('avatar_path, display_name, is_admin')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Discover account loading error:', error);
+    authUI?.render();
+    return;
+  }
+
+  accountProfile = data;
+
+  if (data?.avatar_path) {
+    const { data: imageData } = supabase.storage
+      .from('gamevault-avatars')
+      .getPublicUrl(data.avatar_path);
+
+    avatarUrl = imageData.publicUrl;
+  }
+
+  authUI?.render();
+}
+
+async function initializeAuth() {
+  authUI = initGameVaultAuthUI({
+    sb: supabase,
+    getUser: () => user,
+    getProfile: () => accountProfile,
+    getAvatarUrl: () => avatarUrl,
+    onAction: action => {
+      if (action === 'admin-portal') {
+        window.location.href = 'index.html#admin';
+      }
+    }
+  });
+
+  const { data, error } = await supabase.auth.getSession();
+
+  if (error) {
+    console.error('Discover session error:', error);
+  }
+
+  user = data?.session?.user || null;
+
+  await loadAccount();
+  authUI?.setAuthReady(true);
+
+  supabase.auth.onAuthStateChange((_event, session) => {
+    user = session?.user || null;
+
+    setTimeout(() => {
+      loadAccount();
+    }, 0);
+  });
+}
 function getPostText(post) {
   return [
     post.title,
@@ -203,4 +274,5 @@ filters.addEventListener("click", event => {
   renderPosts();
 });
 
+initializeAuth();
 loadPosts();
