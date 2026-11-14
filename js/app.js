@@ -2040,7 +2040,23 @@ async function openSharePostDM(post) {
   close.textContent = 'Close';
   close.onclick = () => overlay.remove();
 
-  let selectedConversationId = null;
+   let selectedConversationId = null;
+
+  modal.append(
+    heading,
+    description,
+    status,
+    list,
+    send,
+    close
+  );
+
+  overlay.append(modal);
+  overlay.addEventListener('click', event => {
+    if (event.target === overlay) overlay.remove();
+  });
+
+  document.body.append(overlay);
 
   const { data, error } = await sb.rpc('get_dm_conversations');
 
