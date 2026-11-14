@@ -10,13 +10,34 @@ let user = null;
 let currentPost = null;
 let currentProfile = null;
 
+async function loadViewerProfile() {
+  currentProfile = null;
+
+  if (!user) return;
+
+  const { data, error } = await sb
+    .from('profiles')
+    .select('username, display_name, avatar_path')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Could not load account profile:', error.message);
+    return;
+  }
+
+  currentProfile = data || null;
+}
+
 const REACTIONS = ['👍', '❤️', '😂', '🔥', '🎮'];
 
 async function init() {
   const { data } = await sb.auth.getSession();
   user = data.session?.user || null;
 
-  const { initGameVaultAuthUI } = await import('./auth-ui.js');
+await loadViewerProfile();
+
+const { initGameVaultAuthUI } = await import('./auth-ui.js');
 
  const authUI = initGameVaultAuthUI({
   sb,
