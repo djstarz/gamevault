@@ -15,6 +15,30 @@ async function init() {
   const { data } = await sb.auth.getSession();
   user = data.session?.user || null;
 
+  const { initGameVaultAuthUI } = await import('./auth-ui.js');
+
+  const authUI = initGameVaultAuthUI({
+    sb,
+    getUser: () => user
+  });
+
+  authUI?.setAuthReady(true);
+
+  sb.auth.onAuthStateChange((event, session) => {
+    user = session?.user || null;
+
+    if (event !== 'SIGNED_IN' && event !== 'SIGNED_OUT') return;
+
+    setTimeout(() => {
+      authUI?.render();
+
+      if (currentPost) {
+        loadReactions(currentPost.id);
+        loadComments(currentPost.id);
+      }
+    }, 0);
+  });
+
   const postId = new URLSearchParams(location.search).get('id')
     || new URLSearchParams(location.search).get('post');
 
