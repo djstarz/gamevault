@@ -3161,6 +3161,22 @@ button {
   max-width: 100%;
   box-sizing: border-box;
 }
+  /* Settings popup mobile layout */
+.gv-settings-dialog {
+  width: calc(100vw - 24px);
+  max-width: 440px;
+  max-height: calc(100dvh - 24px);
+  margin: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.gv-settings-form input,
+.gv-settings-form button {
+  width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
+}
   /* Community chat */
   body.chat-page {
     height: 100dvh;
