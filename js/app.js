@@ -641,24 +641,7 @@ async function refreshAdmin() {
 }
 
 async function handleAccountAction(action) {
-  if (action === 'my-posts') {
-    const heading = document.querySelector('.community-heading h2');
-    if (heading) heading.textContent = 'My Posts';
-
-    const showAll = $('show-all-posts');
-    if (showAll) showAll.hidden = false;
-
-    const myPosts = postsCache.filter(post => post.user_id === user.id);
-    const gallery = $('gallery-grid');
-
-    if (!myPosts.length) {
-      gallery.textContent = 'You have no posts in the latest loaded feed yet.';
-    } else {
-      gallery.replaceChildren(...myPosts.map(post => makePostCard(post, false)));
-    }
-
-    gallery.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
+ 
 
   if (action === 'change-picture') {
     const fileInput = document.createElement('input');
