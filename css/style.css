@@ -3215,6 +3215,30 @@ button {
 .gv-delete-actions button {
   min-height: 44px;
 }
+  /* Edit post popup mobile layout */
+.gv-edit-dialog {
+  width: calc(100vw - 24px);
+  max-width: 480px;
+  max-height: calc(100dvh - 24px);
+  margin: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.gv-edit-form {
+  min-width: 0;
+  padding: 20px;
+}
+
+.gv-edit-form input,
+.gv-edit-form textarea,
+.gv-edit-form select,
+.gv-edit-form button {
+  width: 100%;
+  max-width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
+}
   /* Community chat */
   body.chat-page {
     height: 100dvh;
