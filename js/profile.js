@@ -665,7 +665,63 @@ $('profile-picture-file').onchange = () => {
   openAvatarCrop(file);
   $('profile-picture-file').value = '';
 };
+$('avatar-zoom').oninput = () => {
+  if (!cropImage) return;
 
+  const canvas = $('avatar-crop-canvas');
+  const oldScale = Math.max(
+    canvas.width / cropImage.width,
+    canvas.height / cropImage.height
+  ) * cropZoom;
+
+  const centerX = (canvas.width / 2 - cropX) / oldScale;
+  const centerY = (canvas.height / 2 - cropY) / oldScale;
+
+  cropZoom = Number($('avatar-zoom').value);
+
+  const newScale = Math.max(
+    canvas.width / cropImage.width,
+    canvas.height / cropImage.height
+  ) * cropZoom;
+
+  cropX = canvas.width / 2 - centerX * newScale;
+  cropY = canvas.height / 2 - centerY * newScale;
+
+  drawAvatarCrop();
+};
+
+const cropCanvas = $('avatar-crop-canvas');
+
+cropCanvas.onpointerdown = event => {
+  if (!cropImage) return;
+
+  cropDragging = true;
+  cropStartX = event.clientX;
+  cropStartY = event.clientY;
+  cropCanvas.setPointerCapture(event.pointerId);
+};
+
+cropCanvas.onpointermove = event => {
+  if (!cropDragging) return;
+
+  const rect = cropCanvas.getBoundingClientRect();
+
+  cropX += (event.clientX - cropStartX) * (cropCanvas.width / rect.width);
+  cropY += (event.clientY - cropStartY) * (cropCanvas.height / rect.height);
+
+  cropStartX = event.clientX;
+  cropStartY = event.clientY;
+
+  drawAvatarCrop();
+};
+
+cropCanvas.onpointerup = () => {
+  cropDragging = false;
+};
+
+cropCanvas.onpointercancel = () => {
+  cropDragging = false;
+};
 initializeProfilePage().catch(error => {
   console.error('GameVault profile page error:', error);
   setStatus('Something went wrong.');
