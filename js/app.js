@@ -2023,14 +2023,31 @@ async function openSharePost(post, container = document.body) {
   copy.textContent = 'Copy link';
 
   copy.onclick = async () => {
-    try {
-      await navigator.clipboard.writeText(getPostShareUrl(post));
-      copy.textContent = 'Link copied!';
-    } catch (error) {
-      copy.textContent = 'Could not copy link';
-      console.error('Copy post link error:', error);
+  const url = getPostShareUrl(post);
+
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(url);
+    } else {
+      const textarea = document.createElement('textarea');
+      textarea.value = url;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+
+      const copied = document.execCommand('copy');
+      textarea.remove();
+
+      if (!copied) throw new Error('Copy failed');
     }
-  };
+
+    copy.textContent = 'Link copied!';
+  } catch (error) {
+    copy.textContent = 'Could not copy link';
+    console.error('Copy post link error:', error);
+  }
+};
   const nativeShare = document.createElement('button');
   nativeShare.type = 'button';
   nativeShare.textContent = 'Share…';
