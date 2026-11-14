@@ -582,6 +582,63 @@ $('display-name-save').onclick = async () => {
     button.disabled = false;
   }
 };
+let cropImage = null;
+let cropZoom = 1;
+let cropX = 0;
+let cropY = 0;
+let cropDragging = false;
+let cropStartX = 0;
+let cropStartY = 0;
+
+function drawAvatarCrop() {
+  const canvas = $('avatar-crop-canvas');
+  const ctx = canvas.getContext('2d');
+
+  const scale = Math.max(
+    canvas.width / cropImage.width,
+    canvas.height / cropImage.height
+  ) * cropZoom;
+
+  const width = cropImage.width * scale;
+  const height = cropImage.height * scale;
+
+  cropX = Math.min(0, Math.max(canvas.width - width, cropX));
+  cropY = Math.min(0, Math.max(canvas.height - height, cropY));
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(cropImage, cropX, cropY, width, height);
+}
+
+function openAvatarCrop(file) {
+  const image = new Image();
+  const imageUrl = URL.createObjectURL(file);
+
+  image.onload = () => {
+    cropImage = image;
+    cropZoom = 1;
+
+    const scale = Math.max(
+      300 / image.width,
+      300 / image.height
+    );
+
+    cropX = (300 - image.width * scale) / 2;
+    cropY = (300 - image.height * scale) / 2;
+
+    $('avatar-zoom').value = '1';
+    drawAvatarCrop();
+    $('avatar-crop-dialog').showModal();
+
+    URL.revokeObjectURL(imageUrl);
+  };
+
+  image.onerror = () => {
+    URL.revokeObjectURL(imageUrl);
+    $('settings-status').textContent = 'Could not open this image.';
+  };
+
+  image.src = imageUrl;
+}
 $('profile-picture-change').onclick = () => {
   $('profile-picture-file').click();
 };
