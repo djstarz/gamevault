@@ -138,8 +138,25 @@ usernameTag.textContent = '@' + profile.username;
       month: 'long'
     });
 
-  info.append(username, usernameTag, role, joined);
-  header.append(avatar, info);
+ info.append(username, usernameTag, role, joined);
+
+if (isOwnProfile) {
+  const settingsButton = document.createElement('button');
+  settingsButton.type = 'button';
+  settingsButton.className = 'button button-secondary';
+  settingsButton.textContent = 'Account Settings';
+
+  settingsButton.addEventListener('click', () => {
+    $('settings-status').textContent = '';
+    $('settings-form').reset();
+    $('display-name').value = accountProfile?.display_name || '';
+    $('settings-dialog').showModal();
+  });
+
+  info.append(settingsButton);
+}
+
+header.append(avatar, info);
 
   const stats = document.createElement('div');
   stats.className = 'gv-public-profile-stats';
