@@ -3177,6 +3177,26 @@ button {
   min-height: 44px;
   box-sizing: border-box;
 }
+  /* Image crop popup mobile layout */
+.gv-crop-dialog {
+  width: calc(100vw - 24px);
+  max-width: 520px;
+  max-height: calc(100dvh - 24px);
+  margin: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.gv-crop-content {
+  min-width: 0;
+  padding: 20px;
+}
+
+.gv-crop-content img,
+.gv-crop-content canvas {
+  max-width: 100%;
+  height: auto;
+}
   /* Community chat */
   body.chat-page {
     height: 100dvh;
