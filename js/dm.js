@@ -578,7 +578,29 @@ async function sendDmMessage(event) {
 async function initializePage() {
   const { data, error } = await sb.auth.getSession();
   authReady = true;
+  authUI = initGameVaultAuthUI({
+    sb,
+    getUser: () => user,
+    getProfile: () => accountProfile,
+    getAvatarUrl: () => avatarUrl,
+    onAction: action => {
+      if (action === 'my-posts') {
+        window.location.href = 'index.html#gallery';
+      }
 
+      if (action === 'change-picture') {
+        alert('Profile picture changing will be connected in a later step.');
+      }
+
+      if (action === 'account-settings') {
+        alert('Account Settings will be connected in a later step.');
+      }
+
+      if (action === 'admin-portal') {
+        window.location.href = 'index.html#admin';
+      }
+    }
+  });
   if (error) {
     setStatus('Could not check your sign-in status.');
     console.error(error);
