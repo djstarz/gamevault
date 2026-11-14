@@ -272,16 +272,6 @@ if (manageAuth) {
 
     
 
-    addMenuItem(dropdown, 'Change Profile Picture', '✎', () => {
-      closeMenu();
-      onAction('change-picture');
-    });
-
-    addMenuItem(dropdown, 'Account Settings', '⚙', () => {
-      closeMenu();
-      onAction('account-settings');
-    });
-
     if (profile?.is_admin) {
       addMenuItem(dropdown, 'Admin Portal', '⚙', () => {
         closeMenu();
