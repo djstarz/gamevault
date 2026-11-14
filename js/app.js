@@ -3201,14 +3201,38 @@ const update = await remoteResponse.json();
     message.textContent = update.message || 'A new GameVault update is available.';
 
     notice.append(heading, message);
-
     if (update.download_url) {
-      const link = document.createElement('a');
-      link.href = update.download_url;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      link.textContent = 'Download Update';
-      notice.append(link);
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = 'Install Update';
+
+      button.addEventListener('click', async () => {
+        button.disabled = true;
+        button.textContent = 'Downloading Update...';
+
+        try {
+          const { registerPlugin } = await import(
+            'https://cdn.jsdelivr.net/npm/@capacitor/core@7.4.3/+esm'
+          );
+
+          const GameVaultUpdater = registerPlugin('GameVaultUpdater');
+
+          await GameVaultUpdater.downloadAndInstall({
+            url: update.download_url
+          });
+
+          button.textContent = 'Opening Android Installer...';
+
+        } catch (error) {
+          console.error('GameVault updater error:', error);
+          button.disabled = false;
+          button.textContent = 'Try Update Again';
+          message.textContent =
+            error?.message || 'Could not install the update.';
+        }
+      });
+
+      notice.append(button);
     }
 
     document.body.appendChild(notice);
