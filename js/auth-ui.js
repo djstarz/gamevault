@@ -49,10 +49,10 @@ export function initGameVaultAuthUI({
             required autocomplete="current-password">
         </label>
 
-        <button id="auth-submit" type="submit">Sign in</button>
+        <button id="auth-submit" class="button button-primary button-wide" type="submit">Sign in</button>
       </form>
 
-      <button id="auth-toggle" type="button">
+      <button id="auth-toggle" class="link-button" type="button">
         Need an account? Sign up
       </button>
 
