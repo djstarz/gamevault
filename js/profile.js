@@ -633,7 +633,32 @@ function openAvatarCrop(file) {
   };
 
   image.onerror = () => {
-    URL.revokeObjectURL(imageUrl);
+$('profile-picture-file').onchange = () => {
+  const file = $('profile-picture-file').files[0];
+  if (!file || !currentUser) return;
+
+  const status = $('settings-status');
+
+  const extensions = [
+    'image/jpeg',
+    'image/png',
+    'image/webp'
+  ];
+
+  if (!extensions.includes(file.type)) {
+    status.textContent = 'Choose a JPG, PNG, or WebP image.';
+    return;
+  }
+
+  if (file.size > 10 * 1024 * 1024) {
+    status.textContent = 'Image must be 10 MB or smaller.';
+    return;
+  }
+
+  status.textContent = '';
+  openAvatarCrop(file);
+  $('profile-picture-file').value = '';
+};    URL.revokeObjectURL(imageUrl);
     $('settings-status').textContent = 'Could not open this image.';
   };
 
@@ -643,67 +668,7 @@ $('profile-picture-change').onclick = () => {
   $('profile-picture-file').click();
 };
 
-$('profile-picture-file').onchange = async () => {
-  const file = $('profile-picture-file').files[0];
-  if (!file || !currentUser) return;
 
-  const status = $('settings-status');
-  const button = $('profile-picture-change');
-
-  const extensions = {
-    'image/jpeg': 'jpg',
-    'image/png': 'png',
-    'image/webp': 'webp'
-  };
-
-  if (!extensions[file.type]) {
-    status.textContent = 'Choose a JPG, PNG, or WebP image.';
-    return;
-  }
-
-  if (file.size > 2 * 1024 * 1024) {
-    status.textContent = 'Image must be 2 MB or smaller.';
-    return;
-  }
-
-  button.disabled = true;
-  status.textContent = 'Uploading profile picture…';
-
-  try {
-    const path = `${currentUser.id}/avatar-${crypto.randomUUID()}.${extensions[file.type]}`;
-
-    const { error: uploadError } = await sb.storage
-      .from('gamevault-avatars')
-      .upload(path, file, {
-        upsert: false,
-        contentType: file.type
-      });
-
-    if (uploadError) throw uploadError;
-
-    const { error: updateError } = await sb
-      .from('profiles')
-      .update({ avatar_path: path })
-      .eq('id', currentUser.id);
-
-    if (updateError) throw updateError;
-
-    accountProfile = {
-      ...accountProfile,
-      avatar_path: path
-    };
-
-    await loadProfile();
-    renderProfileAccount();
-
-    status.textContent = 'Profile picture updated successfully.';
-  } catch (error) {
-    status.textContent = 'Could not update picture: ' + error.message;
-  } finally {
-    button.disabled = false;
-    $('profile-picture-file').value = '';
-  }
-};
 initializeProfilePage().catch(error => {
   console.error('GameVault profile page error:', error);
   setStatus('Something went wrong.');
