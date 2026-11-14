@@ -3080,7 +3080,35 @@ button {
     -webkit-overflow-scrolling: touch;
     padding: 19px;
   }
+  /* Consistent mobile popup content spacing */
+  .gv-delete-content,
+  .gv-edit-form,
+  .gv-settings-form,
+  .gv-crop-content {
+    padding: 20px;
+  }
 
+  .gv-delete-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .gv-delete-actions button {
+    flex: 1 1 120px;
+    min-height: 44px;
+  }
+
+  .auth-dialog {
+    padding: 20px;
+  }
+
+  .profile-dialog {
+    padding: 24px 20px;
+  }
+
+  .upload-dialog {
+    padding: 20px;
+  }
   /* Community chat */
   body.chat-page {
     height: 100dvh;
