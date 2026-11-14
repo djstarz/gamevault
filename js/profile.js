@@ -633,17 +633,23 @@ function openAvatarCrop(file) {
   };
 
   image.onerror = () => {
+    URL.revokeObjectURL(imageUrl);
+    $('settings-status').textContent = 'Could not open this image.';
+  };
+
+  image.src = imageUrl;
+}
+
+$('profile-picture-change').onclick = () => {
+  $('profile-picture-file').click();
+};
+
 $('profile-picture-file').onchange = () => {
   const file = $('profile-picture-file').files[0];
   if (!file || !currentUser) return;
 
   const status = $('settings-status');
-
-  const extensions = [
-    'image/jpeg',
-    'image/png',
-    'image/webp'
-  ];
+  const extensions = ['image/jpeg', 'image/png', 'image/webp'];
 
   if (!extensions.includes(file.type)) {
     status.textContent = 'Choose a JPG, PNG, or WebP image.';
@@ -658,16 +664,7 @@ $('profile-picture-file').onchange = () => {
   status.textContent = '';
   openAvatarCrop(file);
   $('profile-picture-file').value = '';
-};    URL.revokeObjectURL(imageUrl);
-    $('settings-status').textContent = 'Could not open this image.';
-  };
-
-  image.src = imageUrl;
-}
-$('profile-picture-change').onclick = () => {
-  $('profile-picture-file').click();
 };
-
 
 initializeProfilePage().catch(error => {
   console.error('GameVault profile page error:', error);
