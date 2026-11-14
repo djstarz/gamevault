@@ -4,6 +4,7 @@ import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from './config.js';
 const $=id=>document.getElementById(id);
 let sb=null,user=null,signup=false,isAdmin=false,postsCache=[],avatarUrl=null,accountDisplayName=null;
 let reactionsCache = {};
+let authUI = null;
 let authReady = false;
 let chatChannel = null;
 let chatStarted = false;
