@@ -3017,30 +3017,46 @@ button {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  /* Dialogs and popups */
-  .upload-dialog,
-  .auth-dialog,
-  .profile-dialog,
-  .gv-settings-dialog,
-  .gv-crop-dialog {
-    width: calc(100% - 24px);
-    max-width: 520px;
+   /* Shared mobile popup foundation */
+  :where(
+    .upload-dialog,
+    .auth-dialog,
+    .profile-dialog,
+    .gv-settings-dialog,
+    .gv-crop-dialog,
+    .gv-delete-dialog,
+    .gv-edit-dialog
+  ) {
+    box-sizing: border-box;
+    max-width: calc(100vw - 24px);
     max-height: calc(100dvh - 24px);
     margin: auto;
     overflow-x: hidden;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
   }
 
   .gv-modal-overlay {
-    padding: 12px;
+    box-sizing: border-box;
+    padding:
+      max(12px, env(safe-area-inset-top))
+      max(12px, env(safe-area-inset-right))
+      max(12px, env(safe-area-inset-bottom))
+      max(12px, env(safe-area-inset-left));
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .gv-modal {
+    box-sizing: border-box;
     width: 100%;
     max-width: 520px;
     max-height: calc(100dvh - 24px);
     overflow-x: hidden;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     padding: 19px;
   }
 
