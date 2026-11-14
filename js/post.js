@@ -55,14 +55,15 @@ const { initGameVaultAuthUI } = await import('./auth-ui.js');
 
     if (event !== 'SIGNED_IN' && event !== 'SIGNED_OUT') return;
 
-    setTimeout(() => {
-      authUI?.render();
+   setTimeout(async () => {
+  await loadViewerProfile();
+  authUI?.render();
 
-      if (currentPost) {
-        loadReactions(currentPost.id);
-        loadComments(currentPost.id);
-      }
-    }, 0);
+  if (currentPost) {
+    loadReactions(currentPost.id);
+    loadComments(currentPost.id);
+  }
+}, 0);
   });
 
   const postId = new URLSearchParams(location.search).get('id')
