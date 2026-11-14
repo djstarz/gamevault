@@ -3197,6 +3197,24 @@ button {
   max-width: 100%;
   height: auto;
 }
+  /* Delete confirmation popup mobile layout */
+.gv-delete-dialog {
+  width: calc(100vw - 24px);
+  max-width: 420px;
+  max-height: calc(100dvh - 24px);
+  margin: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.gv-delete-content {
+  min-width: 0;
+  padding: 20px;
+}
+
+.gv-delete-actions button {
+  min-height: 44px;
+}
   /* Community chat */
   body.chat-page {
     height: 100dvh;
