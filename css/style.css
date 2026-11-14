@@ -3098,8 +3098,30 @@ button {
     min-height: 44px;
   }
 
+  /* Login popup mobile layout */
   .auth-dialog {
+    width: calc(100vw - 24px);
+    max-width: 440px;
     padding: 20px;
+  }
+
+  .auth-dialog h2 {
+    font-size: 24px;
+  }
+
+  .auth-dialog .auth-form {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .auth-dialog .auth-form label {
+    width: 100%;
+  }
+
+  .auth-dialog .auth-form input,
+  .auth-dialog .auth-form button {
+    width: 100%;
+    min-height: 44px;
   }
 
   .profile-dialog {
