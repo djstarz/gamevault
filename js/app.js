@@ -1160,6 +1160,104 @@ function getPostShareUrl(post) {
   url.searchParams.set('post', post.id);
   return url.toString();
 }
+
+function enableImagePinchZoom(image, container) {
+  let scale = 1;
+  let startScale = 1;
+  let startDistance = 0;
+  let lastX = 0;
+  let lastY = 0;
+  let offsetX = 0;
+  let offsetY = 0;
+  let startX = 0;
+  let startY = 0;
+  const pointers = new Map();
+
+  image.style.touchAction = 'none';
+  image.style.transformOrigin = 'center center';
+  image.style.cursor = 'grab';
+
+  const distance = (a, b) =>
+    Math.hypot(a.x - b.x, a.y - b.y);
+
+  const update = () => {
+    image.style.transform =
+      `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+  };
+
+  image.addEventListener('pointerdown', event => {
+    event.preventDefault();
+    image.setPointerCapture(event.pointerId);
+
+    pointers.set(event.pointerId, {
+      x: event.clientX,
+      y: event.clientY
+    });
+
+    if (pointers.size === 2) {
+      const points = [...pointers.values()];
+      startDistance = distance(points[0], points[1]);
+      startScale = scale;
+    } else if (pointers.size === 1) {
+      startX = event.clientX;
+      startY = event.clientY;
+      lastX = offsetX;
+      lastY = offsetY;
+    }
+  });
+
+  image.addEventListener('pointermove', event => {
+    if (!pointers.has(event.pointerId)) return;
+
+    pointers.set(event.pointerId, {
+      x: event.clientX,
+      y: event.clientY
+    });
+
+    if (pointers.size === 2) {
+      const points = [...pointers.values()];
+      scale = Math.min(
+        4,
+        Math.max(1, startScale * distance(points[0], points[1]) / startDistance)
+      );
+
+      if (scale === 1) {
+        offsetX = 0;
+        offsetY = 0;
+      }
+
+      update();
+    } else if (pointers.size === 1 && scale > 1) {
+      offsetX = lastX + event.clientX - startX;
+      offsetY = lastY + event.clientY - startY;
+      update();
+    }
+  });
+
+  const stop = event => {
+    pointers.delete(event.pointerId);
+
+    if (pointers.size === 1) {
+      const point = [...pointers.values()][0];
+      startX = point.x;
+      startY = point.y;
+      lastX = offsetX;
+      lastY = offsetY;
+    }
+  };
+
+  image.addEventListener('pointerup', stop);
+  image.addEventListener('pointercancel', stop);
+
+  image.addEventListener('dblclick', event => {
+    event.preventDefault();
+    scale = scale > 1 ? 1 : 2;
+    offsetX = 0;
+    offsetY = 0;
+    update();
+  });
+}
+
 function openMediaViewer(post) {
   document.getElementById('gv-media-viewer')?.remove();
 
@@ -1234,7 +1332,9 @@ function openMediaViewer(post) {
   }
 
   media.append(element);
-
+  if (post.media_type !== 'video') {
+    enableImagePinchZoom(element, media);
+  }
   dialog.querySelector('#gv-media-title').textContent =
     post.title || 'Untitled post';
 
