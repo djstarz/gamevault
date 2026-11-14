@@ -270,10 +270,7 @@ if (manageAuth) {
       window.location.href = 'dm.html';
     });
 
-    addMenuItem(dropdown, 'My Posts', '▤', () => {
-      closeMenu();
-      onAction('my-posts');
-    });
+    
 
     addMenuItem(dropdown, 'Change Profile Picture', '✎', () => {
       closeMenu();
