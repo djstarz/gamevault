@@ -90,7 +90,7 @@ export function initGameVaultAuthUI({
 
     $('password').value = '';
   }
-
+if (manageAuth) {
   authButton.addEventListener('click', openAuth);
 
   $('auth-toggle').addEventListener('click', () => {
@@ -100,6 +100,7 @@ export function initGameVaultAuthUI({
     $('auth-status').textContent = signup
       ? 'Choose a unique username and a password of at least 8 characters.'
       : '';
+    function addMenuItem(dropdown, label, icon, action) {
   });
 
   $('auth-form').addEventListener('submit', async event => {
