@@ -2282,7 +2282,16 @@ select,
     height: 94vh !important;
     max-height: 94vh !important;
   }
-
+  #post-viewer {
+    box-sizing: border-box;
+    width: calc(100vw - 24px) !important;
+    max-width: 900px !important;
+    max-height: calc(100dvh - 24px) !important;
+    margin: auto;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+  }
   .gv-media-viewer-layout {
     display: grid;
     grid-template-rows: minmax(0, 1fr) auto;
