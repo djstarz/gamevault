@@ -74,7 +74,7 @@ async function loadPost(postId) {
 
   const { data: author } = await sb
     .from('profiles')
-.select('username, display_name')
+.select('username, display_name, avatar_path')
     .eq('id', post.user_id)
     .maybeSingle();
 
