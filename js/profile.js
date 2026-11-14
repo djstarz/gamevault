@@ -1,4 +1,4 @@
-
+import { initGameVaultAuthUI } from './auth-ui.js';
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from './config.js';
 
@@ -10,6 +10,7 @@ let currentUser = null;
 let authReady = false;
 let profileUser = null;
 let accountProfile = null;
+let authUI = null;
 function setStatus(message) {
   $('profile-page-status').textContent = message;
 }
@@ -618,8 +619,34 @@ async function initializeProfilePage() {
     return;
   }
 
-  const { data, error } = await sb.auth.getSession();
-  authReady = true;
+  authUI = initGameVaultAuthUI({
+  sb,
+  getUser: () => currentUser,
+  getProfile: () => accountProfile,
+  getAvatarUrl: path => avatarUrl(path),
+  onAction: action => {
+    if (action === 'account-settings') {
+      $('settings-status').textContent = '';
+      $('settings-form').reset();
+      $('display-name').value = accountProfile?.display_name || '';
+      $('settings-dialog').showModal();
+    }
+
+    if (action === 'my-posts') {
+      window.location.href = 'index.html#gallery';
+    }
+
+    if (action === 'change-picture') {
+      alert('Profile picture changing will be connected in a later step.');
+    }
+
+    if (action === 'admin-portal') {
+      window.location.href = 'index.html#admin';
+    }
+  }
+});
+
+const { data, error } = await sb.auth.getSession();
 
   if (error) {
     console.error('Profile session error:', error);
@@ -631,7 +658,7 @@ async function initializeProfilePage() {
   updateUpload();
 
 await loadAccountProfile();
-renderProfileAccount();
+authUI?.setAuthReady(true);
 await loadProfile();
 
   sb.auth.onAuthStateChange((_event, session) => {
@@ -640,8 +667,8 @@ await loadProfile();
 
   setTimeout(async () => {
     await loadAccountProfile();
-    renderProfileAccount();
-    await loadProfile();
+authUI?.render();
+await loadProfile();
   }, 0);
 });
 }
