@@ -59,14 +59,18 @@ function setStatus(message) {
 function renderAccount() {
   authUI?.render();
 }
-
 async function loadAvatar() {
   avatarUrl = null;
-  if (!user) return;
+  accountProfile = null;
+
+  if (!user) {
+    accountDisplayName = null;
+    return;
+  }
 
   const { data, error } = await sb
     .from('profiles')
-.select('avatar_path, display_name')
+    .select('avatar_path, display_name, is_admin')
     .eq('id', user.id)
     .maybeSingle();
 
@@ -75,6 +79,8 @@ async function loadAvatar() {
     return;
   }
 
+  accountProfile = data;
+
   if (data?.avatar_path) {
     const { data: imageData } = sb.storage
       .from('gamevault-avatars')
@@ -82,6 +88,7 @@ async function loadAvatar() {
 
     avatarUrl = imageData.publicUrl;
   }
+
   accountDisplayName = data?.display_name?.trim() || usernameOf(user);
 }
 
