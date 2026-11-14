@@ -381,7 +381,7 @@ const commentUserIds = [...new Set(comments.map(comment => comment.user_id))];
 
 const { data: commentProfiles, error: commentProfilesError } = await sb
   .from('profiles')
-  .select('id, username, display_name')
+  .select('id, username, display_name, avatar_path')
   .in('id', commentUserIds);
 
 if (commentProfilesError) {
