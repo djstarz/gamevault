@@ -1,1 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101318">
+  <meta name="description" content="Discover gaming screenshots, wallpapers, edits, clips, builds and guides on GameVault.">
+  <title>Discover — GameVault</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css?v=1.0.7">
+  <link rel="manifest" href="./manifest.webmanifest">
+</head>
+
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html#home" aria-label="GameVault home">
+      <span class="brand-mark" aria-hidden="true">G</span>
+      <span class="brand-word">GAME<span>VAULT</span><small>YOUR GAMING COMMUNITY</small></span>
+    </a>
+
+    <nav class="top-nav" aria-label="Main navigation">
+      <a href="index.html#home">Home</a>
+      <a class="active" href="discover.html">Discover</a>
+      <a href="chat.html">Chat</a>
+      <a href="dm.html">Inbox</a>
+    </nav>
+
+    <div class="header-actions">
+      <a class="icon-action" href="#discover-search"
+         aria-label="Search posts" title="Search posts">⌕</a>
+      <button id="upload-open" class="upload-open-button"
+        type="button" aria-label="Create a post"
+        title="Create a post" hidden>＋</button>
+      <button id="auth-open" class="sign-in-button"
+        type="button" hidden>Sign in</button>
+      <span id="account"></span>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="panel" id="discover-page">
+      <div class="panel-heading">
+        <div>
+          <span class="eyebrow">EXPLORE THE COMMUNITY</span>
+          <h1>Discover</h1>
+          <p>Find screenshots, wallpapers, clips, builds and ideas shared by players.</p>
+        </div>
+        <span class="panel-icon">⌕</span>
+      </div>
+
+      <div class="gv-discover-toolbar">
+        <input
+          id="discover-search"
+          type="search"
+          placeholder="Search posts, games or creators..."
+          aria-label="Search posts"
+        >
+
+        <select id="discover-sort" aria-label="Sort posts">
+          <option value="latest">Latest</option>
+          <option value="popular">Popular</option>
+        </select>
+      </div>
+
+      <div class="gv-discover-filters" id="discover-filters" aria-label="Filter by category">
+        <button class="active" type="button" data-category="All">All</button>
+        <button type="button" data-category="Screenshots">Screenshots</button>
+        <button type="button" data-category="Wallpapers">Wallpapers</button>
+        <button type="button" data-category="Edits">Edits</button>
+        <button type="button" data-category="Clips">Clips</button>
+        <button type="button" data-category="Builds">Builds</button>
+        <button type="button" data-category="Guides">Guides</button>
+      </div>
+
+      <div class="gv-discover-status" id="discover-status" role="status">
+        Loading community posts...
+      </div>
+
+      <div class="grid" id="discover-grid"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a class="footer-brand" href="index.html#home">GAMEVAULT</a>
+    <span>Made for moments worth keeping.</span>
+    <a href="index.html#home">Back to GameVault ↑</a>
+  </footer>
+
+  <script type="module" src="js/discover.js"></script>
+</body>
+</html>
