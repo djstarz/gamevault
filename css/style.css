@@ -3220,3 +3220,47 @@ button {
     padding-top: 10px;
   }
 }
+/* GameVault login popup button theme */
+.auth-dialog #auth-submit {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px 16px;
+  border: 1px solid var(--blue);
+  border-radius: 10px;
+  background: var(--blue);
+  color: #102036;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+
+.auth-dialog #auth-submit:hover:not(:disabled) {
+  background: #9bceff;
+  border-color: #9bceff;
+}
+
+.auth-dialog #auth-toggle {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 9px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.auth-dialog #auth-toggle:hover {
+  background: #222b39;
+  border-color: var(--line);
+}
+
+.auth-dialog .close button:hover {
+  color: var(--text);
+  border-color: var(--blue);
+}
