@@ -60,8 +60,6 @@ function renderAccount() {
   authUI?.render();
 }
 
-
-}
 async function loadAvatar() {
   avatarUrl = null;
   if (!user) return;
