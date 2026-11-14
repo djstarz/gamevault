@@ -3264,6 +3264,32 @@ button {
   min-height: 44px;
   box-sizing: border-box;
 }
+  /* Media viewer mobile layout */
+#gv-media-viewer {
+  width: calc(100vw - 16px) !important;
+  max-width: none !important;
+  max-height: calc(100dvh - 16px) !important;
+  margin: auto;
+  overflow: hidden !important;
+}
+
+.gv-media-viewer-layout {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  height: calc(100dvh - 16px);
+  max-height: calc(100dvh - 16px);
+  min-height: 0;
+}
+
+#gv-media-display {
+  min-height: 0;
+  padding: 10px;
+}
+
+.gv-media-side {
+  max-height: 35dvh;
+  overflow-y: auto;
+}
   /* Community chat */
   body.chat-page {
     height: 100dvh;
