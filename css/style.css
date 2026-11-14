@@ -3290,6 +3290,28 @@ button {
   max-height: 35dvh;
   overflow-y: auto;
 }
+  /* Post viewer mobile layout */
+#post-viewer {
+  display: flex;
+  flex-direction: column;
+  width: calc(100vw - 16px) !important;
+  max-width: 900px !important;
+  max-height: calc(100dvh - 16px) !important;
+  padding: 16px !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  box-sizing: border-box;
+}
+
+#post-viewer img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+#post-viewer button {
+  min-height: 40px;
+}
   /* Community chat */
   body.chat-page {
     height: 100dvh;
