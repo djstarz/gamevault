@@ -1932,8 +1932,48 @@ async function openSharePost(post, container = document.body) {
   nativeShare.type = 'button';
   nativeShare.textContent = 'Share…';
 
-  nativeShare.onclick = async () => {
-    const url = getPostShareUrl(post);
+nativeShare.onclick = async () => {
+  const url = getPostShareUrl(post);
+
+  nativeShare.disabled = true;
+  nativeShare.textContent = 'Opening Share...';
+
+  try {
+    if (window.Capacitor?.isNativePlatform?.()) {
+      const { Share } = await import(
+        'https://cdn.jsdelivr.net/npm/@capacitor/share@7.0.2/+esm'
+      );
+
+      await Share.share({
+        title: post.title || 'GameVault post',
+        text: 'Check out this gaming post on GameVault!',
+        url,
+        dialogTitle: 'Share GameVault post'
+      });
+    } else if (navigator.share) {
+      await navigator.share({
+        title: post.title || 'GameVault post',
+        text: 'Check out this gaming post on GameVault!',
+        url
+      });
+    } else {
+      nativeShare.textContent = 'Sharing not supported';
+      return;
+    }
+  } catch (error) {
+    if (error.name !== 'AbortError') {
+      console.error('Native share error:', error);
+      nativeShare.textContent = 'Could not open sharing';
+    }
+  } finally {
+    nativeShare.disabled = false;
+
+    if (nativeShare.textContent === 'Opening Share...') {
+      nativeShare.textContent = 'Share…';
+    }
+  }
+};
+  const url = getPostShareUrl(post);
 
     if (!navigator.share) {
       nativeShare.textContent = 'Sharing not supported';
