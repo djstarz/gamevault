@@ -584,9 +584,7 @@ async function initializePage() {
     getProfile: () => accountProfile,
     getAvatarUrl: () => avatarUrl,
     onAction: action => {
-      if (action === 'my-posts') {
-  window.location.href = 'index.html#my-posts';
-}
+     
 
       if (action === 'change-picture') {
         alert('Profile picture changing will be connected in a later step.');
