@@ -14,7 +14,8 @@ let accountDisplayName = null;
 let dmConversationsCache = [];
 let activeDmConversation = null;
 let dmChannel = null;
-
+let accountProfile = null;
+let authUI = null;
 let presenceTimer = null;
 
 async function updateGameVaultPresence() {
