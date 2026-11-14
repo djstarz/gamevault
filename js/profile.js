@@ -473,12 +473,10 @@ async function initializeProfilePage() {
   getProfile: () => accountProfile,
   getAvatarUrl: path => avatarUrl(path),
   onAction: action => {
-    if (action === 'account-settings') {
-      $('settings-status').textContent = '';
-      $('settings-form').reset();
-      $('display-name').value = accountProfile?.display_name || '';
-      $('settings-dialog').showModal();
-    }
+  if (action === 'admin-portal') {
+    window.location.href = 'index.html#admin';
+  }
+}
 
     if (action === 'my-posts') {
       window.location.href = 'index.html#gallery';
