@@ -722,6 +722,14 @@ cropCanvas.onpointerup = () => {
 cropCanvas.onpointercancel = () => {
   cropDragging = false;
 };
+function closeAvatarCrop() {
+  $('avatar-crop-dialog').close();
+  cropImage = null;
+  cropDragging = false;
+}
+
+$('crop-close').onclick = closeAvatarCrop;
+$('crop-cancel').onclick = closeAvatarCrop;
 initializeProfilePage().catch(error => {
   console.error('GameVault profile page error:', error);
   setStatus('Something went wrong.');
