@@ -1973,25 +1973,7 @@ nativeShare.onclick = async () => {
     }
   }
 };
-  const url = getPostShareUrl(post);
 
-    if (!navigator.share) {
-      nativeShare.textContent = 'Sharing not supported';
-      return;
-    }
-
-    try {
-      await navigator.share({
-        title: post.title || 'GameVault post',
-        text: 'Check out this gaming post on GameVault!',
-        url
-      });
-    } catch (error) {
-      if (error.name !== 'AbortError') {
-        console.error('Native share error:', error);
-      }
-    }
-  };
     const dmLabel = document.createElement('p');
   dmLabel.textContent = 'Share with a GameVault user';
 
