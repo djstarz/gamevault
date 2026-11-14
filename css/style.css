@@ -3124,8 +3124,24 @@ button {
     min-height: 44px;
   }
 
+   /* Profile popup mobile layout */
   .profile-dialog {
+    width: calc(100vw - 24px);
+    max-width: 380px;
+    max-height: calc(100dvh - 24px);
     padding: 24px 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .profile-dialog-avatar {
+    width: 76px;
+    height: 76px;
+  }
+
+  .profile-dialog-close {
+    width: 40px;
+    height: 40px;
   }
 
   .upload-dialog {
