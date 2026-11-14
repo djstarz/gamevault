@@ -73,7 +73,13 @@ async function start() {
 if ($('community-chat')) await initializeChat();
 await loadDmRequests();
 await loadDmConversations();
-  
+    if (window.location.hash === '#my-posts') {
+    await handleAccountAction('my-posts');
+    window.history.replaceState(null, '', window.location.pathname);
+  } else if (window.location.hash === '#account-settings') {
+    await handleAccountAction('account-settings');
+    window.history.replaceState(null, '', window.location.pathname);
+  }
   sb.auth.onAuthStateChange((_e, s) => {
   user = s?.user || null;
   startGameVaultPresence();
