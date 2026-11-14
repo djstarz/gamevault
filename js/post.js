@@ -8,6 +8,7 @@ const sb = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
 let user = null;
 let currentPost = null;
+let currentProfile = null;
 
 const REACTIONS = ['👍', '❤️', '😂', '🔥', '🎮'];
 
@@ -17,10 +18,14 @@ async function init() {
 
   const { initGameVaultAuthUI } = await import('./auth-ui.js');
 
-  const authUI = initGameVaultAuthUI({
-    sb,
-    getUser: () => user
-  });
+ const authUI = initGameVaultAuthUI({
+  sb,
+  getUser: () => user,
+  getProfile: () => currentProfile,
+  getAvatarUrl: path => path
+    ? sb.storage.from('gamevault-avatars').getPublicUrl(path).data.publicUrl
+    : ''
+});
 
   authUI?.setAuthReady(true);
 
