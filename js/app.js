@@ -2119,21 +2119,6 @@ document.body.append(overlay);
     send.textContent = 'Sent!';
   };
 
-  modal.append(
-    heading,
-    description,
-    status,
-    list,
-    send,
-    close
-  );
-
-  overlay.append(modal);
-  overlay.addEventListener('click', event => {
-    if (event.target === overlay) overlay.remove();
-  });
-
-  document.body.append(overlay);
 }
 async function loadPosts() {
   if (!sb) return;
