@@ -2,6 +2,7 @@ import { initGameVaultAuthUI } from './auth-ui.js';
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from './config.js';
 const $=id=>document.getElementById(id);
+
 let sb=null,user=null,signup=false,isAdmin=false,postsCache=[],avatarUrl=null,accountDisplayName=null;
 let reactionsCache = {};
 let authUI = null;
