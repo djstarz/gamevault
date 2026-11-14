@@ -585,16 +585,16 @@ async function initializePage() {
     getAvatarUrl: () => avatarUrl,
     onAction: action => {
       if (action === 'my-posts') {
-        window.location.href = 'index.html#gallery';
-      }
+  window.location.href = 'index.html#my-posts';
+}
 
       if (action === 'change-picture') {
         alert('Profile picture changing will be connected in a later step.');
       }
 
       if (action === 'account-settings') {
-        alert('Account Settings will be connected in a later step.');
-      }
+  window.location.href = 'index.html#account-settings';
+}
 
       if (action === 'admin-portal') {
         window.location.href = 'index.html#admin';
