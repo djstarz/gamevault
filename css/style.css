@@ -28,7 +28,8 @@
   color: var(--gv-text);
   border-color: var(--gv-blue);
 }
-.auth-brand{display:flex;align-items:center;gap:11px;margin:5px 0 24px}.auth-brand strong,.auth-brand small{display:block}.auth-brand strong{font:600 15px 'Space Grotesk',sans-serif}.auth-brand small{font-size:11px;color:var(--muted);margin-top:3px}.auth-dialog h2{font:700 27px 'Space Grotesk',sans-serif;letter-spacing:-.04em;margin:0 0 12px}.auth-form{display:block}.auth-form label{margin:12px 0}
+.auth-brand{display:flex;align-items:center;gap:11px;margin:5px 0 24px}.auth-brand strong,.auth-brand small{display:block}.auth-brand strong{font:600 15px 'Space Grotesk',sans-serif}.auth-brand small{font-size:11px;color:var(--muted);margin-top:3px}.auth-dialog h2{font:700 27px 'Space Grotesk',sans-serif;letter-spacing:-.04em;margin:0 0 12px}
+.upload-form label,.auth-form label{display:block;margin:8px 0 10px;color:var(--gv-text);font-size:11px;font-weight:700}
 .auth-form input {
   padding: 12px;
   background: var(--gv-secondary-bg);
