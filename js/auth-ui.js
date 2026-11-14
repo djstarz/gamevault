@@ -97,10 +97,9 @@ if (manageAuth) {
     signup = !signup;
     updateAuthMode();
 
-    $('auth-status').textContent = signup
+        $('auth-status').textContent = signup
       ? 'Choose a unique username and a password of at least 8 characters.'
       : '';
-    function addMenuItem(dropdown, label, icon, action) {
   });
 
   $('auth-form').addEventListener('submit', async event => {
@@ -162,7 +161,9 @@ if (manageAuth) {
     } finally {
       submit.disabled = false;
     }
-  });
+   });
+
+}
 
   function addMenuItem(dropdown, label, icon, action) {
     const button = document.createElement('button');
