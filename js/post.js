@@ -298,11 +298,14 @@ authorName.textContent = `${author?.display_name?.trim() || author?.username || 
     if (post.media_type === 'video') {
       element.controls = true;
       element.preload = 'metadata';
-    } else {
+      } else {
       element.alt = post.title || 'Gaming media';
       element.loading = 'eager';
+      element.style.cursor = 'zoom-in';
+      element.addEventListener('click', () => {
+        openPostImageViewer(element.src, element.alt);
+      });
     }
-
     media.append(element);
   }
 }
