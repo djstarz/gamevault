@@ -13,24 +13,34 @@
   <link rel="manifest" href="./manifest.webmanifest">
 </head>
 <body class="chat-page">
-  <header class="site-header">
-    <a class="brand" href="index.html" aria-label="GameVault home">
-      <span class="brand-mark" aria-hidden="true">G</span>
-      <span class="brand-word">GAME<span>VAULT</span><small>YOUR GAMING COMMUNITY</small></span>
-    </a>
+  
+<header class="site-header">
+  <a class="brand" href="index.html#home" aria-label="GameVault home">
+    <span class="brand-mark" aria-hidden="true">G</span>
+    <span class="brand-word">GAME<span>VAULT</span><small>YOUR GAMING COMMUNITY</small></span>
+  </a>
 
-    <nav class="top-nav" aria-label="Main navigation">
-      <a href="index.html">Home</a>
-      <a href="index.html#gallery">Discover</a>
-      <a class="active" href="chat.html">Chat</a>
-      <a href="index.html#share">Share</a>
-    </nav>
+  <nav class="top-nav" aria-label="Main navigation">
+    <a href="index.html#home">Home</a>
+    <a href="index.html#gallery">Discover</a>
+    <a class="active" href="chat.html">Chat</a>
+    <a href="dm.html">Inbox</a>
+  </nav>
 
-    <div class="header-actions">
-      <button id="auth-open" class="sign-in-button" type="button" hidden>Sign in</button>
-      <span id="account"></span>
-    </div>
-  </header>
+  <div class="header-actions">
+    <a class="icon-action" href="index.html#gallery"
+       aria-label="Explore posts" title="Explore posts">⌕</a>
+
+    <button id="upload-open" class="upload-open-button"
+      type="button" aria-label="Create a post"
+      title="Create a post" hidden>＋</button>
+
+    <button id="auth-open" class="sign-in-button"
+      type="button" hidden>Sign in</button>
+
+    <span id="account"></span>
+  </div>
+</header>
 
   <main id="home" class="page-shell">
     <section class="welcome-banner" aria-labelledby="welcome-title">
