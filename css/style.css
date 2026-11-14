@@ -473,6 +473,18 @@
   background: rgba(3, 3, 10, .78);
   backdrop-filter: blur(5px);
 }
+/* Consistent sizing and scrolling for form popups */
+.gv-delete-dialog,
+.gv-edit-dialog,
+.gv-settings-dialog,
+.gv-crop-dialog {
+  box-sizing: border-box;
+  max-height: min(90dvh, 760px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
 
 .gv-edit-form {
   display: grid;
