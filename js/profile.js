@@ -730,6 +730,65 @@ function closeAvatarCrop() {
 
 $('crop-close').onclick = closeAvatarCrop;
 $('crop-cancel').onclick = closeAvatarCrop;
+$('crop-save').onclick = async () => {
+  if (!cropImage || !currentUser) return;
+
+  const button = $('crop-save');
+  const status = $('crop-status');
+
+  button.disabled = true;
+  status.textContent = 'Uploading cropped picture…';
+
+  try {
+    const canvas = $('avatar-crop-canvas');
+
+    const blob = await new Promise(resolve => {
+      canvas.toBlob(resolve, 'image/jpeg', 0.9);
+    });
+
+    if (!blob) throw new Error('Could not create cropped image.');
+
+    const file = new File(
+      [blob],
+      'avatar.jpg',
+      { type: 'image/jpeg' }
+    );
+
+    const path = `${currentUser.id}/avatar-${crypto.randomUUID()}.jpg`;
+
+    const { error: uploadError } = await sb.storage
+      .from('gamevault-avatars')
+      .upload(path, file, {
+        upsert: false,
+        contentType: 'image/jpeg'
+      });
+
+    if (uploadError) throw uploadError;
+
+    const { error: updateError } = await sb
+      .from('profiles')
+      .update({ avatar_path: path })
+      .eq('id', currentUser.id);
+
+    if (updateError) throw updateError;
+
+    accountProfile = {
+      ...accountProfile,
+      avatar_path: path
+    };
+
+    closeAvatarCrop();
+    await loadProfile();
+    renderProfileAccount();
+
+    $('settings-status').textContent =
+      'Profile picture updated successfully.';
+  } catch (error) {
+    status.textContent = 'Could not update picture: ' + error.message;
+  } finally {
+    button.disabled = false;
+  }
+};
 initializeProfilePage().catch(error => {
   console.error('GameVault profile page error:', error);
   setStatus('Something went wrong.');
