@@ -1983,46 +1983,7 @@ nativeShare.onclick = async () => {
     openSharePostDM(post);
   };
 
-  const sendDm = document.createElement('button');
-  sendDm.type = 'button';
-  sendDm.textContent = 'Send to DM';
-  sendDm.disabled = dmConversationsCache.length === 0;
 
-  sendDm.onclick = async () => {
-    if (!user) {
-      overlay.remove();
-      openAuth();
-      return;
-    }
-
-    const conversationId = dmSelect.value;
-
-    if (!conversationId) {
-      sendDm.textContent = 'Choose a conversation first';
-      return;
-    }
-
-    sendDm.disabled = true;
-    sendDm.textContent = 'Sending...';
-
-    const { error } = await sb
-      .from('dm_messages')
-      .insert({
-        conversation_id: conversationId,
-        sender_id: user.id,
-        body: 'Shared a post',
-        shared_post_id: post.id
-      });
-
-    if (error) {
-      console.error('Share post DM error:', error);
-      sendDm.textContent = 'Could not send';
-      sendDm.disabled = false;
-      return;
-    }
-
-    sendDm.textContent = 'Post shared!';
-  };
   const close = document.createElement('button');
   close.type = 'button';
   close.textContent = 'Close';
