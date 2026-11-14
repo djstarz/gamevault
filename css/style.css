@@ -3716,4 +3716,40 @@ button {
     object-fit: contain;
   }
 }
+/* GameVault v1.0.8 — Share Post DM Popup */
 
+.gv-share-dm-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  max-height: 42vh;
+  overflow-y: auto;
+}
+
+.gv-share-dm-conversation {
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1px solid var(--gv-border);
+  border-radius: 10px;
+  background: var(--gv-panel);
+  color: var(--gv-text);
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease;
+}
+
+.gv-share-dm-conversation:hover {
+  background: var(--gv-secondary-bg);
+}
+
+.gv-share-dm-conversation:focus-visible {
+  outline: 2px solid var(--gv-blue);
+  outline-offset: 2px;
+}
+
+#gv-share-dm-overlay .gv-modal {
+  width: min(440px, 100%);
+}
+
+#gv-share-dm-overlay .gv-modal button {
+  min-height: 44px;
+}
